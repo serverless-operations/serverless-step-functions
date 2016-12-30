@@ -28,7 +28,7 @@ class ServerlessStepFunctions {
             options: {
               state: {
                 usage: 'Name of the State Machine',
-                shortcut: 's',
+                shortcut: 't',
                 required: true,
               },
             },
@@ -45,7 +45,7 @@ class ServerlessStepFunctions {
             options: {
               state: {
                 usage: 'Name of the State Machine',
-                shortcut: 's',
+                shortcut: 't',
                 required: true,
               },
             },
@@ -62,7 +62,7 @@ class ServerlessStepFunctions {
             options: {
               state: {
                 usage: 'Name of the State Machine',
-                shortcut: 's',
+                shortcut: 't',
                 required: true,
               },
               data: {
