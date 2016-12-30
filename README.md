@@ -36,16 +36,26 @@ stepFunctions:
 
 ## Usage
 ### deploy
+- --state or -t The name of the step function in your service that you want to deploy. Required.
+- --stage or -s The stage in your service you want to deploy your step function.
+- --region or -r The region in your stage that you want to deploy your step function.
 ```
 $ sls deploy stepf --state <stepfunctionname>
 ```
 
 ### invoke
+- --state or -t The name of the step function in your service that you want to invoke. Required.
+- --stage or -s The stage in your service you want to invoke your step function.
+- --region or -r The region in your stage that you want to invoke your step function.
+- --data or -d String data to be passed as an event to your step function.
 ```
 $ sls invoke stepf --state <stepfunctionname> --data '{"foo":"bar"}'
 ```
 
 ### remove
+- --state or -t The name of the step function in your service that you want to remove. Required.
+- --stage or -s The stage in your service you want to invoke your step remove.
+- --region or -r The region in your stage that you want to invoke your step remove.
 ```
 $ sls remove stepf --state <stepfunctionname>
 ```
