@@ -34,7 +34,7 @@ stepFunctions:
         End: true
 ```
 
-## Usage
+## Command
 ### deploy
 - --state or -t The name of the step function in your service that you want to deploy. Required.
 - --stage or -s The stage in your service you want to deploy your step function.
