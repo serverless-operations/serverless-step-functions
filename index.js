@@ -68,7 +68,7 @@ class ServerlessStepFunctions {
               data: {
                 usage: 'String data to be passed as an event to your step function',
                 shortcut: 'd',
-              }
+              },
             },
           },
         },
