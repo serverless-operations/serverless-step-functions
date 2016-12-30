@@ -42,7 +42,7 @@ $ sls deploy stepf --state <stepfunctionname>
 
 ### invoke
 ```
-$ sls invoke stepf --state <stepfunctionname>
+$ sls invoke stepf --state <stepfunctionname> --data '{"foo":"bar"}'
 ```
 
 ### remove
