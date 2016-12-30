@@ -2,6 +2,7 @@
 const BbPromise = require('bluebird');
 const deploy = require('./lib/deploy');
 const remove = require('./lib/remove');
+const invoke = require('./lib/invoke');
 
 class ServerlessStepFunctions {
   constructor(serverless, options) {
@@ -12,7 +13,8 @@ class ServerlessStepFunctions {
     Object.assign(
       this,
       deploy,
-      remove
+      remove,
+      invoke
     );
 
     this.commands = {
@@ -24,9 +26,9 @@ class ServerlessStepFunctions {
               'deploy',
             ],
             options: {
-              statemachine: {
+              state: {
                 usage: 'Name of the State Machine',
-                shortcut: 'sm',
+                shortcut: 's',
                 required: true,
               },
             },
@@ -41,9 +43,26 @@ class ServerlessStepFunctions {
               'remove',
             ],
             options: {
-              statemachine: {
+              state: {
                 usage: 'Name of the State Machine',
-                shortcut: 'sm',
+                shortcut: 's',
+                required: true,
+              },
+            },
+          },
+        },
+      },
+      invoke: {
+        commands: {
+          stepf: {
+            usage: 'Remove Step functions',
+            lifecycleEvents: [
+              'invoke',
+            ],
+            options: {
+              state: {
+                usage: 'Name of the State Machine',
+                shortcut: 's',
                 required: true,
               },
             },
@@ -57,6 +76,8 @@ class ServerlessStepFunctions {
         .then(this.deploy),
       'remove:stepf:remove': () => BbPromise.bind(this)
         .then(this.remove),
+      'invoke:stepf:invoke': () => BbPromise.bind(this)
+        .then(this.invoke),
     };
   }
 }
