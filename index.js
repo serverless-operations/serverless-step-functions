@@ -153,7 +153,7 @@ class ServerlessStepFunctions {
       if (error.statusCode === 404) {
         return this.createIamRole();
       }
-      return BbPromise.reject();
+      throw new this.serverless.classes.Error(error.message);
     });
   }
 
