@@ -29,6 +29,7 @@ describe('ServerlessStepFunctions', () => {
         name: 'first',
       },
       state: 'stateMachine',
+      data: 'inputData',
     };
     serverless.init();
     serverless.setProvider('aws', new AwsProvider(serverless));
@@ -187,7 +188,7 @@ describe('ServerlessStepFunctions', () => {
     let getRoleStub;
     beforeEach(() => {
       getRoleStub = sinon.stub(serverlessStepFunctions.provider, 'request')
-      .returns(BbPromise.resolve({Role:{Arn:'roleArn'}}));
+      .returns(BbPromise.resolve({ Role: { Arn: 'roleArn' } }));
     });
 
     it('should getIamRole with correct params', () => serverlessStepFunctions.getIamRole()
@@ -210,12 +211,13 @@ describe('ServerlessStepFunctions', () => {
     it('should createRole when statusCode is 404', () => {
       serverlessStepFunctions.provider.request.restore();
       const getRoleErrorStub = sinon.stub(serverlessStepFunctions.provider, 'request')
-       .returns(BbPromise.reject({statusCode: 404}));
+       .returns(BbPromise.reject({ statusCode: 404 }));
       const createIamRoleStub = sinon
         .stub(serverlessStepFunctions, 'createIamRole').returns(BbPromise.resolve());
 
-      serverlessStepFunctions.getIamRole().catch((error) => {
-        expect(createIamRole.calledOnce).to.be.equal(true);
+      serverlessStepFunctions.getIamRole().catch(() => {
+        expect(createIamRoleStub.calledOnce).to.be.equal(true);
+        expect(getRoleErrorStub.calledOnce).to.be.equal(true);
         serverlessStepFunctions.provider.request.restore();
         serverlessStepFunctions.createIamRole.restore();
       });
@@ -224,9 +226,10 @@ describe('ServerlessStepFunctions', () => {
     it('should throw error when statusCode is not 404', () => {
       serverlessStepFunctions.provider.request.restore();
       const getRoleErrorStub = sinon.stub(serverlessStepFunctions.provider, 'request')
-       .returns(BbPromise.reject({statusCode: 502}));
+       .returns(BbPromise.reject({ statusCode: 502 }));
 
       serverlessStepFunctions.getIamRole().catch((error) => {
+        expect(getRoleErrorStub.calledOnce).to.be.equal(true);
         expect(error.name).to.be.equal('ServerlessError');
         serverlessStepFunctions.provider.request.restore();
       });
@@ -237,7 +240,7 @@ describe('ServerlessStepFunctions', () => {
     let getCallerIdentityStub;
     beforeEach(() => {
       getCallerIdentityStub = sinon.stub(serverlessStepFunctions.provider, 'request')
-      .returns(BbPromise.resolve({Account:1234}));
+      .returns(BbPromise.resolve({ Account: 1234 }));
     });
 
     it('should getFunctionArns with correct params', () => serverlessStepFunctions.getFunctionArns()
@@ -261,8 +264,8 @@ describe('ServerlessStepFunctions', () => {
     let createIamRoleStub;
     beforeEach(() => {
       createIamRoleStub = sinon.stub(serverlessStepFunctions.provider, 'request');
-      createIamRoleStub.onFirstCall().returns(BbPromise.resolve({Role:{Arn:'roleArn'}}));
-      createIamRoleStub.onSecondCall().returns(BbPromise.resolve({Policy:{Arn:'policyArn'}}));
+      createIamRoleStub.onFirstCall().returns(BbPromise.resolve({ Role: { Arn: 'roleArn' } }));
+      createIamRoleStub.onSecondCall().returns(BbPromise.resolve({ Policy: { Arn: 'policyArn' } }));
       createIamRoleStub.onThirdCall().returns(BbPromise.resolve());
     });
 
@@ -284,10 +287,11 @@ describe('ServerlessStepFunctions', () => {
     let getStateMachineStub;
     beforeEach(() => {
       getStateMachineStub = sinon.stub(serverlessStepFunctions.provider, 'request')
-      .returns(BbPromise.resolve({Account:1234}));
+      .returns(BbPromise.resolve({ Account: 1234 }));
     });
 
-    it('should getStateMachineStub with correct params', () => serverlessStepFunctions.getStateMachineArn()
+    it('should getStateMachineStub with correct params'
+    , () => serverlessStepFunctions.getStateMachineArn()
       .then(() => {
         expect(getStateMachineStub.calledOnce).to.be.equal(true);
         expect(getStateMachineStub.calledWithExactly(
@@ -302,6 +306,94 @@ describe('ServerlessStepFunctions', () => {
         serverlessStepFunctions.provider.request.restore();
       })
     );
+  });
+
+  describe('#deleteStateMachine()', () => {
+    let deleteStateMachineStub;
+    beforeEach(() => {
+      deleteStateMachineStub = sinon.stub(serverlessStepFunctions.provider, 'request')
+      .returns(BbPromise.resolve({ Account: 1234 }));
+    });
+
+    it('should deleteStateMachine with correct params'
+    , () => serverlessStepFunctions.deleteStateMachine()
+      .then(() => {
+        expect(deleteStateMachineStub.calledOnce).to.be.equal(true);
+        expect(deleteStateMachineStub.calledWithExactly(
+          'StepFunctions',
+          'deleteStateMachine',
+          {
+            stateMachineArn: serverlessStepFunctions.stateMachineArn,
+          },
+          serverlessStepFunctions.options.stage,
+          serverlessStepFunctions.options.region
+        )).to.be.equal(true);
+        serverlessStepFunctions.provider.request.restore();
+      })
+    );
+  });
+
+  describe('#createStateMachine()', () => {
+    // todo
+  });
+
+  describe('#startExecution()', () => {
+    let startExecutionStub;
+    beforeEach(() => {
+      startExecutionStub = sinon.stub(serverlessStepFunctions.provider, 'request')
+      .returns(BbPromise.resolve({ executionArn: 'executionArn' }));
+    });
+
+    it('should startExecution with correct params', () => serverlessStepFunctions.startExecution()
+      .then(() => {
+        expect(startExecutionStub.calledOnce).to.be.equal(true);
+        expect(startExecutionStub.calledWithExactly(
+          'StepFunctions',
+          'startExecution',
+          {
+            stateMachineArn: serverlessStepFunctions.stateMachineArn,
+            input: serverlessStepFunctions.options.data,
+          },
+          serverlessStepFunctions.options.stage,
+          serverlessStepFunctions.options.region
+        )).to.be.equal(true);
+        expect(serverlessStepFunctions.executionArn).to.be.equal('executionArn');
+        serverlessStepFunctions.provider.request.restore();
+      })
+    );
+  });
+
+  describe('#describeExecution()', () => {
+    let describeExecutionStub;
+    beforeEach(() => {
+      describeExecutionStub = sinon.stub(serverlessStepFunctions.provider, 'request')
+      .returns(BbPromise.resolve({ status: 'SUCCESS' }));
+    });
+
+    it('should describeExecution with correct params'
+    , () => serverlessStepFunctions.describeExecution()
+      .then(() => {
+        expect(describeExecutionStub.calledOnce).to.be.equal(true);
+        expect(describeExecutionStub.calledWithExactly(
+          'StepFunctions',
+          'describeExecution',
+          {
+            executionArn: serverlessStepFunctions.executionArn,
+          },
+          serverlessStepFunctions.options.stage,
+          serverlessStepFunctions.options.region
+        )).to.be.equal(true);
+        serverlessStepFunctions.provider.request.restore();
+      })
+    );
+  });
+
+  describe('#yamlParse()', () => {
+    // todo
+  });
+
+  describe('#compile()', () => {
+    // todo
   });
 });
 

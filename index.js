@@ -220,51 +220,6 @@ class ServerlessStepFunctions {
     });
   }
 
-  yamlParse() {
-    const servicePath = this.serverless.config.servicePath;
-
-    if (!servicePath) {
-      return BbPromise.resolve();
-    }
-
-    let serverlessYmlPath = path.join(servicePath, 'serverless.yml');
-    if (!this.serverless.utils.fileExistsSync(serverlessYmlPath)) {
-      serverlessYmlPath = path
-        .join(this.serverless.config.servicePath, 'serverless.yaml');
-    }
-
-    return this.serverless.yamlParser
-      .parse(serverlessYmlPath)
-      .then((serverlessFileParam) => {
-        this.stepFunctions = serverlessFileParam.stepFunctions;
-        return BbPromise.resolve();
-      });
-  }
-
-  compile() {
-    if (!this.stepFunctions) {
-      return BbPromise.resolve();
-    }
-
-    if (typeof this.stepFunctions[this.options.state] === 'undefined') {
-      const errorMessage = [
-        `Step function "${this.options.state}" is not exists`,
-      ].join('');
-      throw new this.serverless.classes.Error(errorMessage);
-    }
-
-    _.forEach(this.stepFunctions[this.options.state].States, (value, key) => {
-      if (value.Resource && !value.Resource.match(/arn:aws:lambda/)) {
-        this.stepFunctions[this.options.state].States[key].Resource
-        = this.functionArns[value.Resource];
-      }
-    });
-
-    this.awsStateLanguage[this.options.state] =
-      JSON.stringify(this.stepFunctions[this.options.state]);
-    return BbPromise.resolve();
-  }
-
   deleteStateMachine() {
     return this.provider.request('StepFunctions',
       'deleteStateMachine',
@@ -338,6 +293,51 @@ class ServerlessStepFunctions {
       }
       return BbPromise.resolve();
     });
+  }
+
+  yamlParse() {
+    const servicePath = this.serverless.config.servicePath;
+
+    if (!servicePath) {
+      return BbPromise.resolve();
+    }
+
+    let serverlessYmlPath = path.join(servicePath, 'serverless.yml');
+    if (!this.serverless.utils.fileExistsSync(serverlessYmlPath)) {
+      serverlessYmlPath = path
+        .join(this.serverless.config.servicePath, 'serverless.yaml');
+    }
+
+    return this.serverless.yamlParser
+      .parse(serverlessYmlPath)
+      .then((serverlessFileParam) => {
+        this.stepFunctions = serverlessFileParam.stepFunctions;
+        return BbPromise.resolve();
+      });
+  }
+
+  compile() {
+    if (!this.stepFunctions) {
+      return BbPromise.resolve();
+    }
+
+    if (typeof this.stepFunctions[this.options.state] === 'undefined') {
+      const errorMessage = [
+        `Step function "${this.options.state}" is not exists`,
+      ].join('');
+      throw new this.serverless.classes.Error(errorMessage);
+    }
+
+    _.forEach(this.stepFunctions[this.options.state].States, (value, key) => {
+      if (value.Resource && !value.Resource.match(/arn:aws:lambda/)) {
+        this.stepFunctions[this.options.state].States[key].Resource
+        = this.functionArns[value.Resource];
+      }
+    });
+
+    this.awsStateLanguage[this.options.state] =
+      JSON.stringify(this.stepFunctions[this.options.state]);
+    return BbPromise.resolve();
   }
 }
 module.exports = ServerlessStepFunctions;
