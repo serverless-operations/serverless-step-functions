@@ -31,6 +31,7 @@ describe('ServerlessStepFunctions', () => {
       state: 'stateMachine',
       data: 'inputData',
     };
+
     serverless.init();
     serverless.setProvider('aws', new AwsProvider(serverless));
     serverlessStepFunctions = new ServerlessStepFunctions(serverless, options);
@@ -334,7 +335,30 @@ describe('ServerlessStepFunctions', () => {
   });
 
   describe('#createStateMachine()', () => {
-    // todo
+    let createStateMachineStub;
+    beforeEach(() => {
+      createStateMachineStub = sinon.stub(serverlessStepFunctions.provider, 'request')
+      .returns(BbPromise.resolve());
+    });
+
+    it('should createStateMachine with correct params'
+    , () => serverlessStepFunctions.createStateMachine()
+      .then(() => {
+        expect(createStateMachineStub.calledOnce).to.be.equal(true);
+        expect(createStateMachineStub.calledWithExactly(
+          'StepFunctions',
+          'createStateMachine',
+          {
+            definition: serverlessStepFunctions.awsStateLanguage[serverlessStepFunctions.options.state],
+            name: `${serverlessStepFunctions.options.state}-${serverlessStepFunctions.options.stage}`,
+            roleArn: serverlessStepFunctions.iamRoleArn,
+          },
+          serverlessStepFunctions.options.stage,
+          serverlessStepFunctions.options.region
+        )).to.be.equal(true);
+        serverlessStepFunctions.provider.request.restore();
+      })
+    );
   });
 
   describe('#startExecution()', () => {
@@ -389,11 +413,45 @@ describe('ServerlessStepFunctions', () => {
   });
 
   describe('#yamlParse()', () => {
-    // todo
+    let yamlParserStub;
+    beforeEach(() => {
+      yamlParserStub = sinon.stub(serverlessStepFunctions.serverless.yamlParser, 'parse')
+      .returns(BbPromise.resolve({ stepFunctions: 'stepFunctions' }));
+      serverlessStepFunctions.serverless.config.servicePath = 'servicePath';
+    });
+
+    it('should yamlParse with correct params'
+    , () => serverlessStepFunctions.yamlParse()
+      .then(() => {
+        expect(yamlParserStub.calledOnce).to.be.equal(true);
+        expect(serverlessStepFunctions.stepFunctions).to.be.equal('stepFunctions');
+      })
+    );
   });
 
   describe('#compile()', () => {
-    // todo
+    beforeEach(() => {
+      serverlessStepFunctions.stepFunctions = {
+        stateMachine: {
+          States: {
+            HelloWorld: {
+              Resource: 'first',
+            },
+          },
+        },
+      };
+      serverlessStepFunctions.functionArns.first = 'lambdaArn';
+    });
+
+    it('should comple with correct params'
+    , () => serverlessStepFunctions.compile()
+      .then(() => {
+        expect(serverlessStepFunctions.stepFunctions.stateMachine.States.HelloWorld.Resource)
+        .to.be.equal('lambdaArn');
+        expect(serverlessStepFunctions.awsStateLanguage.stateMachine)
+        .to.be.equal('{"States":{"HelloWorld":{"Resource":"lambdaArn"}}}');
+      })
+    );
   });
 });
 
