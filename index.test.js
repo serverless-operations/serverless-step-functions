@@ -349,8 +349,10 @@ describe('ServerlessStepFunctions', () => {
           'StepFunctions',
           'createStateMachine',
           {
-            definition: serverlessStepFunctions.awsStateLanguage[serverlessStepFunctions.options.state],
-            name: `${serverlessStepFunctions.options.state}-${serverlessStepFunctions.options.stage}`,
+            definition: serverlessStepFunctions
+            .awsStateLanguage[serverlessStepFunctions.options.state],
+            name:
+            `${serverlessStepFunctions.options.state}-${serverlessStepFunctions.options.stage}`,
             roleArn: serverlessStepFunctions.iamRoleArn,
           },
           serverlessStepFunctions.options.stage,
