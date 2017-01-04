@@ -1,7 +1,15 @@
 language: node_js
 
-node_js:
-  - '6.2'
+matrix:
+  include:
+    - node_js: '4.4'
+    - node_js: '5.11'
+    - node_js: '6.2'
+    - node_js: '6.2'
+    - node_js: '6.2'
+      env:
+        - DISABLE_TESTS=true
+        - LINTING=true
 
 sudo: false
 
@@ -9,4 +17,8 @@ install:
   - travis_retry npm install
 
 script:
-  - npm run lint
+  - if [[ -z "$DISABLE_TESTS" ]]; then npm run test; fi
+  - if [[ ! -z "$DISABLE_TESTS" && ! -z "$LINTING" ]]; then npm run lint; fi
+
+after_success:
+  - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage

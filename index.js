@@ -6,15 +6,13 @@ const _ = require('lodash');
 class ServerlessStepFunctions {
   constructor(serverless, options) {
     this.serverless = serverless;
-    this.options = options;
+    this.options = options || {};
     this.provider = this.serverless.getProvider('aws');
     this.awsStateLanguage = {};
     this.functionArns = {};
     const region = this.options.region || 'us-east-1';
-
     this.iamRoleName = `serverless-step-functions-executerole-${region}`;
     this.iamPolicyName = `serverless-step-functions-executepolicy-${region}`;
-
     this.iamPolicyStatement = `{
       "Version": "2012-10-17",
       "Statement": [
