@@ -111,7 +111,7 @@ class ServerlessStepFunctions {
 
   deploy() {
     this.serverless.cli.log(`Start to deploy ${this.options.state} step function...`);
-    BbPromise.bind(this)
+    return BbPromise.bind(this)
     .then(this.yamlParse)
     .then(this.getStateMachineArn)
     .then(this.getFunctionArns)
@@ -119,29 +119,23 @@ class ServerlessStepFunctions {
     .then(this.getIamRole)
     .then(this.deleteStateMachine)
     .then(this.createStateMachine);
-
-    return BbPromise.resolve();
   }
 
   remove() {
-    BbPromise.bind(this)
+    return BbPromise.bind(this)
     .then(this.getStateMachineArn)
     .then(this.deleteStateMachine)
     .then(() => {
       this.serverless.cli.log(`Remove ${this.options.state}`);
       return BbPromise.resolve();
     });
-
-    return BbPromise.resolve();
   }
 
   invoke() {
-    BbPromise.bind(this)
+    return BbPromise.bind(this)
     .then(this.getStateMachineArn)
     .then(this.startExecution)
     .then(this.describeExecution);
-
-    return BbPromise.resolve();
   }
 
   getIamRole() {
