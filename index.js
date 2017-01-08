@@ -111,7 +111,8 @@ class ServerlessStepFunctions {
                 shortcut: 'd',
               },
               path: {
-                usage: 'The path to a json file with input data to be passed to the invoked step function',
+                usage:
+                'The path to a json file with input data to be passed to the invoked step function',
                 shortcut: 'p',
               },
               stage: {

@@ -408,13 +408,10 @@ describe('ServerlessStepFunctions', () => {
   });
 
   describe('#parseInputdate()', () => {
-    let fileExistsSyncStub;
-    let readFileSyncStub;
     beforeEach(() => {
       serverlessStepFunctions.serverless.config.servicePath = 'servicePath';
-      fileExistsSyncStub = sinon.stub(serverlessStepFunctions.serverless.utils, 'fileExistsSync')
-      .returns(true);
-      readFileSyncStub = sinon.stub(serverlessStepFunctions.serverless.utils, 'readFileSync')
+      sinon.stub(serverlessStepFunctions.serverless.utils, 'fileExistsSync').returns(true);
+      sinon.stub(serverlessStepFunctions.serverless.utils, 'readFileSync')
       .returns({ foo: 'var' });
       serverlessStepFunctions.options.data = null;
       serverlessStepFunctions.options.path = 'data.json';
@@ -422,19 +419,18 @@ describe('ServerlessStepFunctions', () => {
 
     it('should throw error if file does not exists', () => {
       serverlessStepFunctions.serverless.utils.fileExistsSync.restore();
-      fileExistsSyncStub = sinon.stub(serverlessStepFunctions.serverless.utils, 'fileExistsSync')
-      .returns(false);
+      sinon.stub(serverlessStepFunctions.serverless.utils, 'fileExistsSync').returns(false);
       expect(() => serverlessStepFunctions.parseInputdate()).to.throw(Error);
       serverlessStepFunctions.serverless.utils.readFileSync.restore();
     });
 
-    it('should parse file if path param is provided', () => {
-      return serverlessStepFunctions.parseInputdate().then(() => {
+    it('should parse file if path param is provided'
+      , () => serverlessStepFunctions.parseInputdate().then(() => {
         expect(serverlessStepFunctions.options.data).to.deep.equal('{"foo":"var"}');
         serverlessStepFunctions.serverless.utils.fileExistsSync.restore();
         serverlessStepFunctions.serverless.utils.readFileSync.restore();
-      });
-    });
+      })
+    );
 
     it('should return resolve if path param is not provided', () => {
       serverlessStepFunctions.options.path = null;
