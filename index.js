@@ -254,6 +254,7 @@ class ServerlessStepFunctions {
       this.options.region)
     .then((result) => {
       policyArn = `arn:aws:iam::${result.Account}:policy/${this.getIamPolicyName()}`;
+
       return this.provider.request('IAM',
         'detachRolePolicy',
         {
@@ -261,16 +262,17 @@ class ServerlessStepFunctions {
           RoleName: this.getIamRoleName(),
         },
         this.options.stage,
-        this.options.region)})
-    .then((result) => this.provider.request('IAM',
-        'deletePolicy',
-        {
-          PolicyArn: policyArn,
-        },
-        this.options.stage,
-        this.options.region)
+        this.options.region);
+    })
+    .then(() => this.provider.request('IAM',
+      'deletePolicy',
+      {
+        PolicyArn: policyArn,
+      },
+      this.options.stage,
+      this.options.region)
     )
-    .then((result) => this.provider.request('IAM',
+    .then(() => this.provider.request('IAM',
       'deleteRole',
       {
         RoleName: this.getIamRoleName(),
