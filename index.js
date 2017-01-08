@@ -110,6 +110,10 @@ class ServerlessStepFunctions {
                 usage: 'String data to be passed as an event to your step function',
                 shortcut: 'd',
               },
+              path: {
+                usage: 'The path to a json file with input data to be passed to the invoked step function',
+                shortcut: 'p',
+              },
               stage: {
                 usage: 'Stage of the service',
                 shortcut: 's',
@@ -159,6 +163,7 @@ class ServerlessStepFunctions {
 
   invoke() {
     return BbPromise.bind(this)
+    .then(this.parseInputdate)
     .then(this.getStateMachineArn)
     .then(this.startExecution)
     .then(this.describeExecution);
@@ -332,9 +337,21 @@ class ServerlessStepFunctions {
     });
   }
 
+  parseInputdate() {
+    if (!this.options.data && this.options.path) {
+      const absolutePath = path.isAbsolute(this.options.path) ?
+        this.options.path :
+        path.join(this.serverless.config.servicePath, this.options.path);
+      if (!this.serverless.utils.fileExistsSync(absolutePath)) {
+        throw new this.serverless.classes.Error('The file you provided does not exist.');
+      }
+      this.options.data = JSON.stringify(this.serverless.utils.readFileSync(absolutePath));
+    }
+    return BbPromise.resolve();
+  }
+
   startExecution() {
     this.serverless.cli.log(`Start function ${this.options.state}...`);
-
     return this.provider.request('StepFunctions',
       'startExecution',
       {
