@@ -13,8 +13,6 @@ class ServerlessStepFunctions {
     this.stage = this.provider.getStage();
     this.awsStateLanguage = {};
     this.functionArns = {};
-    this.iamRoleName = `serverless-step-functions-executerole-${this.region}`;
-    this.iamPolicyName = `serverless-step-functions-executepolicy-${this.region}`;
     this.iamPolicyStatement = `{
       "Version": "2012-10-17",
       "Statement": [
@@ -149,6 +147,7 @@ class ServerlessStepFunctions {
 
   remove() {
     return BbPromise.bind(this)
+    .then(this.deleteIamRole)
     .then(this.getStateMachineArn)
     .then(this.deleteStateMachine)
     .then(() => {
@@ -164,6 +163,18 @@ class ServerlessStepFunctions {
     .then(this.describeExecution);
   }
 
+  getIamRoleName() {
+    let name = `${this.service}-${this.region}-${this.stage}-${this.options.state}-`;
+    name += 'ssf-exerole';
+    return name;
+  }
+
+  getIamPolicyName() {
+    let name = `${this.service}-${this.region}-${this.stage}-${this.options.state}-`;
+    name += 'ssf-exepolicy';
+    return name;
+  }
+
   getStateMachineName() {
     return `${this.service}-${this.stage}-${this.options.state}`;
   }
@@ -172,7 +183,7 @@ class ServerlessStepFunctions {
     return this.provider.request('IAM',
       'getRole',
       {
-        RoleName: this.iamRoleName,
+        RoleName: this.getIamRoleName(),
       },
       this.options.stage,
       this.options.region)
@@ -207,7 +218,7 @@ class ServerlessStepFunctions {
       'createRole',
       {
         AssumeRolePolicyDocument: this.assumeRolePolicyDocument,
-        RoleName: this.iamRoleName,
+        RoleName: this.getIamRoleName(),
       },
       this.options.stage,
       this.options.region)
@@ -217,7 +228,7 @@ class ServerlessStepFunctions {
         'createPolicy',
         {
           PolicyDocument: this.iamPolicyStatement,
-          PolicyName: this.iamPolicyName,
+          PolicyName: this.getIamPolicyName(),
         },
         this.options.stage,
         this.options.region);
@@ -226,7 +237,43 @@ class ServerlessStepFunctions {
       'attachRolePolicy',
       {
         PolicyArn: result.Policy.Arn,
-        RoleName: this.iamRoleName,
+        RoleName: this.getIamRoleName(),
+      },
+      this.options.stage,
+      this.options.region)
+    )
+    .then(() => BbPromise.resolve());
+  }
+
+  deleteIamRole() {
+    let policyArn;
+    return this.provider.request('STS',
+      'getCallerIdentity',
+      {},
+      this.options.stage,
+      this.options.region)
+    .then((result) => {
+      policyArn = `arn:aws:iam::${result.Account}:policy/${this.getIamPolicyName()}`;
+      return this.provider.request('IAM',
+        'detachRolePolicy',
+        {
+          PolicyArn: policyArn,
+          RoleName: this.getIamRoleName(),
+        },
+        this.options.stage,
+        this.options.region)})
+    .then((result) => this.provider.request('IAM',
+        'deletePolicy',
+        {
+          PolicyArn: policyArn,
+        },
+        this.options.stage,
+        this.options.region)
+    )
+    .then((result) => this.provider.request('IAM',
+      'deleteRole',
+      {
+        RoleName: this.getIamRoleName(),
       },
       this.options.stage,
       this.options.region)

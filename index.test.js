@@ -55,14 +55,6 @@ describe('ServerlessStepFunctions', () => {
     it('should set the stage variable', () =>
       expect(serverlessStepFunctions.stage).to.be.equal(provider.getStage()));
 
-    it('should set the iamRoleName variable', () =>
-      expect(serverlessStepFunctions.iamRoleName).to.be
-      .equal('serverless-step-functions-executerole-us-east-1'));
-
-    it('should set the iamPolicyName variable', () =>
-      expect(serverlessStepFunctions.iamPolicyName).to.be
-      .equal('serverless-step-functions-executepolicy-us-east-1'));
-
     it('should set the assumeRolePolicyDocument variable', () =>
       expect(serverlessStepFunctions.assumeRolePolicyDocument).to.be
       .equal(`{
@@ -155,6 +147,8 @@ describe('ServerlessStepFunctions', () => {
 
   describe('#remove()', () => {
     it('should run promise chain in order', () => {
+      const deleteIamRoleStub = sinon
+        .stub(serverlessStepFunctions, 'deleteIamRole').returns(BbPromise.resolve());
       const getStateMachineArnStub = sinon
         .stub(serverlessStepFunctions, 'getStateMachineArn').returns(BbPromise.resolve());
       const deleteStateMachineStub = sinon
@@ -162,7 +156,8 @@ describe('ServerlessStepFunctions', () => {
 
       return serverlessStepFunctions.remove()
         .then(() => {
-          expect(getStateMachineArnStub.calledOnce).to.be.equal(true);
+          expect(deleteIamRoleStub.calledOnce).to.be.equal(true);
+          expect(getStateMachineArnStub.calledAfter(deleteIamRoleStub)).to.be.equal(true);
           expect(deleteStateMachineStub.calledAfter(getStateMachineArnStub)).to.be.equal(true);
 
           serverlessStepFunctions.getStateMachineArn.restore();
@@ -193,10 +188,17 @@ describe('ServerlessStepFunctions', () => {
     });
   });
 
-  describe('#getStateMachineName', () => {
-    it('should return stateMachineName', () => {
-      expect(serverlessStepFunctions.getStateMachineName())
-      .to.be.equal('step-functions-dev-stateMachine');
+  describe('#getIamRoleName', () => {
+    it('should return IamRoleName', () => {
+      expect(serverlessStepFunctions.getIamRoleName())
+      .to.be.equal('step-functions-us-east-1-dev-stateMachine-ssf-exerole');
+    });
+  });
+
+  describe('#getIamPolicyName', () => {
+    it('should return IamPolicyName', () => {
+      expect(serverlessStepFunctions.getIamPolicyName())
+      .to.be.equal('step-functions-us-east-1-dev-stateMachine-ssf-exepolicy');
     });
   });
 
@@ -214,7 +216,7 @@ describe('ServerlessStepFunctions', () => {
           'IAM',
           'getRole',
           {
-            RoleName: 'serverless-step-functions-executerole-us-east-1',
+            RoleName: 'step-functions-us-east-1-dev-stateMachine-ssf-exerole',
           },
           serverlessStepFunctions.options.stage,
           serverlessStepFunctions.options.region
@@ -294,6 +296,32 @@ describe('ServerlessStepFunctions', () => {
         expect(createIamRoleStub.args[1][1]).to.be.equal('createPolicy');
         expect(createIamRoleStub.args[2][0]).to.be.equal('IAM');
         expect(createIamRoleStub.args[2][1]).to.be.equal('attachRolePolicy');
+        serverlessStepFunctions.provider.request.restore();
+      })
+    );
+  });
+
+  describe('#deleteIamRole()', () => {
+    let deleteIamRoleStub;
+    beforeEach(() => {
+      deleteIamRoleStub = sinon.stub(serverlessStepFunctions.provider, 'request');
+      deleteIamRoleStub.onFirstCall().returns(BbPromise.resolve({ Account: 1234 }));
+      deleteIamRoleStub.onSecondCall().returns(BbPromise.resolve());
+      deleteIamRoleStub.onThirdCall().returns(BbPromise.resolve());
+      deleteIamRoleStub.onCall(4).returns(BbPromise.resolve());
+    });
+
+    it('should deleteIamRole with correct params', () => serverlessStepFunctions.deleteIamRole()
+      .then(() => {
+        expect(deleteIamRoleStub.callCount).to.be.equal(4);
+        expect(deleteIamRoleStub.args[0][0]).to.be.equal('STS');
+        expect(deleteIamRoleStub.args[0][1]).to.be.equal('getCallerIdentity');
+        expect(deleteIamRoleStub.args[1][0]).to.be.equal('IAM');
+        expect(deleteIamRoleStub.args[1][1]).to.be.equal('detachRolePolicy');
+        expect(deleteIamRoleStub.args[2][0]).to.be.equal('IAM');
+        expect(deleteIamRoleStub.args[2][1]).to.be.equal('deletePolicy');
+        expect(deleteIamRoleStub.args[3][0]).to.be.equal('IAM');
+        expect(deleteIamRoleStub.args[3][1]).to.be.equal('deleteRole');
         serverlessStepFunctions.provider.request.restore();
       })
     );
