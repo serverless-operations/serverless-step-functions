@@ -9,12 +9,13 @@ const ServerlessStepFunctions = require('./index');
 
 describe('ServerlessStepFunctions', () => {
   let serverless;
+  let provider;
   let serverlessStepFunctions;
 
   beforeEach(() => {
     serverless = new Serverless();
     serverless.servicePath = true;
-
+    serverless.service.service = 'step-functions';
     serverless.service.functions = {
       first: {
         handler: true,
@@ -34,6 +35,7 @@ describe('ServerlessStepFunctions', () => {
 
     serverless.init();
     serverless.setProvider('aws', new AwsProvider(serverless));
+    provider = serverless.getProvider('aws');
     serverlessStepFunctions = new ServerlessStepFunctions(serverless, options);
   });
 
@@ -46,6 +48,12 @@ describe('ServerlessStepFunctions', () => {
     it('should have access to the serverless instance', () => {
       expect(serverlessStepFunctions.serverless).to.deep.equal(serverless);
     });
+
+    it('should set the region variable', () =>
+      expect(serverlessStepFunctions.region).to.be.equal(provider.getRegion()));
+
+    it('should set the stage variable', () =>
+      expect(serverlessStepFunctions.stage).to.be.equal(provider.getStage()));
 
     it('should set the iamRoleName variable', () =>
       expect(serverlessStepFunctions.iamRoleName).to.be
@@ -185,6 +193,13 @@ describe('ServerlessStepFunctions', () => {
     });
   });
 
+  describe('#getStateMachineName', () => {
+    it('should return stateMachineName', () => {
+      expect(serverlessStepFunctions.getStateMachineName())
+      .to.be.equal('step-functions-dev-stateMachine');
+    });
+  });
+
   describe('#getIamRole()', () => {
     let getRoleStub;
     beforeEach(() => {
@@ -303,7 +318,7 @@ describe('ServerlessStepFunctions', () => {
           serverlessStepFunctions.options.region
         )).to.be.equal(true);
         expect(serverlessStepFunctions.stateMachineArn).to.be
-        .equal('arn:aws:states:us-east-1:1234:stateMachine:stateMachine-dev');
+        .equal('arn:aws:states:us-east-1:1234:stateMachine:step-functions-dev-stateMachine');
         serverlessStepFunctions.provider.request.restore();
       })
     );
@@ -344,6 +359,8 @@ describe('ServerlessStepFunctions', () => {
     it('should createStateMachine with correct params'
     , () => serverlessStepFunctions.createStateMachine()
       .then(() => {
+        const stage = serverlessStepFunctions.options.stage;
+        const state = serverlessStepFunctions.options.state;
         expect(createStateMachineStub.calledOnce).to.be.equal(true);
         expect(createStateMachineStub.calledWithExactly(
           'StepFunctions',
@@ -351,8 +368,7 @@ describe('ServerlessStepFunctions', () => {
           {
             definition: serverlessStepFunctions
             .awsStateLanguage[serverlessStepFunctions.options.state],
-            name:
-            `${serverlessStepFunctions.options.state}-${serverlessStepFunctions.options.stage}`,
+            name: `${serverless.service.service}-${stage}-${state}`,
             roleArn: serverlessStepFunctions.iamRoleArn,
           },
           serverlessStepFunctions.options.stage,

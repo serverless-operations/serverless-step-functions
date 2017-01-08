@@ -8,11 +8,13 @@ class ServerlessStepFunctions {
     this.serverless = serverless;
     this.options = options || {};
     this.provider = this.serverless.getProvider('aws');
+    this.service = this.serverless.service.service;
+    this.region = this.provider.getRegion();
+    this.stage = this.provider.getStage();
     this.awsStateLanguage = {};
     this.functionArns = {};
-    const region = this.options.region || 'us-east-1';
-    this.iamRoleName = `serverless-step-functions-executerole-${region}`;
-    this.iamPolicyName = `serverless-step-functions-executepolicy-${region}`;
+    this.iamRoleName = `serverless-step-functions-executerole-${this.region}`;
+    this.iamPolicyName = `serverless-step-functions-executepolicy-${this.region}`;
     this.iamPolicyStatement = `{
       "Version": "2012-10-17",
       "Statement": [
@@ -33,7 +35,7 @@ class ServerlessStepFunctions {
         {
           "Effect": "Allow",
           "Principal": {
-            "Service": "states.${region}.amazonaws.com"
+            "Service": "states.${this.region}.amazonaws.com"
           },
           "Action": "sts:AssumeRole"
         }
@@ -55,6 +57,14 @@ class ServerlessStepFunctions {
                 shortcut: 't',
                 required: true,
               },
+              stage: {
+                usage: 'Stage of the service',
+                shortcut: 's',
+              },
+              region: {
+                usage: 'Region of the service',
+                shortcut: 'r',
+              },
             },
           },
         },
@@ -71,6 +81,14 @@ class ServerlessStepFunctions {
                 usage: 'Name of the State Machine',
                 shortcut: 't',
                 required: true,
+              },
+              stage: {
+                usage: 'Stage of the service',
+                shortcut: 's',
+              },
+              region: {
+                usage: 'Region of the service',
+                shortcut: 'r',
               },
             },
           },
@@ -92,6 +110,14 @@ class ServerlessStepFunctions {
               data: {
                 usage: 'String data to be passed as an event to your step function',
                 shortcut: 'd',
+              },
+              stage: {
+                usage: 'Stage of the service',
+                shortcut: 's',
+              },
+              region: {
+                usage: 'Region of the service',
+                shortcut: 'r',
               },
             },
           },
@@ -138,6 +164,10 @@ class ServerlessStepFunctions {
     .then(this.describeExecution);
   }
 
+  getStateMachineName() {
+    return `${this.service}-${this.stage}-${this.options.state}`;
+  }
+
   getIamRole() {
     return this.provider.request('IAM',
       'getRole',
@@ -164,10 +194,9 @@ class ServerlessStepFunctions {
       this.options.stage,
       this.options.region)
     .then((result) => {
-      const region = this.options.region || 'us-east-1';
       _.forEach(this.serverless.service.functions, (value, key) => {
         this.functionArns[key]
-        = `arn:aws:lambda:${region}:${result.Account}:function:${value.name}`;
+        = `arn:aws:lambda:${this.region}:${result.Account}:function:${value.name}`;
       });
       return BbPromise.resolve();
     });
@@ -212,10 +241,8 @@ class ServerlessStepFunctions {
       this.options.stage,
       this.options.region)
     .then((result) => {
-      const region = this.options.region || 'us-east-1';
-      const stage = this.options.stage || 'dev';
       this.stateMachineArn =
-      `arn:aws:states:${region}:${result.Account}:stateMachine:${this.options.state}-${stage}`;
+      `arn:aws:states:${this.region}:${result.Account}:stateMachine:${this.getStateMachineName()}`;
       return BbPromise.resolve();
     });
   }
@@ -232,19 +259,18 @@ class ServerlessStepFunctions {
   }
 
   createStateMachine() {
-    const stage = this.options.stage || 'dev';
     return this.provider.request('StepFunctions',
       'createStateMachine',
       {
         definition: this.awsStateLanguage[this.options.state],
-        name: `${this.options.state}-${stage}`,
+        name: this.getStateMachineName(),
         roleArn: this.iamRoleArn,
       },
       this.options.stage,
       this.options.region)
     .then(() => {
       this.serverless.cli.consoleLog('');
-      this.serverless.cli.log(`Finish to deploy ${this.options.state}-${stage} step function`);
+      this.serverless.cli.log(`Finish to deploy ${this.getStateMachineName()} step function`);
       return BbPromise.resolve();
     }).catch((error) => {
       if (error.message.match(/State Machine is being deleted/)) {
