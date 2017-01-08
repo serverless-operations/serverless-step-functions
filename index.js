@@ -2,6 +2,7 @@
 const BbPromise = require('bluebird');
 const path = require('path');
 const _ = require('lodash');
+const chalk = require('chalk');
 
 class ServerlessStepFunctions {
   constructor(serverless, options) {
@@ -364,8 +365,35 @@ class ServerlessStepFunctions {
         setTimeout(this.describeExecution.bind(this), 5000);
       } else {
         this.serverless.cli.consoleLog('');
+        this.serverless.cli.consoleLog('');
+        const msg = 'Execution Result -----------------------------------------';
+        this.serverless.cli.consoleLog(chalk.yellow(msg));
+        this.serverless.cli.consoleLog('');
         this.serverless.cli.consoleLog(result);
+
+        if (result.status === 'FAILED') {
+          return this.getExecutionHistory();
+        }
       }
+      return BbPromise.resolve();
+    });
+  }
+
+  getExecutionHistory() {
+    return this.provider.request('StepFunctions',
+      'getExecutionHistory',
+      {
+        executionArn: this.executionArn,
+      },
+      this.options.stage,
+      this.options.region)
+    .then((result) => {
+      this.serverless.cli.consoleLog('');
+      const msg = 'Error Log ------------------------------------------------';
+      this.serverless.cli.consoleLog(chalk.yellow(msg));
+      this.serverless.cli.consoleLog('');
+      this.serverless.cli.consoleLog(result.events[result.events.length - 1]
+      .executionFailedEventDetails);
       return BbPromise.resolve();
     });
   }
@@ -377,12 +405,7 @@ class ServerlessStepFunctions {
       return BbPromise.resolve();
     }
 
-    let serverlessYmlPath = path.join(servicePath, 'serverless.yml');
-    if (!this.serverless.utils.fileExistsSync(serverlessYmlPath)) {
-      serverlessYmlPath = path
-        .join(this.serverless.config.servicePath, 'serverless.yaml');
-    }
-
+    const serverlessYmlPath = path.join(servicePath, 'serverless.yml');
     return this.serverless.yamlParser
       .parse(serverlessYmlPath)
       .then((serverlessFileParam) => {
@@ -393,7 +416,10 @@ class ServerlessStepFunctions {
 
   compile() {
     if (!this.stepFunctions) {
-      return BbPromise.resolve();
+      const errorMessage = [
+        'stepFunctions statement does not exists in serverless.yml',
+      ].join('');
+      throw new this.serverless.classes.Error(errorMessage);
     }
 
     if (typeof this.stepFunctions[this.options.state] === 'undefined') {

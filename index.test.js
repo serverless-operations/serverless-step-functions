@@ -435,18 +435,66 @@ describe('ServerlessStepFunctions', () => {
 
   describe('#describeExecution()', () => {
     let describeExecutionStub;
-    beforeEach(() => {
+    it('should describeExecution with correct params', () => {
       describeExecutionStub = sinon.stub(serverlessStepFunctions.provider, 'request')
       .returns(BbPromise.resolve({ status: 'SUCCESS' }));
-    });
 
-    it('should describeExecution with correct params'
-    , () => serverlessStepFunctions.describeExecution()
+      serverlessStepFunctions.describeExecution()
       .then(() => {
         expect(describeExecutionStub.calledOnce).to.be.equal(true);
         expect(describeExecutionStub.calledWithExactly(
           'StepFunctions',
           'describeExecution',
+          {
+            executionArn: serverlessStepFunctions.executionArn,
+          },
+          serverlessStepFunctions.options.stage,
+          serverlessStepFunctions.options.region
+        )).to.be.equal(true);
+        serverlessStepFunctions.provider.request.restore();
+      });
+    });
+
+    it('should describeExecution with status FAILED', () => {
+      describeExecutionStub = sinon.stub(serverlessStepFunctions.provider, 'request')
+        .returns(BbPromise.resolve({ status: 'FAILED' }));
+      const getExecutionHistoryStub = sinon
+        .stub(serverlessStepFunctions, 'getExecutionHistory')
+        .returns(BbPromise.resolve({ events: [{ executionFailedEventDetails: 'error' }] }));
+
+      serverlessStepFunctions.describeExecution()
+      .then(() => {
+        expect(describeExecutionStub.calledOnce).to.be.equal(true);
+        expect(describeExecutionStub.calledWithExactly(
+          'StepFunctions',
+          'describeExecution',
+          {
+            executionArn: serverlessStepFunctions.executionArn,
+          },
+          serverlessStepFunctions.options.stage,
+          serverlessStepFunctions.options.region
+        )).to.be.equal(true);
+        expect(getExecutionHistoryStub.calledOnce).to.be.equal(true);
+        serverlessStepFunctions.provider.request.restore();
+        serverlessStepFunctions.getExecutionHistory.restore();
+      });
+    });
+  });
+
+  describe('#getExecutionHistory()', () => {
+    let getExecutionHistoryStub;
+    beforeEach(() => {
+      getExecutionHistoryStub = sinon.stub(serverlessStepFunctions.provider, 'request')
+      .returns(BbPromise.resolve({ events: [{ executionFailedEventDetails: 'error' }] }));
+    });
+
+    it('should getExecutionHistory with correct params'
+    , () => serverlessStepFunctions.getExecutionHistory()
+      .then(() => {
+        expect(getExecutionHistoryStub.calledOnce).to.be.equal(true);
+        expect(getExecutionHistoryStub.calledWithExactly(
+          'StepFunctions',
+          'getExecutionHistory',
           {
             executionArn: serverlessStepFunctions.executionArn,
           },
@@ -473,9 +521,26 @@ describe('ServerlessStepFunctions', () => {
         expect(serverlessStepFunctions.stepFunctions).to.be.equal('stepFunctions');
       })
     );
+
+    it('should return resolve when servicePath does not exists', () => {
+      serverlessStepFunctions.serverless.config.servicePath = null;
+      serverlessStepFunctions.yamlParse()
+      .then(() => {
+        expect(yamlParserStub.callCount).to.be.equal(0);
+      });
+    });
   });
 
   describe('#compile()', () => {
+    it('should throw error when stepFunction state does not exists', () => {
+      expect(() => serverlessStepFunctions.compile()).to.throw(Error);
+    });
+
+    it('should throw error when stateMachine name does not exists', () => {
+      serverlessStepFunctions.stepFunctions = {};
+      expect(() => serverlessStepFunctions.compile()).to.throw(Error);
+    });
+
     it('should comple with correct params', () => {
       serverlessStepFunctions.stepFunctions = {
         stateMachine: {
