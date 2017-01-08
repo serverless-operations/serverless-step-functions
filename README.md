@@ -48,6 +48,7 @@ $ sls deploy stepf --state <stepfunctionname>
 - --stage or -s The stage in your service you want to invoke your step function.
 - --region or -r The region in your stage that you want to invoke your step function.
 - --data or -d String data to be passed as an event to your step function.
+- --path or -p The path to a json file with input data to be passed to the invoked step function.
 ```
 $ sls invoke stepf --state <stepfunctionname> --data '{"foo":"bar"}'
 ```

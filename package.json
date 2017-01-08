@@ -1,6 +1,6 @@
 {
   "name": "serverless-step-functions",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "The module is AWS Step Functions plugin for Serverless Framework",
   "main": "index.js",
   "scripts": {
@@ -39,6 +39,6 @@
     "lodash": "^4.13.1",
     "aws-sdk": "^2.7.19",
     "bluebird": "^3.4.0",
-    "chalk": "^1.1.1"
+    "
   }
 }
