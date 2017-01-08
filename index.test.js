@@ -476,7 +476,7 @@ describe('ServerlessStepFunctions', () => {
   });
 
   describe('#compile()', () => {
-    beforeEach(() => {
+    it('should comple with correct params', () => {
       serverlessStepFunctions.stepFunctions = {
         stateMachine: {
           States: {
@@ -487,17 +487,36 @@ describe('ServerlessStepFunctions', () => {
         },
       };
       serverlessStepFunctions.functionArns.first = 'lambdaArn';
-    });
-
-    it('should comple with correct params'
-    , () => serverlessStepFunctions.compile()
-      .then(() => {
-        expect(serverlessStepFunctions.stepFunctions.stateMachine.States.HelloWorld.Resource)
-        .to.be.equal('lambdaArn');
+      serverlessStepFunctions.compile().then(() => {
         expect(serverlessStepFunctions.awsStateLanguage.stateMachine)
         .to.be.equal('{"States":{"HelloWorld":{"Resource":"lambdaArn"}}}');
-      })
-    );
+      });
+    });
+
+    it('should comple with correct params when nested Resource', () => {
+      serverlessStepFunctions.stepFunctions = {
+        stateMachine: {
+          States: {
+            HelloWorld: {
+              Resource: 'first',
+              HelloWorld: {
+                Resource: 'first',
+                HelloWorld: {
+                  Resource: 'first',
+                },
+              },
+            },
+          },
+        },
+      };
+
+      let a = '{"States":{"HelloWorld":{"Resource":"lambdaArn","HelloWorld"';
+      a += ':{"Resource":"lambdaArn","HelloWorld":{"Resource":"lambdaArn"}}}}}';
+      serverlessStepFunctions.functionArns.first = 'lambdaArn';
+      serverlessStepFunctions.compile().then(() => {
+        expect(serverlessStepFunctions.awsStateLanguage.stateMachine).to.be.equal(a);
+      });
+    });
   });
 });
 

@@ -166,13 +166,13 @@ class ServerlessStepFunctions {
   getIamRoleName() {
     let name = `${this.service}-${this.region}-${this.stage}-${this.options.state}-`;
     name += 'ssf-exerole';
-    return name;
+    return name.substr(0, 64);
   }
 
   getIamPolicyName() {
     let name = `${this.service}-${this.region}-${this.stage}-${this.options.state}-`;
     name += 'ssf-exepolicy';
-    return name;
+    return name.substr(0, 64);
   }
 
   getStateMachineName() {
@@ -403,15 +403,14 @@ class ServerlessStepFunctions {
       throw new this.serverless.classes.Error(errorMessage);
     }
 
-    _.forEach(this.stepFunctions[this.options.state].States, (value, key) => {
-      if (value.Resource && !value.Resource.match(/arn:aws:lambda/)) {
-        this.stepFunctions[this.options.state].States[key].Resource
-        = this.functionArns[value.Resource];
-      }
-    });
-
     this.awsStateLanguage[this.options.state] =
       JSON.stringify(this.stepFunctions[this.options.state]);
+
+    _.forEach(this.functionArns, (value, key) => {
+      const regExp = new RegExp(`"Resource":"${key}"`, 'g');
+      this.awsStateLanguage[this.options.state] =
+        this.awsStateLanguage[this.options.state].replace(regExp, `"Resource":"${value}"`);
+    });
     return BbPromise.resolve();
   }
 }
