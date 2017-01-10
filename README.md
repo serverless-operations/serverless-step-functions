@@ -2,6 +2,8 @@
 # Serverless Step Functions
 Serverless plugin for AWS Step Functions.
 
+This plugin requires Serverless v1.4.0 or later.
+
 ## Install
 Run `npm install` in your Serverless project.
 ```
