@@ -9,16 +9,11 @@ matrix:
       env:
         - DISABLE_TESTS=true
         - LINTING=true
-env:
-  - SERVERLESS_VERSION=1.3.0
-  - SERVERLESS_VERSION=1.4.0
-  - SERVERLESS_VERSION=1.5.0
 
 sudo: false
 
 install:
   - travis_retry npm install
-  - npm install -v serverless@$SERVERLESS_VERSION
 
 script:
   - if [[ -z "$DISABLE_TESTS" ]]; then npm run test; fi
