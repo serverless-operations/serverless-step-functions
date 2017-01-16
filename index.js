@@ -427,20 +427,21 @@ class ServerlessStepFunctions {
     return this.serverless.yamlParser
       .parse(serverlessYmlPath)
       .then((serverlessFileParam) => {
-        this.stepFunctions = serverlessFileParam.stepFunctions;
+        this.serverless.service.stepFunctions = serverlessFileParam.stepFunctions;
+        this.serverless.variables.populateService(this.serverless.pluginManager.cliOptions);
         return BbPromise.resolve();
       });
   }
 
   compile() {
-    if (!this.stepFunctions) {
+    if (!this.serverless.service.stepFunctions) {
       const errorMessage = [
         'stepFunctions statement does not exists in serverless.yml',
       ].join('');
       throw new this.serverless.classes.Error(errorMessage);
     }
 
-    if (typeof this.stepFunctions[this.options.state] === 'undefined') {
+    if (typeof this.serverless.service.stepFunctions[this.options.state] === 'undefined') {
       const errorMessage = [
         `Step function "${this.options.state}" is not exists`,
       ].join('');
@@ -448,7 +449,7 @@ class ServerlessStepFunctions {
     }
 
     this.awsStateLanguage[this.options.state] =
-      JSON.stringify(this.stepFunctions[this.options.state]);
+      JSON.stringify(this.serverless.service.stepFunctions[this.options.state]);
 
     _.forEach(this.functionArns, (value, key) => {
       const regExp = new RegExp(`"Resource":"${key}"`, 'g');

@@ -553,7 +553,8 @@ describe('ServerlessStepFunctions', () => {
     , () => serverlessStepFunctions.yamlParse()
       .then(() => {
         expect(yamlParserStub.calledOnce).to.be.equal(true);
-        expect(serverlessStepFunctions.stepFunctions).to.be.equal('stepFunctions');
+        expect(serverless.service.stepFunctions).to.be.equal('stepFunctions');
+        serverlessStepFunctions.serverless.yamlParser.parse.restore();
       })
     );
 
@@ -562,6 +563,18 @@ describe('ServerlessStepFunctions', () => {
       serverlessStepFunctions.yamlParse()
       .then(() => {
         expect(yamlParserStub.callCount).to.be.equal(0);
+        serverlessStepFunctions.serverless.yamlParser.parse.restore();
+      });
+    });
+
+    it('should return resolve when variables exists in the yaml', () => {
+      serverlessStepFunctions.serverless.yamlParser.parse.restore();
+      yamlParserStub = sinon.stub(serverlessStepFunctions.serverless.yamlParser, 'parse')
+      .returns(BbPromise.resolve({ stepFunctions: '${self:defaults.region}' }));
+      serverlessStepFunctions.yamlParse()
+      .then(() => {
+        expect(yamlParserStub.calledOnce).to.be.equal(true);
+        expect(serverless.service.stepFunctions).to.be.equal('us-east-1');
       });
     });
   });
@@ -577,7 +590,7 @@ describe('ServerlessStepFunctions', () => {
     });
 
     it('should comple with correct params', () => {
-      serverlessStepFunctions.stepFunctions = {
+      serverless.service.stepFunctions = {
         stateMachine: {
           States: {
             HelloWorld: {
@@ -594,7 +607,7 @@ describe('ServerlessStepFunctions', () => {
     });
 
     it('should comple with correct params when nested Resource', () => {
-      serverlessStepFunctions.stepFunctions = {
+      serverless.service.stepFunctions = {
         stateMachine: {
           States: {
             HelloWorld: {
