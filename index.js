@@ -96,7 +96,7 @@ class ServerlessStepFunctions {
       invoke: {
         commands: {
           stepf: {
-            usage: 'Remove Step functions',
+            usage: 'Invoke Step functions',
             lifecycleEvents: [
               'invoke',
             ],
