@@ -545,7 +545,7 @@ describe('ServerlessStepFunctions', () => {
     let yamlParserStub;
     beforeEach(() => {
       yamlParserStub = sinon.stub(serverlessStepFunctions.serverless.yamlParser, 'parse')
-      .returns(BbPromise.resolve({ stepFunctions: 'stepFunctions' }));
+      .returns(BbPromise.resolve({ stepFunctions: { stateMachine: 'stepFunctions' } }));
       serverlessStepFunctions.serverless.config.servicePath = 'servicePath';
     });
 
@@ -570,7 +570,7 @@ describe('ServerlessStepFunctions', () => {
     it('should return resolve when variables exists in the yaml', () => {
       serverlessStepFunctions.serverless.yamlParser.parse.restore();
       yamlParserStub = sinon.stub(serverlessStepFunctions.serverless.yamlParser, 'parse')
-      .returns(BbPromise.resolve({ stepFunctions: '${self:defaults.region}' }));
+      .returns(BbPromise.resolve({ stepFunctions: { stateMachine: '${self:defaults.region}' } }));
       serverlessStepFunctions.yamlParse()
       .then(() => {
         expect(yamlParserStub.calledOnce).to.be.equal(true);

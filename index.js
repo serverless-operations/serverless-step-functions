@@ -427,7 +427,7 @@ class ServerlessStepFunctions {
     return this.serverless.yamlParser
       .parse(serverlessYmlPath)
       .then((serverlessFileParam) => {
-        this.serverless.service.stepFunctions = serverlessFileParam.stepFunctions;
+        this.serverless.service.stepFunctions = serverlessFileParam.stepFunctions.stateMachine;
         this.serverless.variables.populateService(this.serverless.pluginManager.cliOptions);
         return BbPromise.resolve();
       });
