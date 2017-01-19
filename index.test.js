@@ -73,31 +73,31 @@ describe('ServerlessStepFunctions', () => {
 
     it('should run deploy:stepf:deploy promise chain in order', () => {
       const deployStub = sinon
-        .stub(serverlessStepFunctions, 'deploy').returns(BbPromise.resolve());
+        .stub(serverlessStepFunctions, 'stateMachineDeploy').returns(BbPromise.resolve());
       return serverlessStepFunctions.hooks['deploy:stepf:deploy']()
         .then(() => {
           expect(deployStub.calledOnce).to.be.equal(true);
-          serverlessStepFunctions.deploy.restore();
+          serverlessStepFunctions.stateMachineDeploy.restore();
         });
     });
 
     it('should run remove:stepf:remove promise chain in order', () => {
       const removeStub = sinon
-        .stub(serverlessStepFunctions, 'remove').returns(BbPromise.resolve());
+        .stub(serverlessStepFunctions, 'stateMachineRemove').returns(BbPromise.resolve());
       return serverlessStepFunctions.hooks['remove:stepf:remove']()
         .then(() => {
           expect(removeStub.calledOnce).to.be.equal(true);
-          serverlessStepFunctions.remove.restore();
+          serverlessStepFunctions.stateMachineRemove.restore();
         });
     });
 
     it('should run invoke:stepf:invoke promise chain in order', () => {
       const invokeStub = sinon
-        .stub(serverlessStepFunctions, 'invoke').returns(BbPromise.resolve());
+        .stub(serverlessStepFunctions, 'stateMachineInvoke').returns(BbPromise.resolve());
       return serverlessStepFunctions.hooks['invoke:stepf:invoke']()
         .then(() => {
           expect(invokeStub.calledOnce).to.be.equal(true);
-          serverlessStepFunctions.invoke.restore();
+          serverlessStepFunctions.stateMachineInvoke.restore();
         });
     });
 
@@ -107,7 +107,7 @@ describe('ServerlessStepFunctions', () => {
     });
   });
 
-  describe('#deploy()', () => {
+  describe('#stateMachineDeploy()', () => {
     it('should run promise chain in order', () => {
       const yamlParseStub = sinon
         .stub(serverlessStepFunctions, 'yamlParse').returns(BbPromise.resolve());
@@ -124,7 +124,7 @@ describe('ServerlessStepFunctions', () => {
       const createStateMachineStub = sinon
         .stub(serverlessStepFunctions, 'createStateMachine').returns(BbPromise.resolve());
 
-      return serverlessStepFunctions.deploy()
+      return serverlessStepFunctions.stateMachineDeploy()
         .then(() => {
           expect(yamlParseStub.calledOnce).to.be.equal(true);
           expect(getStateMachineArnStub.calledAfter(yamlParseStub)).to.be.equal(true);
@@ -145,7 +145,7 @@ describe('ServerlessStepFunctions', () => {
     });
   });
 
-  describe('#remove()', () => {
+  describe('#stateMachineRemove()', () => {
     it('should run promise chain in order', () => {
       const deleteIamRoleStub = sinon
         .stub(serverlessStepFunctions, 'deleteIamRole').returns(BbPromise.resolve());
@@ -154,7 +154,7 @@ describe('ServerlessStepFunctions', () => {
       const deleteStateMachineStub = sinon
         .stub(serverlessStepFunctions, 'deleteStateMachine').returns(BbPromise.resolve());
 
-      return serverlessStepFunctions.remove()
+      return serverlessStepFunctions.stateMachineRemove()
         .then(() => {
           expect(deleteIamRoleStub.calledOnce).to.be.equal(true);
           expect(getStateMachineArnStub.calledAfter(deleteIamRoleStub)).to.be.equal(true);
@@ -166,7 +166,7 @@ describe('ServerlessStepFunctions', () => {
     });
   });
 
-  describe('#invoke()', () => {
+  describe('#stateMachineInvoke()', () => {
     it('should run promise chain in order', () => {
       const getStateMachineArnStub = sinon
         .stub(serverlessStepFunctions, 'getStateMachineArn').returns(BbPromise.resolve());
@@ -175,7 +175,7 @@ describe('ServerlessStepFunctions', () => {
       const describeExecutionStub = sinon
         .stub(serverlessStepFunctions, 'describeExecution').returns(BbPromise.resolve());
 
-      return serverlessStepFunctions.invoke()
+      return serverlessStepFunctions.stateMachineInvoke()
         .then(() => {
           expect(getStateMachineArnStub.calledOnce).to.be.equal(true);
           expect(startExecutionStub.calledAfter(getStateMachineArnStub)).to.be.equal(true);

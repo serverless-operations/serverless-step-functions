@@ -46,13 +46,34 @@ class ServerlessStepFunctions {
       deploy: {
         commands: {
           stepf: {
-            usage: 'Deploy Step functions',
+            usage: 'Deploy the State Machine of Step functions',
             lifecycleEvents: [
               'deploy',
             ],
             options: {
               state: {
                 usage: 'Name of the State Machine',
+                shortcut: 't',
+                required: true,
+              },
+              stage: {
+                usage: 'Stage of the service',
+                shortcut: 's',
+              },
+              region: {
+                usage: 'Region of the service',
+                shortcut: 'r',
+              },
+            },
+          },
+          tasks: {
+            usage: 'Deploy the Tasks of Step functions',
+            lifecycleEvents: [
+              'deploy',
+            ],
+            options: {
+              state: {
+                usage: 'Name of the Tasks',
                 shortcut: 't',
                 required: true,
               },
@@ -78,6 +99,27 @@ class ServerlessStepFunctions {
             options: {
               state: {
                 usage: 'Name of the State Machine',
+                shortcut: 't',
+                required: true,
+              },
+              stage: {
+                usage: 'Stage of the service',
+                shortcut: 's',
+              },
+              region: {
+                usage: 'Region of the service',
+                shortcut: 'r',
+              },
+            },
+          },
+          tasks: {
+            usage: 'Remove the Tasks of Step functions',
+            lifecycleEvents: [
+              'deploy',
+            ],
+            options: {
+              state: {
+                usage: 'Name of the Tasks',
                 shortcut: 't',
                 required: true,
               },
@@ -131,15 +173,19 @@ class ServerlessStepFunctions {
 
     this.hooks = {
       'deploy:stepf:deploy': () => BbPromise.bind(this)
-        .then(this.deploy),
+        .then(this.stateMachineDeploy),
       'remove:stepf:remove': () => BbPromise.bind(this)
-        .then(this.remove),
+        .then(this.stateMachineRemove),
       'invoke:stepf:invoke': () => BbPromise.bind(this)
-        .then(this.invoke),
+        .then(this.stateMachineInvoke),
+      'deploy:tasks:deploy': () => BbPromise.bind(this)
+        .then(this.tasksDeploy),
+      'remove:tasks:remove': () => BbPromise.bind(this)
+        .then(this.tasksRemove),
     };
   }
 
-  deploy() {
+  stateMachineDeploy() {
     this.serverless.cli.log(`Start to deploy ${this.options.state} step function...`);
     return BbPromise.bind(this)
     .then(this.yamlParse)
@@ -151,7 +197,7 @@ class ServerlessStepFunctions {
     .then(this.createStateMachine);
   }
 
-  remove() {
+  stateMachineRemove() {
     return BbPromise.bind(this)
     .then(this.deleteIamRole)
     .then(this.getStateMachineArn)
@@ -162,12 +208,20 @@ class ServerlessStepFunctions {
     });
   }
 
-  invoke() {
+  stateMachineInvoke() {
     return BbPromise.bind(this)
     .then(this.parseInputdate)
     .then(this.getStateMachineArn)
     .then(this.startExecution)
     .then(this.describeExecution);
+  }
+
+  tasksDeploy() {
+    // todo
+  }
+
+  tasksRemove() {
+    // todo
   }
 
   getIamRoleName() {
