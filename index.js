@@ -14,6 +14,7 @@ class ServerlessStepFunctions {
     this.stage = this.provider.getStage();
     this.awsStateLanguage = {};
     this.functionArns = {};
+    this.iamRoleArn = {};
     this.iamPolicyStatement = `{
       "Version": "2012-10-17",
       "Statement": [
@@ -54,7 +55,6 @@ class ServerlessStepFunctions {
               state: {
                 usage: 'Name of the State Machine',
                 shortcut: 't',
-                required: true,
               },
               stage: {
                 usage: 'Stage of the service',
@@ -186,15 +186,27 @@ class ServerlessStepFunctions {
   }
 
   stateMachineDeploy() {
-    this.serverless.cli.log(`Start to deploy ${this.options.state} step function...`);
-    return BbPromise.bind(this)
-    .then(this.yamlParse)
-    .then(this.getStateMachineArn)
-    .then(this.getFunctionArns)
-    .then(this.compile)
-    .then(this.getIamRole)
-    .then(this.deleteStateMachine)
-    .then(this.createStateMachine);
+    if (this.options.state) {
+      this.serverless.cli.log(`Start to deploy ${this.options.state} step function...`);
+      return BbPromise.bind(this)
+      .then(this.yamlParse)
+      .then(this.getStateMachineArn)
+      .then(this.getFunctionArns)
+      .then(this.compile)
+      .then(this.getIamRole)
+      .then(this.deleteStateMachine)
+      .then(this.createStateMachine);
+    } else {
+      this.serverless.cli.log(`Start to deploy all step functions...`);
+      return BbPromise.bind(this)
+      .then(this.yamlParse)
+      .then(this.getStateMachineNames)
+      .then(this.getFunctionArns)
+      .then(this.compileAll)
+      .then(this.getIamRoles)
+      .then(this.deleteStateMachines)
+      .then(this.createStateMachines);
+    }
   }
 
   stateMachineRemove() {
@@ -224,8 +236,8 @@ class ServerlessStepFunctions {
     // todo
   }
 
-  getIamRoleName() {
-    let name = `${this.service}-${this.region}-${this.stage}-${this.options.state}-`;
+  getIamRoleName(state) {
+    let name = `${this.service}-${this.region}-${this.stage}-${state}-`;
     name += 'ssf-exerole';
     return name.substr(0, 64);
   }
@@ -236,27 +248,39 @@ class ServerlessStepFunctions {
     return name.substr(0, 64);
   }
 
-  getStateMachineName() {
-    return `${this.service}-${this.stage}-${this.options.state}`;
+  getStateMachineName(state) {
+    return `${this.service}-${this.stage}-${state}`;
   }
 
-  getIamRole() {
+  getIamRole(state) {
+    state = state || this.options.state;
     return this.provider.request('IAM',
       'getRole',
       {
-        RoleName: this.getIamRoleName(),
+        RoleName: this.getIamRoleName(state),
       },
       this.options.stage,
       this.options.region)
     .then((result) => {
-      this.iamRoleArn = result.Role.Arn;
+      this.iamRoleArn[state] = result.Role.Arn;
       return BbPromise.resolve();
     }).catch((error) => {
       if (error.statusCode === 404) {
-        return this.createIamRole();
+        return this.createIamRole(state);
       }
       throw new this.serverless.classes.Error(error.message);
     });
+  }
+
+  getIamRoles() {
+    const promises = [];
+    _.forEach(this.serverless.service.stepFunctions, (value, key) => {
+      promises.push(key);
+    });
+
+    return BbPromise.map(promises, (value) => {
+      return this.getIamRole(value);
+    }).then(() => BbPromise.resolve());
   }
 
   getFunctionArns() {
@@ -274,17 +298,18 @@ class ServerlessStepFunctions {
     });
   }
 
-  createIamRole() {
+  createIamRole(state) {
+    state = state || this.options.state;
     return this.provider.request('IAM',
       'createRole',
       {
         AssumeRolePolicyDocument: this.assumeRolePolicyDocument,
-        RoleName: this.getIamRoleName(),
+        RoleName: this.getIamRoleName(state),
       },
       this.options.stage,
       this.options.region)
     .then((result) => {
-      this.iamRoleArn = result.Role.Arn;
+      this.iamRoleArn[state] = result.Role.Arn;
       return this.provider.request('IAM',
         'createPolicy',
         {
@@ -298,7 +323,7 @@ class ServerlessStepFunctions {
       'attachRolePolicy',
       {
         PolicyArn: result.Policy.Arn,
-        RoleName: this.getIamRoleName(),
+        RoleName: this.getIamRoleName(state),
       },
       this.options.stage,
       this.options.region)
@@ -320,7 +345,7 @@ class ServerlessStepFunctions {
         'detachRolePolicy',
         {
           PolicyArn: policyArn,
-          RoleName: this.getIamRoleName(),
+          RoleName: this.getIamRoleName(this.options.state),
         },
         this.options.stage,
         this.options.region);
@@ -336,7 +361,7 @@ class ServerlessStepFunctions {
     .then(() => this.provider.request('IAM',
       'deleteRole',
       {
-        RoleName: this.getIamRoleName(),
+        RoleName: this.getIamRoleName(this.options.state),
       },
       this.options.stage,
       this.options.region)
@@ -357,39 +382,79 @@ class ServerlessStepFunctions {
     });
   }
 
-  deleteStateMachine() {
+  getStateMachineNames() {
+    return this.provider.request('STS',
+      'getCallerIdentity',
+      {},
+      this.options.stage,
+      this.options.region)
+    .then((result) => {
+      this.stateMachineArns = {};
+      _.forEach(this.serverless.service.stepFunctions, (value, key) => {
+        this.stateMachineArns[key] =
+          `arn:aws:states:${this.region}:${result.Account}:stateMachine:${key}`;
+      });
+      return BbPromise.resolve();
+    });
+  }
+
+  deleteStateMachine(state) {
+    state = state || this.options.state;
     return this.provider.request('StepFunctions',
       'deleteStateMachine',
       {
-        stateMachineArn: this.stateMachineArn,
+        stateMachineArn: this.stateMachineArns[state],
       },
       this.options.stage,
       this.options.region)
     .then(() => BbPromise.resolve());
   }
 
-  createStateMachine() {
+  deleteStateMachines() {
+    const promises = [];
+    _.forEach(this.serverless.service.stepFunctions, (value, key) => {
+      promises.push(key);
+    });
+
+    return BbPromise.map(promises, (state) => {
+      return this.deleteStateMachine(state);
+    }).then(() => BbPromise.resolve());
+  }
+
+  createStateMachine(state) {
+    state = state || this.options.state;
     return this.provider.request('StepFunctions',
       'createStateMachine',
       {
-        definition: this.awsStateLanguage[this.options.state],
-        name: this.getStateMachineName(),
-        roleArn: this.iamRoleArn,
+        definition: this.serverless.service.stepFunctions[state],
+        name: this.getStateMachineName(state),
+        roleArn: this.iamRoleArn[state],
       },
       this.options.stage,
       this.options.region)
     .then(() => {
       this.serverless.cli.consoleLog('');
-      this.serverless.cli.log(`Finish to deploy ${this.getStateMachineName()} step function`);
+      this.serverless.cli.log(`Finish to deploy ${this.getStateMachineName(state)} step function`);
       return BbPromise.resolve();
     }).catch((error) => {
       if (error.message.match(/State Machine is being deleted/)) {
         this.serverless.cli.printDot();
-        setTimeout(this.createStateMachine.bind(this), 5000);
+        setTimeout(this.createStateMachine(state).bind(this), 5000);
       } else {
         throw new this.serverless.classes.Error(error.message);
       }
     });
+  }
+
+  createStateMachines() {
+    const promises = [];
+    _.forEach(this.serverless.service.stepFunctions, (value, key) => {
+      promises.push(key);
+    });
+
+    return BbPromise.map(promises, (state) => {
+      return this.createStateMachine(state);
+    }).then(() => BbPromise.resolve());
   }
 
   parseInputdate() {
@@ -509,6 +574,28 @@ class ServerlessStepFunctions {
       const regExp = new RegExp(`"Resource":"${key}"`, 'g');
       this.awsStateLanguage[this.options.state] =
         this.awsStateLanguage[this.options.state].replace(regExp, `"Resource":"${value}"`);
+    });
+    return BbPromise.resolve();
+  }
+
+  compileAll() {
+    if (!this.serverless.service.stepFunctions) {
+      const errorMessage = [
+        'stepFunctions statement does not exists in serverless.yml',
+      ].join('');
+      throw new this.serverless.classes.Error(errorMessage);
+    }
+
+    _.forEach(this.serverless.service.stepFunctions, (stepFunctionObj, stepFunctionKey) => {
+      this.serverless.service.stepFunctions[stepFunctionKey] = JSON.stringify(stepFunctionObj);
+    });
+
+    _.forEach(this.functionArns, (functionObj, functionKey) => {
+      const regExp = new RegExp(`"Resource":"${functionKey}"`, 'g');
+      _.forEach(this.serverless.service.stepFunctions, (stepFunctionObj, stepFunctionKey) => {
+        this.serverless.service.stepFunctions[stepFunctionKey] =
+          this.serverless.service.stepFunctions[stepFunctionKey].replace(regExp, `"Resource":"${functionObj}"`);
+      });
     });
     return BbPromise.resolve();
   }
