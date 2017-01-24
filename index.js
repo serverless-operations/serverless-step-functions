@@ -195,7 +195,20 @@ class ServerlessStepFunctions {
       .then(this.compile)
       .then(this.getIamRole)
       .then(this.deleteStateMachine)
-      .then(this.createStateMachine);
+      .then(this.createStateMachine)
+      .then(() => {
+        this.serverless.cli.consoleLog('');
+        this.serverless.cli.log(`Finish to deploy ${this.options.state} step function`);
+        let message = '';
+        message += `${chalk.yellow.underline('Service Information')}\n`;
+        message += `${chalk.yellow('service:')} ${this.service}\n`;
+        message += `${chalk.yellow('stage:')} ${this.stage}\n`;
+        message += `${chalk.yellow('region:')} ${this.region}\n\n`;
+        message += `${chalk.yellow.underline('State Machine Information')}\n`;
+        message += `${chalk.yellow(this.options.state)}${chalk.yellow(':')} ${this.stateMachineArn}\n`;
+        this.serverless.cli.consoleLog(message);
+        return BbPromise.resolve();
+      });
     } else {
       this.serverless.cli.log(`Start to deploy all step functions...`);
       return BbPromise.bind(this)
@@ -205,7 +218,22 @@ class ServerlessStepFunctions {
       .then(this.compileAll)
       .then(this.getIamRoles)
       .then(this.deleteStateMachines)
-      .then(this.createStateMachines);
+      .then(this.createStateMachines)
+      .then(() => {
+        this.serverless.cli.consoleLog('');
+        this.serverless.cli.log('Finish to deploy all step functions');
+        let message = '';
+        message += `${chalk.yellow.underline('Service Information')}\n`;
+        message += `${chalk.yellow('service:')} ${this.service}\n`;
+        message += `${chalk.yellow('stage:')} ${this.stage}\n`;
+        message += `${chalk.yellow('region:')} ${this.region}\n\n`;
+        message += `${chalk.yellow.underline('State Machine Information')}\n`;
+        _.forEach(this.stateMachineArns, (arn, name) => {
+          message += `${chalk.yellow(name)}${chalk.yellow(':')} ${arn}\n`;
+        });
+        this.serverless.cli.consoleLog(message);
+        return BbPromise.resolve();
+      });
     }
   }
 
@@ -392,7 +420,7 @@ class ServerlessStepFunctions {
       this.stateMachineArns = {};
       _.forEach(this.serverless.service.stepFunctions, (value, key) => {
         this.stateMachineArns[key] =
-          `arn:aws:states:${this.region}:${result.Account}:stateMachine:${key}`;
+          `arn:aws:states:${this.region}:${result.Account}:stateMachine:${this.getStateMachineName(key)}`;
       });
       return BbPromise.resolve();
     });
@@ -433,17 +461,24 @@ class ServerlessStepFunctions {
       this.options.stage,
       this.options.region)
     .then(() => {
-      this.serverless.cli.consoleLog('');
-      this.serverless.cli.log(`Finish to deploy ${this.getStateMachineName(state)} step function`);
       return BbPromise.resolve();
     }).catch((error) => {
       if (error.message.match(/State Machine is being deleted/)) {
         this.serverless.cli.printDot();
-        setTimeout(this.createStateMachine(state).bind(this), 5000);
+        this.createStateMachine.bin
+        return this.setTimeout().then(() => {
+          return this.createStateMachine(state);
+        });
       } else {
         throw new this.serverless.classes.Error(error.message);
       }
     });
+  }
+
+  setTimeout() {
+    return new BbPromise((resolve, reject) => {
+      setTimeout(resolve, 5000);
+    })
   }
 
   createStateMachines() {
@@ -454,7 +489,7 @@ class ServerlessStepFunctions {
 
     return BbPromise.map(promises, (state) => {
       return this.createStateMachine(state);
-    }).then(() => BbPromise.resolve());
+    }).then(() =>  BbPromise.resolve());
   }
 
   parseInputdate() {
