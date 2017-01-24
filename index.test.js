@@ -22,6 +22,7 @@ describe('ServerlessStepFunctions', () => {
         name: 'first',
       },
     };
+
     const options = {
       stage: 'dev',
       region: 'us-east-1',
@@ -29,7 +30,7 @@ describe('ServerlessStepFunctions', () => {
       functionObj: {
         name: 'first',
       },
-      state: 'stateMachine',
+      state: 'hellofunc',
       data: 'inputData',
     };
 
@@ -190,15 +191,15 @@ describe('ServerlessStepFunctions', () => {
 
   describe('#getIamRoleName', () => {
     it('should return IamRoleName', () => {
-      expect(serverlessStepFunctions.getIamRoleName())
-      .to.be.equal('step-functions-us-east-1-dev-stateMachine-ssf-exerole');
+      expect(serverlessStepFunctions.getIamRoleName('state'))
+      .to.be.equal('step-functions-us-east-1-dev-state-ssf-exerole');
     });
   });
 
   describe('#getIamPolicyName', () => {
     it('should return IamPolicyName', () => {
-      expect(serverlessStepFunctions.getIamPolicyName())
-      .to.be.equal('step-functions-us-east-1-dev-stateMachine-ssf-exepolicy');
+      expect(serverlessStepFunctions.getIamPolicyName('state'))
+      .to.be.equal('step-functions-us-east-1-dev-state-ssf-exepolicy');
     });
   });
 
@@ -209,19 +210,19 @@ describe('ServerlessStepFunctions', () => {
       .returns(BbPromise.resolve({ Role: { Arn: 'roleArn' } }));
     });
 
-    it('should getIamRole with correct params', () => serverlessStepFunctions.getIamRole()
+    it('should getIamRole with correct params', () => serverlessStepFunctions.getIamRole('state')
       .then(() => {
         expect(getRoleStub.calledOnce).to.be.equal(true);
         expect(getRoleStub.calledWithExactly(
           'IAM',
           'getRole',
           {
-            RoleName: 'step-functions-us-east-1-dev-stateMachine-ssf-exerole',
+            RoleName: 'step-functions-us-east-1-dev-state-ssf-exerole',
           },
           serverlessStepFunctions.options.stage,
           serverlessStepFunctions.options.region
         )).to.be.equal(true);
-        expect(serverlessStepFunctions.iamRoleArn).to.be.equal('roleArn');
+        expect(serverlessStepFunctions.iamRoleArn.state).to.be.equal('roleArn');
         serverlessStepFunctions.provider.request.restore();
       })
     );
@@ -335,7 +336,7 @@ describe('ServerlessStepFunctions', () => {
     });
 
     it('should getStateMachineStub with correct params'
-    , () => serverlessStepFunctions.getStateMachineArn()
+    , () => serverlessStepFunctions.getStateMachineArn('state')
       .then(() => {
         expect(getStateMachineStub.calledOnce).to.be.equal(true);
         expect(getStateMachineStub.calledWithExactly(
@@ -345,8 +346,8 @@ describe('ServerlessStepFunctions', () => {
           serverlessStepFunctions.options.stage,
           serverlessStepFunctions.options.region
         )).to.be.equal(true);
-        expect(serverlessStepFunctions.stateMachineArn).to.be
-        .equal('arn:aws:states:us-east-1:1234:stateMachine:step-functions-dev-stateMachine');
+        expect(serverlessStepFunctions.stateMachineArns.state).to.be
+        .equal('arn:aws:states:us-east-1:1234:stateMachine:step-functions-dev-state');
         serverlessStepFunctions.provider.request.restore();
       })
     );
@@ -382,22 +383,22 @@ describe('ServerlessStepFunctions', () => {
     beforeEach(() => {
       createStateMachineStub = sinon.stub(serverlessStepFunctions.provider, 'request')
       .returns(BbPromise.resolve());
+      serverlessStepFunctions.serverless.service.stepFunctions = { state: 'state' };
     });
 
     it('should createStateMachine with correct params'
-    , () => serverlessStepFunctions.createStateMachine()
+    , () => serverlessStepFunctions.createStateMachine('state')
       .then(() => {
         const stage = serverlessStepFunctions.options.stage;
-        const state = serverlessStepFunctions.options.state;
         expect(createStateMachineStub.calledOnce).to.be.equal(true);
         expect(createStateMachineStub.calledWithExactly(
           'StepFunctions',
           'createStateMachine',
           {
             definition: serverlessStepFunctions
-            .awsStateLanguage[serverlessStepFunctions.options.state],
-            name: `${serverless.service.service}-${stage}-${state}`,
-            roleArn: serverlessStepFunctions.iamRoleArn,
+            .serverless.service.stepFunctions.state,
+            name: `${serverless.service.service}-${stage}-state`,
+            roleArn: serverlessStepFunctions.iamRoleArn.state,
           },
           serverlessStepFunctions.options.stage,
           serverlessStepFunctions.options.region
@@ -591,7 +592,7 @@ describe('ServerlessStepFunctions', () => {
 
     it('should comple with correct params', () => {
       serverless.service.stepFunctions = {
-        stateMachine: {
+        hellofunc: {
           States: {
             HelloWorld: {
               Resource: 'first',
@@ -601,14 +602,14 @@ describe('ServerlessStepFunctions', () => {
       };
       serverlessStepFunctions.functionArns.first = 'lambdaArn';
       serverlessStepFunctions.compile().then(() => {
-        expect(serverlessStepFunctions.awsStateLanguage.stateMachine)
+        expect(serverlessStepFunctions.serverless.service.stepFunctions.hellofunc)
         .to.be.equal('{"States":{"HelloWorld":{"Resource":"lambdaArn"}}}');
       });
     });
 
     it('should comple with correct params when nested Resource', () => {
-      serverless.service.stepFunctions = {
-        stateMachine: {
+      serverlessStepFunctions.serverless.service.stepFunctions = {
+        hellofunc: {
           States: {
             HelloWorld: {
               Resource: 'first',
@@ -627,7 +628,7 @@ describe('ServerlessStepFunctions', () => {
       a += ':{"Resource":"lambdaArn","HelloWorld":{"Resource":"lambdaArn"}}}}}';
       serverlessStepFunctions.functionArns.first = 'lambdaArn';
       serverlessStepFunctions.compile().then(() => {
-        expect(serverlessStepFunctions.awsStateLanguage.stateMachine).to.be.equal(a);
+        expect(serverlessStepFunctions.serverless.service.stepFunctions.hellofunc).to.be.equal(a);
       });
     });
   });

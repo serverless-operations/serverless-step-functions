@@ -449,8 +449,9 @@ class ServerlessStepFunctions {
       this.options.region)
     .then((result) => {
       this.stateMachineArns[stateMachine] =
-      `arn:aws:states:${this.region}:${result.Account}:
-      stateMachine:${this.getStateMachineName(stateMachine)}`;
+      `arn:aws:states:${this.region}:${result.Account}:`;
+      this.stateMachineArns[stateMachine] +=
+      `stateMachine:${this.getStateMachineName(stateMachine)}`;
       return BbPromise.resolve();
     });
   }
@@ -464,8 +465,9 @@ class ServerlessStepFunctions {
     .then((result) => {
       _.forEach(this.serverless.service.stepFunctions, (value, key) => {
         this.stateMachineArns[key] =
-          `arn:aws:states:${this.region}:${result.Account}:
-          stateMachine:${this.getStateMachineName(key)}`;
+          `arn:aws:states:${this.region}:${result.Account}:`;
+        this.stateMachineArns[key] +=
+          `stateMachine:${this.getStateMachineName(key)}`;
       });
       return BbPromise.resolve();
     });
@@ -645,7 +647,6 @@ class ServerlessStepFunctions {
 
     this.serverless.service.stepFunctions[this.options.state] =
       JSON.stringify(this.serverless.service.stepFunctions[this.options.state]);
-
     _.forEach(this.functionArns, (value, key) => {
       const regExp = new RegExp(`"Resource":"${key}"`, 'g');
       this.serverless.service.stepFunctions[this.options.state] =
