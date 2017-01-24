@@ -237,14 +237,37 @@ class ServerlessStepFunctions {
   }
 
   stateMachineRemove() {
-    return BbPromise.bind(this)
-    .then(this.deleteIamRole)
-    .then(this.getStateMachineArn)
-    .then(this.deleteStateMachine)
-    .then(() => {
-      this.serverless.cli.log(`Remove ${this.options.state}`);
-      return BbPromise.resolve();
-    });
+    if (this.options.state) {
+      return BbPromise.bind(this)
+      .then(this.yamlParse)
+      .then(this.deleteIamRole)
+      .then(this.getStateMachineArn)
+      .then(this.deleteStateMachine)
+      .then(() => {
+        this.serverless.cli.log(`Remove ${this.options.state}`);
+        return BbPromise.resolve();
+      });
+    } else {
+      return BbPromise.bind(this)
+      .then(this.yamlParse)
+      .then(this.deleteIamRoles)
+      .then(this.getStateMachineNames)
+      .then(this.deleteStateMachines)
+      .then(() => {
+        this.serverless.cli.log('Remove all state machine');
+        let message = '';
+        message += `${chalk.yellow.underline('Service Information')}\n`;
+        message += `${chalk.yellow('service:')} ${this.service}\n`;
+        message += `${chalk.yellow('stage:')} ${this.stage}\n`;
+        message += `${chalk.yellow('region:')} ${this.region}\n\n`;
+        message += `${chalk.yellow.underline('Deleted State Machine')}\n`;
+        _.forEach(this.stateMachineArns, (arn, name) => {
+          message += `${chalk.yellow(name)}${chalk.yellow(':')} ${arn}\n`;
+        });
+        this.serverless.cli.consoleLog(message);
+        return BbPromise.resolve();
+      });
+    }
   }
 
   stateMachineInvoke() {
@@ -394,7 +417,29 @@ class ServerlessStepFunctions {
       this.options.stage,
       this.options.region)
     )
-    .then(() => BbPromise.resolve());
+    .then(() => BbPromise.resolve())
+    .catch((error) => {
+      if (error.statusCode === 404) {
+        return BbPromise.resolve();
+      }
+    });
+  }
+
+  deleteIamRoles() {
+    const promises = [];
+    _.forEach(this.serverless.service.stepFunctions, (value, key) => {
+      promises.push(key);
+    });
+
+    return BbPromise.map(promises, (state) => {
+      return this.deleteIamRole(state);
+    })
+    .then(() => BbPromise.resolve())
+    .catch((error) => {
+      if (error.statusCode === 404) {
+        return BbPromise.resolve();
+      }
+    });
   }
 
   getStateMachineArn(state) {
