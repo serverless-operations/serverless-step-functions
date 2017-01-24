@@ -12,9 +12,9 @@ class ServerlessStepFunctions {
     this.service = this.serverless.service.service;
     this.region = this.provider.getRegion();
     this.stage = this.provider.getStage();
-    this.awsStateLanguage = {};
     this.functionArns = {};
     this.iamRoleArn = {};
+    this.stateMachineArns = {};
     this.iamPolicyStatement = `{
       "Version": "2012-10-17",
       "Statement": [
@@ -100,7 +100,6 @@ class ServerlessStepFunctions {
               state: {
                 usage: 'Name of the State Machine',
                 shortcut: 't',
-                required: true,
               },
               stage: {
                 usage: 'Stage of the service',
@@ -205,7 +204,7 @@ class ServerlessStepFunctions {
         message += `${chalk.yellow('stage:')} ${this.stage}\n`;
         message += `${chalk.yellow('region:')} ${this.region}\n\n`;
         message += `${chalk.yellow.underline('State Machine Information')}\n`;
-        message += `${chalk.yellow(this.options.state)}${chalk.yellow(':')} ${this.stateMachineArn}\n`;
+        message += `${chalk.yellow(this.options.state)}${chalk.yellow(':')} ${this.stateMachineArns[this.options.state]}\n`;
         this.serverless.cli.consoleLog(message);
         return BbPromise.resolve();
       });
@@ -270,8 +269,8 @@ class ServerlessStepFunctions {
     return name.substr(0, 64);
   }
 
-  getIamPolicyName() {
-    let name = `${this.service}-${this.region}-${this.stage}-${this.options.state}-`;
+  getIamPolicyName(state) {
+    let name = `${this.service}-${this.region}-${this.stage}-${state}-`;
     name += 'ssf-exepolicy';
     return name.substr(0, 64);
   }
@@ -342,7 +341,7 @@ class ServerlessStepFunctions {
         'createPolicy',
         {
           PolicyDocument: this.iamPolicyStatement,
-          PolicyName: this.getIamPolicyName(),
+          PolicyName: this.getIamPolicyName(state),
         },
         this.options.stage,
         this.options.region);
@@ -359,7 +358,8 @@ class ServerlessStepFunctions {
     .then(() => BbPromise.resolve());
   }
 
-  deleteIamRole() {
+  deleteIamRole(state) {
+    state = state || this.options.state;
     let policyArn;
     return this.provider.request('STS',
       'getCallerIdentity',
@@ -367,13 +367,13 @@ class ServerlessStepFunctions {
       this.options.stage,
       this.options.region)
     .then((result) => {
-      policyArn = `arn:aws:iam::${result.Account}:policy/${this.getIamPolicyName()}`;
+      policyArn = `arn:aws:iam::${result.Account}:policy/${this.getIamPolicyName(state)}`;
 
       return this.provider.request('IAM',
         'detachRolePolicy',
         {
           PolicyArn: policyArn,
-          RoleName: this.getIamRoleName(this.options.state),
+          RoleName: this.getIamRoleName(state),
         },
         this.options.stage,
         this.options.region);
@@ -389,7 +389,7 @@ class ServerlessStepFunctions {
     .then(() => this.provider.request('IAM',
       'deleteRole',
       {
-        RoleName: this.getIamRoleName(this.options.state),
+        RoleName: this.getIamRoleName(state),
       },
       this.options.stage,
       this.options.region)
@@ -397,15 +397,16 @@ class ServerlessStepFunctions {
     .then(() => BbPromise.resolve());
   }
 
-  getStateMachineArn() {
+  getStateMachineArn(state) {
+    state = state || this.options.state
     return this.provider.request('STS',
       'getCallerIdentity',
       {},
       this.options.stage,
       this.options.region)
     .then((result) => {
-      this.stateMachineArn =
-      `arn:aws:states:${this.region}:${result.Account}:stateMachine:${this.getStateMachineName()}`;
+      this.stateMachineArns[state] =
+      `arn:aws:states:${this.region}:${result.Account}:stateMachine:${this.getStateMachineName(state)}`;
       return BbPromise.resolve();
     });
   }
@@ -417,7 +418,6 @@ class ServerlessStepFunctions {
       this.options.stage,
       this.options.region)
     .then((result) => {
-      this.stateMachineArns = {};
       _.forEach(this.serverless.service.stepFunctions, (value, key) => {
         this.stateMachineArns[key] =
           `arn:aws:states:${this.region}:${result.Account}:stateMachine:${this.getStateMachineName(key)}`;
@@ -602,13 +602,13 @@ class ServerlessStepFunctions {
       throw new this.serverless.classes.Error(errorMessage);
     }
 
-    this.awsStateLanguage[this.options.state] =
+    this.serverless.service.stepFunctions[this.options.state] =
       JSON.stringify(this.serverless.service.stepFunctions[this.options.state]);
 
     _.forEach(this.functionArns, (value, key) => {
       const regExp = new RegExp(`"Resource":"${key}"`, 'g');
-      this.awsStateLanguage[this.options.state] =
-        this.awsStateLanguage[this.options.state].replace(regExp, `"Resource":"${value}"`);
+      this.serverless.service.stepFunctions[this.options.state] =
+        this.serverless.service.stepFunctions[this.options.state].replace(regExp, `"Resource":"${value}"`);
     });
     return BbPromise.resolve();
   }
