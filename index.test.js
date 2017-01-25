@@ -176,7 +176,8 @@ describe('ServerlessStepFunctions', () => {
       const startExecutionStub = sinon
         .stub(serverlessStepFunctions, 'startExecution').returns(BbPromise.resolve());
       const describeExecutionStub = sinon
-        .stub(serverlessStepFunctions, 'describeExecution').returns(BbPromise.resolve({ status: 'SUCCEED' }));
+        .stub(serverlessStepFunctions, 'describeExecution')
+        .returns(BbPromise.resolve({ status: 'SUCCEED' }));
 
       return serverlessStepFunctions.stateMachineInvoke()
         .then(() => {
@@ -200,7 +201,8 @@ describe('ServerlessStepFunctions', () => {
       const startExecutionStub = sinon
         .stub(serverlessStepFunctions, 'startExecution').returns(BbPromise.resolve());
       const describeExecutionStub = sinon
-        .stub(serverlessStepFunctions, 'describeExecution').returns(BbPromise.resolve({ status: 'FAILED' }));
+        .stub(serverlessStepFunctions, 'describeExecution')
+        .returns(BbPromise.resolve({ status: 'FAILED' }));
       const getExecutionHistoryStub = sinon
         .stub(serverlessStepFunctions, 'getExecutionHistory').returns(BbPromise.resolve({
           events: [{
