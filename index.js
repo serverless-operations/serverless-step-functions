@@ -274,7 +274,25 @@ class ServerlessStepFunctions {
     .then(this.parseInputdate)
     .then(this.getStateMachineArn)
     .then(this.startExecution)
-    .then(this.describeExecution);
+    .then(this.describeExecution)
+    .then((result) => {
+      this.serverless.cli.consoleLog('');
+      this.serverless.cli.consoleLog(chalk.yellow.underline('Execution Result'));
+      this.serverless.cli.consoleLog('');
+      this.serverless.cli.consoleLog(result);
+
+      if (result.status === 'FAILED') {
+        return this.getExecutionHistory()
+        .then((error) => {
+          this.serverless.cli.consoleLog('');
+          this.serverless.cli.consoleLog(chalk.yellow.underline('Error Log'));
+          this.serverless.cli.consoleLog('');
+          this.serverless.cli.consoleLog(error.events[error.events.length - 1]
+          .executionFailedEventDetails);
+        });
+      }
+      return BbPromise.resolve();
+    });
   }
 
   tasksDeploy() {
@@ -549,11 +567,10 @@ class ServerlessStepFunctions {
   }
 
   startExecution() {
-    this.serverless.cli.log(`Start function ${this.options.state}...`);
     return this.provider.request('StepFunctions',
       'startExecution',
       {
-        stateMachineArn: this.stateMachineArn,
+        stateMachineArn: this.stateMachineArns[this.options.state],
         input: this.options.data,
       },
       this.options.stage,
@@ -577,20 +594,10 @@ class ServerlessStepFunctions {
     .then((result) => {
       if (result.status === 'RUNNING') {
         this.serverless.cli.printDot();
-        setTimeout(this.describeExecution.bind(this), 5000);
-      } else {
-        this.serverless.cli.consoleLog('');
-        this.serverless.cli.consoleLog('');
-        const msg = 'Execution Result -----------------------------------------';
-        this.serverless.cli.consoleLog(chalk.yellow(msg));
-        this.serverless.cli.consoleLog('');
-        this.serverless.cli.consoleLog(result);
-
-        if (result.status === 'FAILED') {
-          return this.getExecutionHistory();
-        }
+        return this.setTimeout()
+        .then(() => this.describeExecution());
       }
-      return BbPromise.resolve();
+      return BbPromise.resolve(result);
     });
   }
 
@@ -602,15 +609,7 @@ class ServerlessStepFunctions {
       },
       this.options.stage,
       this.options.region)
-    .then((result) => {
-      this.serverless.cli.consoleLog('');
-      const msg = 'Error Log ------------------------------------------------';
-      this.serverless.cli.consoleLog(chalk.yellow(msg));
-      this.serverless.cli.consoleLog('');
-      this.serverless.cli.consoleLog(result.events[result.events.length - 1]
-      .executionFailedEventDetails);
-      return BbPromise.resolve();
-    });
+    .then((result) => BbPromise.resolve(result));
   }
 
   yamlParse() {

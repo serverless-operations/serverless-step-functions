@@ -169,22 +169,58 @@ describe('ServerlessStepFunctions', () => {
 
   describe('#stateMachineInvoke()', () => {
     it('should run promise chain in order', () => {
+      const parseInputdateStub = sinon
+        .stub(serverlessStepFunctions, 'parseInputdate').returns(BbPromise.resolve());
       const getStateMachineArnStub = sinon
         .stub(serverlessStepFunctions, 'getStateMachineArn').returns(BbPromise.resolve());
       const startExecutionStub = sinon
         .stub(serverlessStepFunctions, 'startExecution').returns(BbPromise.resolve());
       const describeExecutionStub = sinon
-        .stub(serverlessStepFunctions, 'describeExecution').returns(BbPromise.resolve());
+        .stub(serverlessStepFunctions, 'describeExecution').returns(BbPromise.resolve({ status: 'SUCCEED' }));
 
       return serverlessStepFunctions.stateMachineInvoke()
         .then(() => {
-          expect(getStateMachineArnStub.calledOnce).to.be.equal(true);
+          expect(parseInputdateStub.calledOnce).to.be.equal(true);
+          expect(getStateMachineArnStub.calledAfter(parseInputdateStub)).to.be.equal(true);
           expect(startExecutionStub.calledAfter(getStateMachineArnStub)).to.be.equal(true);
           expect(describeExecutionStub.calledAfter(startExecutionStub)).to.be.equal(true);
 
+          serverlessStepFunctions.parseInputdate.restore();
           serverlessStepFunctions.getStateMachineArn.restore();
           serverlessStepFunctions.startExecution.restore();
           serverlessStepFunctions.describeExecution.restore();
+        });
+    });
+
+    it('should run promise chain in order when invocation error occurs', () => {
+      const parseInputdateStub = sinon
+        .stub(serverlessStepFunctions, 'parseInputdate').returns(BbPromise.resolve());
+      const getStateMachineArnStub = sinon
+        .stub(serverlessStepFunctions, 'getStateMachineArn').returns(BbPromise.resolve());
+      const startExecutionStub = sinon
+        .stub(serverlessStepFunctions, 'startExecution').returns(BbPromise.resolve());
+      const describeExecutionStub = sinon
+        .stub(serverlessStepFunctions, 'describeExecution').returns(BbPromise.resolve({ status: 'FAILED' }));
+      const getExecutionHistoryStub = sinon
+        .stub(serverlessStepFunctions, 'getExecutionHistory').returns(BbPromise.resolve({
+          events: [{
+            executionFailedEventDetails: '',
+          }],
+        }));
+
+      return serverlessStepFunctions.stateMachineInvoke()
+        .then(() => {
+          expect(parseInputdateStub.calledOnce).to.be.equal(true);
+          expect(getStateMachineArnStub.calledAfter(parseInputdateStub)).to.be.equal(true);
+          expect(startExecutionStub.calledAfter(getStateMachineArnStub)).to.be.equal(true);
+          expect(describeExecutionStub.calledAfter(startExecutionStub)).to.be.equal(true);
+          expect(getExecutionHistoryStub.calledAfter(describeExecutionStub)).to.be.equal(true);
+
+          serverlessStepFunctions.parseInputdate.restore();
+          serverlessStepFunctions.getStateMachineArn.restore();
+          serverlessStepFunctions.startExecution.restore();
+          serverlessStepFunctions.describeExecution.restore();
+          serverlessStepFunctions.getExecutionHistory.restore();
         });
     });
   });
@@ -488,31 +524,6 @@ describe('ServerlessStepFunctions', () => {
           serverlessStepFunctions.options.region
         )).to.be.equal(true);
         serverlessStepFunctions.provider.request.restore();
-      });
-    });
-
-    it('should describeExecution with status FAILED', () => {
-      describeExecutionStub = sinon.stub(serverlessStepFunctions.provider, 'request')
-        .returns(BbPromise.resolve({ status: 'FAILED' }));
-      const getExecutionHistoryStub = sinon
-        .stub(serverlessStepFunctions, 'getExecutionHistory')
-        .returns(BbPromise.resolve({ events: [{ executionFailedEventDetails: 'error' }] }));
-
-      serverlessStepFunctions.describeExecution()
-      .then(() => {
-        expect(describeExecutionStub.calledOnce).to.be.equal(true);
-        expect(describeExecutionStub.calledWithExactly(
-          'StepFunctions',
-          'describeExecution',
-          {
-            executionArn: serverlessStepFunctions.executionArn,
-          },
-          serverlessStepFunctions.options.stage,
-          serverlessStepFunctions.options.region
-        )).to.be.equal(true);
-        expect(getExecutionHistoryStub.calledOnce).to.be.equal(true);
-        serverlessStepFunctions.provider.request.restore();
-        serverlessStepFunctions.getExecutionHistory.restore();
       });
     });
   });
