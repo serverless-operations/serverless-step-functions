@@ -38,14 +38,25 @@ stepFunctions:
 
 ## Command
 ### deploy
-- --state or -t The name of the step function in your service that you want to deploy. Required.
-- --stage or -s The stage in your service you want to deploy your step function.
-- --region or -r The region in your stage that you want to deploy your step function.
+#### All StateMachines deploy 
+```
+$ sls deploy stepf
+```
+
+#### Single StateMachine deploy 
 ```
 $ sls deploy stepf --state <stepfunctionname>
 ```
 
+#### options
+
+- --state or -t The name of the step function in your service that you want to deploy.
+- --stage or -s The stage in your service you want to deploy your step function.
+- --region or -r The region in your stage that you want to deploy your step function.
+
 ### invoke
+#### options
+
 - --state or -t The name of the step function in your service that you want to invoke. Required.
 - --stage or -s The stage in your service you want to invoke your step function.
 - --region or -r The region in your stage that you want to invoke your step function.
@@ -56,9 +67,21 @@ $ sls invoke stepf --state <stepfunctionname> --data '{"foo":"bar"}'
 ```
 
 ### remove
-- --state or -t The name of the step function in your service that you want to remove. Required.
-- --stage or -s The stage in your service you want to invoke your step remove.
-- --region or -r The region in your stage that you want to invoke your step remove.
+#### All StateMachines remove
+
+```
+$ sls remove stepf
+```
+
+#### Single StateMachine remove
+
 ```
 $ sls remove stepf --state <stepfunctionname>
 ```
+
+#### options
+
+- --state or -t The name of the step function in your service that you want to remove. Required.
+- --stage or -s The stage in your service you want to invoke your step remove.
+- --region or -r The region in your stage that you want to invoke your step remove.
+
