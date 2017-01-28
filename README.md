@@ -27,7 +27,7 @@ functions:
     handler: handler.hello
 
 stepFunctions:
-  stateMachine:
+  stateMachines:
     hellostepfunc:
       Comment: "A Hello World example of the Amazon States Language using an AWS Lambda Function"
       StartAt: HelloWorld
@@ -95,7 +95,7 @@ functions:
     handler: handler.hello
 
 stepFunctions:
-  stateMachine:
+  stateMachines:
     yourWateMachine:
       Comment: "An example of the Amazon States Language using wait states"
       StartAt: FirstState
@@ -125,3 +125,160 @@ stepFunctions:
           Resource: hellofunc
           End: true
 ```
+### Retry Failture
+
+```yml
+functions:
+  hellofunc:
+    handler: handler.hello
+
+stepFunctions:
+  stateMachines:
+    yourRetryMachine:
+      Comment: "A Retry example of the Amazon States Language using an AWS Lambda Function"
+      StartAt: HelloWorld
+      States:
+        HelloWorld:
+          Type: Task
+          Resource: hellofunc
+          Retry:
+          - ErrorEquals:
+            - HandledError
+            IntervalSeconds: 1
+            MaxAttempts: 2
+            BackoffRate: 2
+          - ErrorEquals:
+            - States.TaskFailed
+            IntervalSeconds: 30
+            MaxAttempts: 2
+            BackoffRate: 2
+          - ErrorEquals:
+            - States.ALL
+            IntervalSeconds: 5
+            MaxAttempts: 5
+            BackoffRate: 2
+          End: true
+```
+
+### Parallel
+
+```yml
+stepFunctions:
+  stateMachines:
+    yourParallelMachine:
+      Comment: "An example of the Amazon States Language using a parallel state to execute two branches at the same time."
+      StartAt: Parallel
+      States:
+        Parallel:
+          Type: Parallel
+          Next: Final State
+          Branches:
+          - StartAt: Wait 20s
+            States:
+              Wait 20s:
+                Type: Wait
+                Seconds: 20
+                End: true
+          - StartAt: Pass
+            States:
+              Pass:
+                Type: Pass
+                Next: Wait 10s
+              Wait 10s:
+                Type: Wait
+                Seconds: 10
+                End: true
+        Final State:
+          Type: Pass
+          End: true
+      
+```
+
+### Catch Failture
+
+```yml
+functions:
+  hellofunc:
+    handler: handler.hello
+stepFunctions:
+  stateMachines:
+    yourCatchMachine:
+      Comment: "A Catch example of the Amazon States Language using an AWS Lambda Function"
+      StartAt: HelloWorld
+      States:
+        HelloWorld:
+          Type: Task
+          Resource: hellofunc
+          Catch:
+          - ErrorEquals:
+            - HandledError
+            Next: CustomErrorFallback
+          - ErrorEquals:
+            - States.TaskFailed
+            Next: ReservedTypeFallback
+          - ErrorEquals:
+            - States.ALL
+            Next: CatchAllFallback
+          End: true
+        CustomErrorFallback:
+          Type: Pass
+          Result: "This is a fallback from a custom lambda function exception"
+          End: true
+        ReservedTypeFallback:
+          Type: Pass
+          Result: "This is a fallback from a reserved error code"
+          End: true
+        CatchAllFallback:
+          Type: Pass
+          Result: "This is a fallback from a reserved error code"
+          End: true
+
+```
+
+### Choice
+
+```yml
+functions:
+  hellofunc1:
+    handler: handler.hello1
+  hellofunc2:
+    handler: handler.hello2
+  hellofunc3:
+    handler: handler.hello3
+  hellofunc4:
+    handler: handler.hello4
+stepFunctions:
+  stateMachines:
+    yourChoiceMachine:
+      Comment: "An example of the Amazon States Language using a choice state."
+      StartAt: FirstState
+      States:
+        FirstState:
+          Type: Task
+          Resource: hellofunc1
+          Next: ChoiceState
+        ChoiceState:
+          Type: Choice
+          Choices:
+          - Variable: "$.foo"
+            NumericEquals: 1
+            Next: FirstMatchState
+          - Variable: "$.foo"
+            NumericEquals: 2
+            Next: SecondMatchState
+          Default: DefaultState
+        FirstMatchState:
+          Type: Task
+          Resource: hellofunc2
+          Next: NextState
+        SecondMatchState:
+          Type: Task
+          Resource: hellofunc3
+          Next: NextState
+        DefaultState:
+          Type: Fail
+          Cause: "No Matches!"
+        NextState:
+          Type: Task
+          Resource: hellofunc4
+          End: true
