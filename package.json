@@ -2,9 +2,9 @@
   "name": "serverless-step-functions",
   "version": "0.2.0",
   "description": "The module is AWS Step Functions plugin for Serverless Framework",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "istanbul cover -x '*.test.js' node_modules/mocha/bin/_mocha '*.test.js' -- -R spec --recursive",
+    "test": "istanbul cover -x '**/*.test.js' node_modules/mocha/bin/_mocha '!(node_modules)/**/*.test.js' -- -R spec --recursive",
     "lint": "eslint ."
   },
   "repository": {
