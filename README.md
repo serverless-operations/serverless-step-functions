@@ -19,6 +19,7 @@ plugins:
 ## Setup
 Write definitions yaml using Amazon States Language in a `stepFunctions` statement in serverless.yml.
 `Resource` statements refer to `functions` statements. Therefore, you do not need to write a function arn directly.
+Of course, you can also specify arn directly.
 
 ```yml
 functions:
@@ -26,14 +27,15 @@ functions:
     handler: handler.hello
 
 stepFunctions:
-  hellostepfunc:
-    Comment: "A Hello World example of the Amazon States Language using an AWS Lambda Function"
-    StartAt: HelloWorld
-    States: 
-      HelloWorld: 
-        Type: Task
-        Resource: hellofunc
-        End: true
+  stateMachine:
+    hellostepfunc:
+      Comment: "A Hello World example of the Amazon States Language using an AWS Lambda Function"
+      StartAt: HelloWorld
+      States: 
+        HelloWorld: 
+          Type: Task
+          Resource: hellofunc
+          End: true
 ```
 
 ## Command
@@ -85,3 +87,41 @@ $ sls remove stepf --state <stepfunctionname>
 - --stage or -s The stage in your service you want to invoke your step remove.
 - --region or -r The region in your stage that you want to invoke your step remove.
 
+## Sample statemachines setting in serverless.yml
+### Waite State
+```yml
+functions:
+  hellofunc:
+    handler: handler.hello
+
+stepFunctions:
+  stateMachine:
+    yourWateMachine:
+      Comment: "An example of the Amazon States Language using wait states"
+      StartAt: FirstState
+      States:
+        FirstState:
+          Type: Task
+          Resource: hellofunc
+          Next: wait_using_seconds
+        wait_using_seconds:
+          Type: Wait
+          Seconds: 10
+          Next: wait_using_timestamp
+        wait_using_timestamp:
+          Type: Wait
+          Timestamp: '2015-09-04T01:59:00Z'
+          Next: wait_using_timestamp_path
+        wait_using_timestamp_path:
+          Type: Wait
+          TimestampPath: "$.expirydate"
+          Next: wait_using_seconds_path
+        wait_using_seconds_path:
+          Type: Wait
+          SecondsPath: "$.expiryseconds"
+          Next: FinalState
+        FinalState:
+          Type: Task
+          Resource: hellofunc
+          End: true
+```
