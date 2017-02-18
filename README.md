@@ -43,7 +43,7 @@ stepFunctions:
           Type: Task
           Resource: myTask
           End: true
-  activities
+  activities:
     - myTask
     - yourTask
 ```
