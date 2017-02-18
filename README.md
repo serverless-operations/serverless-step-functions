@@ -18,7 +18,7 @@ plugins:
 
 ## Setup
 Write definitions yaml using Amazon States Language in a `stepFunctions` statement in serverless.yml.
-`Resource` statements refer to `functions` statements. Therefore, you do not need to write a function arn directly.
+`Resource` statements refer to `functions` or `activities` statements. Therefore, you do not need to write a function arn or activity arn directly.
 Of course, you can also specify arn directly.
 
 ```yml
@@ -28,31 +28,70 @@ functions:
 
 stepFunctions:
   stateMachines:
-    hellostepfunc:
+    hellostepfunc1:
       Comment: "A Hello World example of the Amazon States Language using an AWS Lambda Function"
-      StartAt: HelloWorld
+      StartAt: HelloWorld1
       States: 
-        HelloWorld: 
+        HelloWorld1:
           Type: Task
           Resource: hellofunc
           End: true
+    hellostepfunc2:
+      StartAt: HelloWorld2
+      States: 
+        HelloWorld2: 
+          Type: Task
+          Resource: myTask
+          End: true
+  activities
+    - myTask
+    - yourTask
 ```
 
 ## Command
 ### deploy
-#### All StateMachines deploy 
+#### All StateMachines and Activities deploy 
 ```
 $ sls deploy stepf
 ```
 
+##### options
+- --stage or -s The stage in your service you want to deploy your step function.
+- --region or -r The region in your stage that you want to deploy your step function.
+
+#### All StateMachines deploy 
+```
+$ sls deploy stepf statemachines
+```
+
+##### options
+- --stage or -s The stage in your service you want to deploy your step function.
+- --region or -r The region in your stage that you want to deploy your step function.
+
 #### Single StateMachine deploy 
 ```
-$ sls deploy stepf --state <stepfunctionname>
+$ sls deploy stepf statemachines --name <stepfunctionname>
+```
+##### options
+- --name or -n The name of the step function in your service that you want to deploy.
+- --stage or -s The stage in your service you want to deploy your step function.
+- --region or -r The region in your stage that you want to deploy your step function.
+
+#### All Activities deploy 
+```
+$ sls deploy stepf activities
 ```
 
-#### options
+##### options
+- --stage or -s The stage in your service you want to deploy your step function.
+- --region or -r The region in your stage that you want to deploy your step function.
 
-- --state or -t The name of the step function in your service that you want to deploy.
+#### Single Activity deploy 
+```
+$ sls deploy stepf activities --name <activityname>
+```
+##### options
+- --name or -n The name of the step function in your service that you want to deploy.
 - --stage or -s The stage in your service you want to deploy your step function.
 - --region or -r The region in your stage that you want to deploy your step function.
 
@@ -69,11 +108,24 @@ $ sls invoke stepf --state <stepfunctionname> --data '{"foo":"bar"}'
 ```
 
 ### remove
-#### All StateMachines remove
+#### All StateMachines and Activities remove
 
 ```
 $ sls remove stepf
 ```
+
+##### options
+- --stage or -s The stage in your service you want to deploy your step function.
+- --region or -r The region in your stage that you want to deploy your step function.
+
+#### All StateMachines remove 
+```
+$ sls remove stepf statemachines
+```
+
+##### options
+- --stage or -s The stage in your service you want to deploy your step function.
+- --region or -r The region in your stage that you want to deploy your step function.
 
 #### Single StateMachine remove
 
@@ -86,6 +138,25 @@ $ sls remove stepf --state <stepfunctionname>
 - --state or -t The name of the step function in your service that you want to remove. Required.
 - --stage or -s The stage in your service you want to invoke your step remove.
 - --region or -r The region in your stage that you want to invoke your step remove.
+
+#### All Activities remove 
+```
+$ sls remove stepf activities
+```
+
+##### options
+- --stage or -s The stage in your service you want to deploy your step function.
+- --region or -r The region in your stage that you want to deploy your step function.
+
+#### Single Activity remove 
+```
+$ sls remove stepf activities --name <activityname>
+```
+##### options
+- --name or -n The name of the step function in your service that you want to deploy.
+- --stage or -s The stage in your service you want to deploy your step function.
+- --region or -r The region in your stage that you want to deploy your step function.
+
 
 ## Sample statemachines setting in serverless.yml
 ### Waite State
