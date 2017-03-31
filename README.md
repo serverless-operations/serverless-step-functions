@@ -98,13 +98,13 @@ $ sls deploy stepf activities --name <activityname>
 ### invoke
 #### options
 
-- --state or -t The name of the step function in your service that you want to invoke. Required.
+- --name or -n The name of the step function in your service that you want to invoke. Required.
 - --stage or -s The stage in your service you want to invoke your step function.
 - --region or -r The region in your stage that you want to invoke your step function.
 - --data or -d String data to be passed as an event to your step function.
 - --path or -p The path to a json file with input data to be passed to the invoked step function.
 ```
-$ sls invoke stepf --state <stepfunctionname> --data '{"foo":"bar"}'
+$ sls invoke stepf --name <stepfunctionname> --data '{"foo":"bar"}'
 ```
 
 ### remove
@@ -130,12 +130,12 @@ $ sls remove stepf statemachines
 #### Single StateMachine remove
 
 ```
-$ sls remove stepf --state <stepfunctionname>
+$ sls remove stepf --name <stepfunctionname>
 ```
 
 #### options
 
-- --state or -t The name of the step function in your service that you want to remove. Required.
+- --name or -n The name of the step function in your service that you want to remove. Required.
 - --stage or -s The stage in your service you want to invoke your step remove.
 - --region or -r The region in your stage that you want to invoke your step remove.
 
