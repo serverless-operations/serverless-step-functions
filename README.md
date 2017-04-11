@@ -159,7 +159,7 @@ $ sls remove stepf activities --name <activityname>
 
 
 ## Sample statemachines setting in serverless.yml
-### Waite State
+### Wait State
 ```yml
 functions:
   hellofunc:
@@ -167,7 +167,7 @@ functions:
 
 stepFunctions:
   stateMachines:
-    yourWateMachine:
+    yourWaitMachine:
       Comment: "An example of the Amazon States Language using wait states"
       StartAt: FirstState
       States:
