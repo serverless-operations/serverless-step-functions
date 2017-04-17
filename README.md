@@ -112,3 +112,16 @@ $ sls invoke stepf --name <stepfunctionname> --data '{"foo":"bar"}'
 - --region or -r The region in your stage that you want to invoke your step function.
 - --data or -d String data to be passed as an event to your step function.
 - --path or -p The path to a json file with input data to be passed to the invoked step function.
+
+## IAM Role
+The IAM roles required to run Statemachine are automatically generated. It is also possible to specify ARN directly.
+
+Here's an example:
+
+```yml
+stepFunctions:
+  stateMachines:
+    hello:
+      role: arn:aws:iam::xxxxxxxx:role/yourRole
+      definition:
+```
