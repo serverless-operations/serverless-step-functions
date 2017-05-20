@@ -134,8 +134,6 @@ This makes it possible to trigger your statemachine through Lambda events
 functions:
   hello:
     handler: handler.hello
-  hello:
-    handler: handler.hello2
     environment:
         statemachine_arn: ${self:resources.Outputs.HelloStepfunc.Value}
 
