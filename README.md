@@ -154,3 +154,26 @@ plugins:
   - serverless-step-functions
 ```
 
+### Adding a custom name for a stateMachine
+In case you need to interpolate a specific stage or service layer variable as the
+stateMachines name you can add a `Name` property to your yaml.
+
+```yml
+service: messager
+
+functions:
+  sendMessage:
+    handler: handler.sendMessage
+
+stepFunctions:
+  stateMachines:
+    sendMessageFunc:
+      Name: sendMessageFunc-${self:custom.service}-${opt:stage}
+      definition:
+        <your definition>
+
+plugins:
+  - serverless-step-functions
+```
+
+Please note, that during normalization some characters will be changed to adhere to CloudFormation templates.
