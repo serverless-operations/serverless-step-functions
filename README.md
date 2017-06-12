@@ -34,6 +34,7 @@ stepFunctions:
         - http:
           path: gofunction
           method: GET
+      name: myStateMachine
       definition:
         Comment: "A Hello World example of the Amazon States Language using an AWS Lambda Function"
         StartAt: HelloWorld1
@@ -54,6 +55,31 @@ stepFunctions:
     - myTask
     - yourTask
 ```
+
+### Adding a custom name for a stateMachine
+In case you need to interpolate a specific stage or service layer variable as the
+stateMachines name you can add a `name` property to your yaml.
+
+```yml
+service: messager
+
+functions:
+  sendMessage:
+    handler: handler.sendMessage
+
+stepFunctions:
+  stateMachines:
+    sendMessageFunc:
+      name: sendMessageFunc-${self:custom.service}-${opt:stage}
+      definition:
+        <your definition>
+
+plugins:
+  - serverless-step-functions
+```
+
+Please note, that during normalization some characters will be changed to adhere to CloudFormation templates.
+You can get the real statemachine name using `{ "Fn::GetAtt": ["MyStateMachine", "Name"] }`.
 
 ## Events
 ### API Gateway
@@ -135,45 +161,22 @@ functions:
   hello:
     handler: handler.hello
     environment:
-        statemachine_arn: ${self:resources.Outputs.HelloStepfunc.Value}
+      statemachine_arn: ${self:resources.Outputs.MyStateMachine.Value}
 
 stepFunctions:
   stateMachines:
     hellostepfunc:
+      name: myStateMachine
       definition:
         <your definition>
 
 resources:
   Outputs:
-    HelloStepfunc:
+    MyStateMachine:
       Description: The ARN of the example state machine
       Value:
-        Ref: HellostepfuncStepFunctionsStateMachine
+        Ref: MyStateMachine
 
 plugins:
   - serverless-step-functions
 ```
-
-### Adding a custom name for a stateMachine
-In case you need to interpolate a specific stage or service layer variable as the
-stateMachines name you can add a `Name` property to your yaml.
-
-```yml
-service: messager
-
-functions:
-  sendMessage:
-    handler: handler.sendMessage
-
-stepFunctions:
-  stateMachines:
-    sendMessageFunc:
-      Name: sendMessageFunc-${self:custom.service}-${opt:stage}
-      definition:
-        <your definition>
-
-plugins:
-  - serverless-step-functions
-```
-
-Please note, that during normalization some characters will be changed to adhere to CloudFormation templates.
