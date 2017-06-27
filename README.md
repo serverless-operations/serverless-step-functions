@@ -32,8 +32,8 @@ stepFunctions:
     hellostepfunc1:
       events:
         - http:
-          path: gofunction
-          method: GET
+            path: gofunction
+            method: GET
       name: myStateMachine
       definition:
         Comment: "A Hello World example of the Amazon States Language using an AWS Lambda Function"
