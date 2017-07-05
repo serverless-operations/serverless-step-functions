@@ -180,3 +180,223 @@ resources:
 plugins:
   - serverless-step-functions
 ```
+## Sample statemachines setting in serverless.yml
+### Waite State
+``` yaml
+custom:
+  accountId: <Here is your accountId>
+
+functions:
+  hello:
+    handler: handler.hello
+
+stepFunctions:
+  stateMachines:
+    yourWateMachine:
+      definition:
+        Comment: "An example of the Amazon States Language using wait states"
+        StartAt: FirstState
+        States:
+          FirstState:
+            Type: Task
+            Resource: arn:aws:lambda:${opt:region}:${self:custom.accountId}:function:${self:service}-${opt:stage}-hello
+            Next: wait_using_seconds
+          wait_using_seconds:
+            Type: Wait
+            Seconds: 10
+            Next: wait_using_timestamp
+          wait_using_timestamp:
+            Type: Wait
+            Timestamp: '2015-09-04T01:59:00Z'
+            Next: wait_using_timestamp_path
+          wait_using_timestamp_path:
+            Type: Wait
+            TimestampPath: "$.expirydate"
+            Next: wait_using_seconds_path
+          wait_using_seconds_path:
+            Type: Wait
+            SecondsPath: "$.expiryseconds"
+            Next: FinalState
+          FinalState:
+            Type: Task
+            Resource: arn:aws:lambda:${opt:region}:${self:custom.accountId}:function:${self:service}-${opt:stage}-hello
+            End: true
+```
+
+### Retry Failture
+``` yaml
+custom:
+  accountId: <Here is your accountId>
+
+functions:
+  hello:
+    handler: handler.hello
+
+stepFunctions:
+  stateMachines:
+    yourRetryMachine:
+      definition:
+        Comment: "A Retry example of the Amazon States Language using an AWS Lambda Function"
+        StartAt: HelloWorld
+        States:
+          HelloWorld:
+            Type: Task
+            Resource: arn:aws:lambda:${opt:region}:${self:custom.accountId}:function:${self:service}-${opt:stage}-hello
+            Retry:
+            - ErrorEquals:
+              - HandledError
+              IntervalSeconds: 1
+              MaxAttempts: 2
+              BackoffRate: 2
+            - ErrorEquals:
+              - States.TaskFailed
+              IntervalSeconds: 30
+              MaxAttempts: 2
+              BackoffRate: 2
+            - ErrorEquals:
+              - States.ALL
+              IntervalSeconds: 5
+              MaxAttempts: 5
+              BackoffRate: 2
+            End: true
+```
+
+### Parallel
+
+```yaml
+custom:
+  accountId: <Here is your accountId>
+
+functions:
+  hello:
+    handler: handler.hello
+
+stepFunctions:
+  stateMachines:
+    yourParallelMachine:
+      definition:
+        Comment: "An example of the Amazon States Language using a parallel state to execute two branches at the same time."
+        StartAt: Parallel
+        States:
+          Parallel:
+            Type: Parallel
+            Next: Final State
+            Branches:
+            - StartAt: Wait 20s
+              States:
+                Wait 20s:
+                  Type: Wait
+                  Seconds: 20
+                  End: true
+            - StartAt: Pass
+              States:
+                Pass:
+                  Type: Pass
+                  Next: Wait 10s
+                Wait 10s:
+                  Type: Wait
+                  Seconds: 10
+                  End: true
+          Final State:
+            Type: Pass
+            End: true
+```
+
+### Catch Failture
+
+```yaml
+custom:
+  accountId: <Here is your accountId>
+
+functions:
+  hello:
+    handler: handler.hello
+
+stepFunctions:
+  stateMachines:
+    yourCatchMachine:
+      definition:
+        Comment: "A Catch example of the Amazon States Language using an AWS Lambda Function"
+        StartAt: HelloWorld
+        States:
+          HelloWorld:
+            Type: Task
+            Resource: arn:aws:lambda:${opt:region}:${self:custom.accountId}:function:${self:service}-${opt:stage}-hello
+            Catch:
+            - ErrorEquals:
+              - HandledError
+              Next: CustomErrorFallback
+            - ErrorEquals:
+              - States.TaskFailed
+              Next: ReservedTypeFallback
+            - ErrorEquals:
+              - States.ALL
+              Next: CatchAllFallback
+            End: true
+          CustomErrorFallback:
+            Type: Pass
+            Result: "This is a fallback from a custom lambda function exception"
+            End: true
+          ReservedTypeFallback:
+            Type: Pass
+            Result: "This is a fallback from a reserved error code"
+            End: true
+          CatchAllFallback:
+            Type: Pass
+            Result: "This is a fallback from a reserved error code"
+            End: true
+```
+
+### Choice
+
+```yaml
+custom:
+  accountId: <Here is your account Id>
+
+functions:
+  hello1:
+    handler: handler.hello1
+  hello2:
+    handler: handler.hello2
+  hello3:
+    handler: handler.hello3
+  hello4:
+    handler: handler.hello4
+
+stepFunctions:
+  stateMachines:
+    yourChoiceMachine:
+      definition:
+        Comment: "An example of the Amazon States Language using a choice state."
+        StartAt: FirstState
+        States:
+          FirstState:
+            Type: Task
+            Resource: arn:aws:lambda:${opt:region}:${self:custom.accountId}:function:${self:service}-${opt:stage}-hello1
+            Next: ChoiceState
+          ChoiceState:
+            Type: Choice
+            Choices:
+            - Variable: "$.foo"
+              NumericEquals: 1
+              Next: FirstMatchState
+            - Variable: "$.foo"
+              NumericEquals: 2
+              Next: SecondMatchState
+            Default: DefaultState
+          FirstMatchState:
+            Type: Task
+            Resource: arn:aws:lambda:${opt:region}:${self:custom.accountId}:function:${self:service}-${opt:stage}-hello2
+            Next: NextState
+          SecondMatchState:
+            Type: Task
+            Resource: arn:aws:lambda:${opt:region}:${self:custom.accountId}:function:${self:service}-${opt:stage}-hello3
+            Next: NextState
+          DefaultState:
+            Type: Fail
+            Cause: "No Matches!"
+          NextState:
+            Type: Task
+            Resource: arn:aws:lambda:${opt:region}:${self:custom.accountId}:function:${self:service}-${opt:stage}-hello4
+            End: true
+```
