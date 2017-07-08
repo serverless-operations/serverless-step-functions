@@ -181,7 +181,7 @@ plugins:
   - serverless-step-functions
 ```
 ## Sample statemachines setting in serverless.yml
-### Waite State
+### Wait State
 ``` yaml
 custom:
   accountId: <Here is your accountId>
