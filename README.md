@@ -302,7 +302,7 @@ stepFunctions:
             End: true
 ```
 
-### Catch Failture
+### Catch Failure
 
 ```yaml
 custom:
