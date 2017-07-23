@@ -115,6 +115,47 @@ stepFunctions:
       definition:
 ```
 
+#### Enabling CORS
+
+To set CORS configurations for your HTTP endpoints, simply modify your event configurations as follows:
+
+```yml
+stepFunctions:
+  stateMachines:
+    hello:
+      events:
+        - http:
+            path: posts/create
+            method: POST
+            cors: true
+      definition:
+```
+
+Setting cors to true assumes a default configuration which is equivalent to:
+
+```yml
+stepFunctions:
+  stateMachines:
+    hello:
+      events:
+        - http:
+            path: posts/create
+            method: POST
+            cors:
+              origin: '*'
+              headers:
+                - Content-Type
+                - X-Amz-Date
+                - Authorization
+                - X-Api-Key
+                - X-Amz-Security-Token
+                - X-Amz-User-Agent
+              allowCredentials: false
+      definition:
+```
+
+Configuring the cors property sets Access-Control-Allow-Origin, Access-Control-Allow-Headers, Access-Control-Allow-Methods,Access-Control-Allow-Credentials headers in the CORS preflight response.
+
 #### Send request to an API
 You can input an value as json in request body, the value is passed as the input value of your statemachine
 
