@@ -7,7 +7,7 @@ This plugin requires Serverless v1.4.0 or later.
 ## Install
 Run `npm install` in your Serverless project.
 ```
-$ npm install --save serverless-step-functions
+$ npm install --save-dev serverless-step-functions
 ```
 
 Add the plugin to your serverless.yml file
