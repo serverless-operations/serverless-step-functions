@@ -32,6 +32,14 @@ stepFunctions:
         - http:
             path: gofunction
             method: GET
+        - schedule:
+            rate: rate(10 minutes)
+            enabled: true
+            input:
+              key1: value1
+              key2: value2
+              stageParams:
+                stage: dev
       name: myStateMachine
       definition:
         Comment: "A Hello World example of the Amazon States Language using an AWS Lambda Function"
