@@ -87,7 +87,7 @@ plugins:
 ```
 
 #### Current Gotcha
-Please keep this gotcha in mind when using this tips. To generate Logical ID for CloudFormation, the plugin transforms the specified name in serverless.yml based on the following scheme.
+Please keep this gotcha in mind if you want to reference the `name` from the `resources` section. To generate Logical ID for CloudFormation, the plugin transforms the specified name in serverless.yml based on the following scheme.
 
 - Transform a leading character into uppercase
 - Transform `-` into Dash
@@ -100,26 +100,13 @@ The correct sample is here.
 ```yaml
 stepFunctions:
   stateMachines:
-    etlStateMachine:
+    myStateMachine:
       name: myStateMachine-${self:service}-${opt:stage}
-      events:
-        - http:
-            path: etl-trigger
-            method: GET
-      definition:
-        Comment: "An example of the Amazon States Language using wait states"
-        StartAt:  read_queue
-        States:
-          read_queue:
-            Type: Task
-            Resource: arn:aws:lambda:${opt:region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-CheckQueue
-            End: true
-
 ...
 
 resources:
   Outputs:
-    etlStateMachine:
+    myStateMachine:
       Value:
         Ref: MyStateMachineDash${self:service}Dash${opt:stage}
 ```
