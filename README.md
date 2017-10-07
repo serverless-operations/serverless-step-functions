@@ -86,8 +86,43 @@ plugins:
   - serverless-step-functions
 ```
 
-Please note, that during normalization some characters will be changed to adhere to CloudFormation templates.
-You can get the real statemachine name using `{ "Fn::GetAtt": ["MyStateMachine", "Name"] }`.
+#### Current Gotcha
+Please keep this gotcha in mind when using this tips. To generate Logical ID for CloudFormation, the plugin transforms the specified name in serverless.yml based on the following scheme.
+
+- Transform a leading character into uppercase
+- Transform `-` into Dash
+- Transform `_` into Underscore
+
+If you want to use variables system in name statement, you can't put the variables as a prefix like this:`${self:service}-${opt:stage}-myStateMachine` since the variables are transformed within Output section, as a result, the reference will be broken.
+
+The correct sample is here.
+
+```yaml
+stepFunctions:
+  stateMachines:
+    etlStateMachine:
+      name: myStateMachine-${self:service}-${opt:stage}
+      events:
+        - http:
+            path: etl-trigger
+            method: GET
+      definition:
+        Comment: "An example of the Amazon States Language using wait states"
+        StartAt:  read_queue
+        States:
+          read_queue:
+            Type: Task
+            Resource: arn:aws:lambda:${opt:region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-CheckQueue
+            End: true
+
+...
+
+resources:
+  Outputs:
+    etlStateMachine:
+      Value:
+        Ref: MyStateMachineDash${self:service}Dash${opt:stage}
+```
 
 ## Events
 ### API Gateway
