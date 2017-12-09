@@ -260,6 +260,16 @@ $ sls invoke stepf --name <stepfunctionname> --data '{"foo":"bar"}'
 - --data or -d String data to be passed as an event to your step function.
 - --path or -p The path to a json file with input data to be passed to the invoked step function.
 
+### validate-state-machines
+This command allows you to validate the definition of your state machine(s). Validation is done by [asl-validator](https://www.npmjs.com/package/asl-validator).
+```
+$ sls validate-state-machines [--name <stepfunctionname>]
+```
+
+#### options
+
+- --name or -n The name of the step function in your service that you want to validate. Will validate all state machines if not specified.
+
 ## IAM Role
 The IAM roles required to run Statemachine are automatically generated. It is also possible to specify ARN directly.
 
