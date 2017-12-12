@@ -260,10 +260,10 @@ $ sls invoke stepf --name <stepfunctionname> --data '{"foo":"bar"}'
 - --data or -d String data to be passed as an event to your step function.
 - --path or -p The path to a json file with input data to be passed to the invoked step function.
 
-### validate-state-machines
+### validate
 This command allows you to validate the definition of your state machine(s). Validation is done by [asl-validator](https://www.npmjs.com/package/asl-validator).
 ```
-$ sls validate-state-machines [--name <stepfunctionname>]
+$ sls validate stepf [--name <stepfunctionname>]
 ```
 
 #### options
