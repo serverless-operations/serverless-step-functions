@@ -36,7 +36,7 @@
     "sinon": "^1.17.5"
   },
   "dependencies": {
-    "asl-validator": "^1.0.4",
+    "asl-validator": "^1.0.5",
     "aws-sdk": "^2.7.19",
     "bluebird": "^3.4.0",
     "chalk": "^1.1.1",
