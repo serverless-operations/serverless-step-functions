@@ -21,24 +21,25 @@
   },
   "homepage": "https://github.com/horike37/serverless-step-functions#readme",
   "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^7.1.1",
+    "coveralls": "^2.11.12",
     "eslint": "^3.3.1",
     "eslint-config-airbnb": "^10.0.1",
     "eslint-config-airbnb-base": "^5.0.2",
     "eslint-plugin-import": "^1.13.0",
     "eslint-plugin-jsx-a11y": "^2.1.0",
     "eslint-plugin-react": "^6.1.1",
-    "serverless": "^1.4.0",
     "istanbul": "^0.4.4",
     "mocha": "^3.0.2",
     "mocha-lcov-reporter": "^1.2.0",
-    "chai": "^3.5.0",
-    "coveralls": "^2.11.12",
+    "serverless": "^1.4.0",
     "sinon": "^1.17.5"
   },
   "dependencies": {
-    "lodash": "^4.13.1",
     "aws-sdk": "^2.7.19",
     "bluebird": "^3.4.0",
-    "chalk": "^1.1.1"
+    "chalk": "^1.1.1",
+    "lodash": "^4.13.1"
   }
 }
