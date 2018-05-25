@@ -86,6 +86,30 @@ plugins:
   - serverless-step-functions
 ```
 
+### Adding a custom logical id for a stateMachine
+You can use a custom logical id that is only unique within the stack as opposed to the name that needs to be unique globally. This can make referencing the state machine easier/simpler because you don't have to duplicate the interpolation logic everywhere you reference the state machine.
+
+```yml
+service: messager
+
+functions:
+  sendMessage:
+    handler: handler.sendMessage
+
+stepFunctions:
+  stateMachines:
+    sendMessageFunc:
+      id: SendMessageStateMachine
+      name: sendMessageFunc-${self:custom.service}-${opt:stage}
+      definition:
+        <your definition>
+
+plugins:
+  - serverless-step-functions
+```
+
+You can then `Ref: SendMessageStateMachine` in various parts of CloudFormation or serverless.yml
+
 #### Current Gotcha
 Please keep this gotcha in mind if you want to reference the `name` from the `resources` section. To generate Logical ID for CloudFormation, the plugin transforms the specified name in serverless.yml based on the following scheme.
 
