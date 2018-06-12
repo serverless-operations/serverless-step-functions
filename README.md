@@ -299,7 +299,7 @@ events:
 
 ## Command
 ### deploy
-Runn `sls deploy`, the defined Stepfunctions are deployed.
+Run `sls deploy`, the defined Stepfunctions are deployed.
 
 ### invoke
 ```
