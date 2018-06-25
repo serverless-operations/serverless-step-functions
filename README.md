@@ -186,6 +186,32 @@ stepFunctions:
 
 Configuring the cors property sets Access-Control-Allow-Origin, Access-Control-Allow-Headers, Access-Control-Allow-Methods,Access-Control-Allow-Credentials headers in the CORS preflight response.
 
+#### Customizing request body mapping templates
+
+The plugin generates default body mapping templates for `application/json` and `application/x-www-form-urlencoded` content types. If you'd like to add more content types or customize the default ones, you can do so by including them in `serverless.yml`:
+
+```yml
+stepFunctions:
+  stateMachines:
+    hello:
+      events:
+        - http:
+            path: posts/create
+            method: POST
+            request:
+              template:
+                application/json: |
+                  #set( $body = $util.escapeJavaScript($input.json('$')) )
+                  #set( $name = $util.escapeJavaScript($input.json('$.data.attributes.order_id')) )
+                  {
+                    "input": "$body",
+                    "name": "$name",
+                    "stateMachineArn":"arn:aws:states:#{AWS::Region}:#{AWS::AccountId}:stateMachine:processOrderFlow-${opt:stage}"
+                  }
+      name: processOrderFlow-${opt:stage}
+      definition:
+```
+
 #### Send request to an API
 You can input an value as json in request body, the value is passed as the input value of your statemachine
 
