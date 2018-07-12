@@ -32,7 +32,7 @@
     "istanbul": "^0.4.4",
     "mocha": "^5.2.0",
     "mocha-lcov-reporter": "^1.2.0",
-    "serverless": "^1.27.3",
+    "serverless": "^1.28.0",
     "sinon": "^1.17.5"
   },
   "dependencies": {
