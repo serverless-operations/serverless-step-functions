@@ -1,7 +1,3 @@
-# 1.5.1(10.07.2018)
-## Features
-- Added support for Shared API Gateway
-
 # 0.2.0(08.01.2017)
 ## Breaking Changes
 The service name is added to the statemachine prefix.
