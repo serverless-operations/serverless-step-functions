@@ -169,9 +169,9 @@ stepFunctions:
       definition:
 ```
 
-#### [Share API Gateway and API Resources](https://serverless.com/framework/docs/providers/aws/events/apigateway/#share-api-gateway-and-api-resources)
+#### Share API Gateway and API Resources
 
-You can share the same API Gateway between multiple projects by referencing its REST API ID and Root Resource ID in serverless.yml as follows:
+You can [share the same API Gateway](https://serverless.com/framework/docs/providers/aws/events/apigateway/#share-api-gateway-and-api-resources) between multiple projects by referencing its REST API ID and Root Resource ID in serverless.yml as follows:
 
 ```yml
 service: service-name
