@@ -1,6 +1,6 @@
 # 0.2.0(08.01.2017)
 ## Breaking Changes
-The service name is added to the statemachin prefix.
+The service name is added to the statemachine prefix.
 This is because there is a possibility of conflict with the state machine deployed from another service without the service name.
 
 A state machine created with version 0.1 is not inherited. Please recreate it.
