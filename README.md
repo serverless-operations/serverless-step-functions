@@ -210,6 +210,52 @@ stepFunctions:
 
 Configuring the cors property sets Access-Control-Allow-Origin, Access-Control-Allow-Headers, Access-Control-Allow-Methods,Access-Control-Allow-Credentials headers in the CORS preflight response.
 
+#### HTTP Endpoints with AWS_IAM Authorizers
+
+If you want to require that the caller submit the IAM user's access keys in order to be authenticated to invoke your Lambda Function, set the authorizer to AWS_IAM as shown in the following example:
+
+```yml
+stepFunctions:
+  stateMachines:
+    hello:
+      events:
+        - http:
+            path: posts/create
+            method: POST
+            authorizer: aws_iam
+      definition:
+```
+
+#### HTTP Endpoints with Custom Authorizers
+
+[Custom Authorizers](https://serverless.com/framework/docs/providers/aws/events/apigateway/#http-endpoints-with-custom-authorizers) allow you to run an AWS Lambda Function before your targeted AWS Lambda Function. This is useful for Microservice Architectures or when you simply want to do some Authorization before running your business logic.
+
+You can enable Custom Authorizers for your HTTP endpoint by setting the Authorizer in your http event to another function in the same service, as shown in the following example:
+
+```yml
+stepFunctions:
+  stateMachines:
+    hello:
+      - http:
+          path: posts/create
+          method: post
+          authorizer: authorizerFunc
+      definition:
+```
+
+If the Authorizer function does not exist in your service but exists in AWS, you can provide the ARN of the Lambda function instead of the function name, as shown in the following example:
+
+```yml
+stepFunctions:
+  stateMachines:
+    hello:
+      - http:
+          path: posts/create
+          method: post
+          authorizer: xxx:xxx:Lambda-Name
+      definition:
+```
+
 #### Customizing request body mapping templates
 
 The plugin generates default body mapping templates for `application/json` and `application/x-www-form-urlencoded` content types. If you'd like to add more content types or customize the default ones, you can do so by including them in `serverless.yml`:
