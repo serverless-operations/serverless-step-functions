@@ -317,6 +317,27 @@ stepFunctions:
       definition:
 ```
 
+### Share Authorizer
+
+Auto-created Authorizer is convenient for conventional setup. However, when you need to define your custom Authorizer, or use COGNITO_USER_POOLS authorizer with shared API Gateway, it is painful because of AWS limitation. Sharing Authorizer is a better way to do.
+
+```yml
+stepFunctions:
+  stateMachines:
+    createUser:
+      ...
+      events:
+        - http:
+            path: /users
+            ...     
+            authorizer:
+              # Provide both type and authorizerId
+              type: COGNITO_USER_POOLS # TOKEN, CUSTOM or COGNITO_USER_POOLS, same as AWS Cloudformation documentation
+              authorizerId: 
+                Ref: ApiGatewayAuthorizer  # or hard-code Authorizer ID
+```
+
+
 #### Customizing request body mapping templates
 
 The plugin generates default body mapping templates for `application/json` and `application/x-www-form-urlencoded` content types. If you'd like to add more content types or customize the default ones, you can do so by including them in `serverless.yml`:
