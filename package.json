@@ -32,13 +32,13 @@
     "istanbul": "^0.4.4",
     "mocha": "^5.2.0",
     "mocha-lcov-reporter": "^1.2.0",
-    "serverless": "^1.27.3",
+    "serverless": "^1.29.0",
     "sinon": "^1.17.5"
   },
   "dependencies": {
-    "lodash": "^4.13.1",
-    "aws-sdk": "^2.7.19",
+    "aws-sdk": "^2.282.1",
     "bluebird": "^3.4.0",
-    "chalk": "^1.1.1"
+    "chalk": "^1.1.1",
+    "lodash": "^4.17.10"
   }
 }
