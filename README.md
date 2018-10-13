@@ -478,7 +478,7 @@ events:
 ### CloudWatch Event
 ## Simple event definition
 
-This will enable your Step Functions to be called by an EC2 event rule.
+This will enable your Statemachine to be called by an EC2 event rule.
 Please check the page of [Event Types for CloudWatch Events](http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/EventTypes.html).
 
 ```yml
