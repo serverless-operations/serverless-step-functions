@@ -47,6 +47,8 @@ stepFunctions:
             Type: Task
             Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-hello
             End: true
+      dependsOn:
+        Ref: DynamoDBTable
     hellostepfunc2:
       definition:
         StartAt: HelloWorld2
@@ -55,6 +57,10 @@ stepFunctions:
             Type: Task
             Resource: arn:aws:states:#{AWS::Region}:#{AWS::AccountId}:activity:myTask
             End: true
+      dependsOn:
+        - Ref: DynamoDBTable
+        - Ref: KinesisStream
+        - Ref: CUstomIamRole
   activities:
     - myTask
     - yourTask
@@ -109,6 +115,23 @@ plugins:
 ```
 
 You can then `Ref: SendMessageStateMachine` in various parts of CloudFormation or serverless.yml
+
+#### Depending on another logical id
+If your state machine depends on another resource defined in your `serverless.yml` then you can add a `dependsOn` field to the state machine `definition`. This would add the `DependsOn`clause to the generated CloudFormation template.
+
+This `dependsOn` field can be either a string, or an array of strings.
+
+```yaml
+stepFunctions:
+  stateMachines:
+    myStateMachine:
+      dependsOn: myDB
+
+    myOtherStateMachine:
+      dependsOn:
+        - myOtherDB
+        - myStream
+```
 
 #### Current Gotcha
 Please keep this gotcha in mind if you want to reference the `name` from the `resources` section. To generate Logical ID for CloudFormation, the plugin transforms the specified name in serverless.yml based on the following scheme.
@@ -329,11 +352,11 @@ stepFunctions:
       events:
         - http:
             path: /users
-            ...     
+            ...
             authorizer:
               # Provide both type and authorizerId
               type: COGNITO_USER_POOLS # TOKEN, CUSTOM or COGNITO_USER_POOLS, same as AWS Cloudformation documentation
-              authorizerId: 
+              authorizerId:
                 Ref: ApiGatewayAuthorizer  # or hard-code Authorizer ID
 ```
 
@@ -581,7 +604,7 @@ stepFunctions:
                 state:
                   - pending
       definition:
-        ...   
+        ...
 ```
 
 ## Specifying a Name
@@ -654,7 +677,7 @@ resources:
   Resources:
     StateMachineRole:
       Type: AWS::IAM::Role
-      Properties: 
+      Properties:
         ...
 ```
 
