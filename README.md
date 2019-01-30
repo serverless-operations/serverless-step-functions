@@ -47,8 +47,7 @@ stepFunctions:
             Type: Task
             Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-hello
             End: true
-      dependsOn:
-        Ref: DynamoDBTable
+      dependsOn: CustomIamRole
     hellostepfunc2:
       definition:
         StartAt: HelloWorld2
@@ -58,9 +57,9 @@ stepFunctions:
             Resource: arn:aws:states:#{AWS::Region}:#{AWS::AccountId}:activity:myTask
             End: true
       dependsOn:
-        - Ref: DynamoDBTable
-        - Ref: KinesisStream
-        - Ref: CUstomIamRole
+        - DynamoDBTable
+        - KinesisStream
+        - CUstomIamRole
   activities:
     - myTask
     - yourTask
