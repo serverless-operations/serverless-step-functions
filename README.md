@@ -48,6 +48,16 @@ stepFunctions:
             Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-hello
             End: true
       dependsOn: CustomIamRole
+      alarms:
+        topics:
+          ok: arn:aws:sns:us-east-1:1234567890:NotifyMe
+          alarm: arn:aws:sns:us-east-1:1234567890:NotifyMe
+          insufficientData: arn:aws:sns:us-east-1:1234567890:NotifyMe
+        metrics:
+          - executionsTimeOut
+          - executionsFailed
+          - executionsAborted
+          - executionThrottled
     hellostepfunc2:
       definition:
         StartAt: HelloWorld2
@@ -60,6 +70,16 @@ stepFunctions:
         - DynamoDBTable
         - KinesisStream
         - CUstomIamRole
+      alarms:
+        topics:
+          ok: arn:aws:sns:us-east-1:1234567890:NotifyMe
+          alarm: arn:aws:sns:us-east-1:1234567890:NotifyMe
+          insufficientData: arn:aws:sns:us-east-1:1234567890:NotifyMe
+        metrics:
+          - executionsTimeOut
+          - executionsFailed
+          - executionsAborted
+          - executionThrottled
   activities:
     - myTask
     - yourTask
@@ -130,6 +150,45 @@ stepFunctions:
       dependsOn:
         - myOtherDB
         - myStream
+```
+
+#### CloudWatch Alarms
+It's common practice to want to monitor the health of your state machines and be alerted when something goes wrong. You can either:
+
+* do this using the [serverless-plugin-aws-alerts](https://github.com/ACloudGuru/serverless-plugin-aws-alerts), which lets you configure custom CloudWatch Alarms against the various metrics that Step Functions publishes.
+* or, you can use the built-in `alarms` configuration from this plugin, which gives you an opinionated set of default alarms (see below)
+
+```yaml
+stepFunctions:
+  stateMachines:
+    myStateMachine:
+      alarms:
+        topics:
+          ok: arn:aws:sns:us-east-1:1234567890:NotifyMe
+          alarm: arn:aws:sns:us-east-1:1234567890:NotifyMe
+          insufficientData: arn:aws:sns:us-east-1:1234567890:NotifyMe
+        metrics:
+          - executionsTimeOut
+          - executionsFailed
+          - executionsAborted
+          - executionThrottled
+```
+
+Both `topics` and `metrics` are required properties. There are 4 supported metrics, each map to the CloudWatch Metrics that Step Functions publishes for your executions.
+
+The generated CloudWatch alarms would have the following configurations:
+```yaml
+namespace: 'AWS/States'
+metric: <ExecutionsTimeOut | ExecutionsFailed | ExecutionsAborted | ExecutionThrottled>
+threshold: 1
+period: 60
+evaluationPeriods: 1
+ComparisonOperator: GreaterThanOrEqualToThreshold
+Statistic: Sum
+treatMissingData: missing
+Dimensions:
+  - Name: StateMachineArn
+    Value: <ArnOfTheStateMachine>
 ```
 
 #### Current Gotcha
