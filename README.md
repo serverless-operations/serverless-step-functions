@@ -57,7 +57,9 @@ stepFunctions:
           - executionsTimeOut
           - executionsFailed
           - executionsAborted
-          - executionThrottled
+          - metric: executionThrottled
+            treatMissingData: breaching # overrides below default
+        treatMissingData: ignore # optional
     hellostepfunc2:
       definition:
         StartAt: HelloWorld2
@@ -70,16 +72,6 @@ stepFunctions:
         - DynamoDBTable
         - KinesisStream
         - CUstomIamRole
-      alarms:
-        topics:
-          ok: arn:aws:sns:us-east-1:1234567890:NotifyMe
-          alarm: arn:aws:sns:us-east-1:1234567890:NotifyMe
-          insufficientData: arn:aws:sns:us-east-1:1234567890:NotifyMe
-        metrics:
-          - executionsTimeOut
-          - executionsFailed
-          - executionsAborted
-          - executionThrottled
   activities:
     - myTask
     - yourTask
@@ -172,9 +164,19 @@ stepFunctions:
           - executionsFailed
           - executionsAborted
           - executionThrottled
+        treatMissingData: missing
 ```
 
 Both `topics` and `metrics` are required properties. There are 4 supported metrics, each map to the CloudWatch Metrics that Step Functions publishes for your executions.
+
+You can configure how the CloudWatch Alarms should treat missing data:
+
+* `missing` (AWS default): The alarm does not consider missing data points when evaluating whether to change state.
+* `ignore`: The current alarm state is maintained.
+* `breaching`: Missing data points are treated as breaching the threshold.
+* `notBreaching`: Missing data points are treated as being within the threshold.
+
+For more information, please refer to the [official documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-missing-data).
 
 The generated CloudWatch alarms would have the following configurations:
 ```yaml
@@ -185,10 +187,27 @@ period: 60
 evaluationPeriods: 1
 ComparisonOperator: GreaterThanOrEqualToThreshold
 Statistic: Sum
-treatMissingData: missing
+treatMissingData: <missing (default) | ignore | breaching | notBreaching>
 Dimensions:
   - Name: StateMachineArn
     Value: <ArnOfTheStateMachine>
+```
+
+You can also override the default `treatMissingData` setting for a particular alarm by specifying an override:
+
+```yml
+alarms:
+  topics:
+    ok: arn:aws:sns:us-east-1:1234567890:NotifyMe
+    alarm: arn:aws:sns:us-east-1:1234567890:NotifyMe
+    insufficientData: arn:aws:sns:us-east-1:1234567890:NotifyMe
+  metrics:
+    - executionsTimeOut
+    - executionsFailed
+    - executionsAborted
+    - metric: executionThrottled
+      treatMissingData: breaching # override
+  treatMissingData: ignore # default
 ```
 
 #### Current Gotcha
