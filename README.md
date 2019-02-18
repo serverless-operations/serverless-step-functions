@@ -929,14 +929,11 @@ stepFunctions:
             Type: Task
             Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-hello
             Catch:
-            - ErrorEquals:
-              - HandledError
+            - ErrorEquals: ["HandledError"]
               Next: CustomErrorFallback
-            - ErrorEquals:
-              - States.TaskFailed
+            - ErrorEquals: ["States.TaskFailed"]
               Next: ReservedTypeFallback
-            - ErrorEquals:
-              - States.ALL
+            - ErrorEquals: ["States.ALL"]
               Next: CatchAllFallback
             End: true
           CustomErrorFallback:
