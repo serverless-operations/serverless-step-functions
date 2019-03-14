@@ -48,6 +48,9 @@ stepFunctions:
             Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-hello
             End: true
       dependsOn: CustomIamRole
+      tags:
+        - Key: Team
+          Value: Atlantis
       alarms:
         topics:
           ok: arn:aws:sns:us-east-1:1234567890:NotifyMe
@@ -72,6 +75,9 @@ stepFunctions:
         - DynamoDBTable
         - KinesisStream
         - CUstomIamRole
+      tags:
+        - Key: Team
+          Value: Atlantis
   activities:
     - myTask
     - yourTask
