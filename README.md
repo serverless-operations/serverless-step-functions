@@ -49,8 +49,7 @@ stepFunctions:
             End: true
       dependsOn: CustomIamRole
       tags:
-        - Key: Team
-          Value: Atlantis
+        Team: Atlantis
       alarms:
         topics:
           ok: arn:aws:sns:us-east-1:1234567890:NotifyMe
@@ -76,8 +75,7 @@ stepFunctions:
         - KinesisStream
         - CUstomIamRole
       tags:
-        - Key: Team
-          Value: Atlantis
+        Team: Atlantis
   activities:
     - myTask
     - yourTask
