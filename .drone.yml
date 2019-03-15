@@ -1,0 +1,19 @@
+pipeline:
+  install:
+    image: node:8.6.0
+    commands:
+      - node -v
+      - npm -v
+      - npm install
+
+  testing:
+    image: node:8.6.0
+    group: testing
+    commands:
+      - npm run test
+
+  linting:
+    image: node:8.6.0
+    group: testing
+    commands:
+      - npm run lint
