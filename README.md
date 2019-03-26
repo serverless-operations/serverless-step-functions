@@ -711,8 +711,12 @@ stepFunctions:
         ...
 ```
 
+## Tags
+
+You can specify tags on each state machine. Additionally any global tags (specified under `provider` section in your `serverless.yml`) would be merged in as well.
 
 ## Command
+
 ### deploy
 Run `sls deploy`, the defined Stepfunctions are deployed.
 
