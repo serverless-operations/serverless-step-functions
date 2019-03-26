@@ -48,6 +48,8 @@ stepFunctions:
             Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-hello
             End: true
       dependsOn: CustomIamRole
+      tags:
+        Team: Atlantis
       alarms:
         topics:
           ok: arn:aws:sns:us-east-1:1234567890:NotifyMe
@@ -72,6 +74,8 @@ stepFunctions:
         - DynamoDBTable
         - KinesisStream
         - CUstomIamRole
+      tags:
+        Team: Atlantis
   activities:
     - myTask
     - yourTask
@@ -707,8 +711,12 @@ stepFunctions:
         ...
 ```
 
+## Tags
+
+You can specify tags on each state machine. Additionally any global tags (specified under `provider` section in your `serverless.yml`) would be merged in as well.
 
 ## Command
+
 ### deploy
 Run `sls deploy`, the defined Stepfunctions are deployed.
 
