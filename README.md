@@ -581,7 +581,7 @@ events:
 
 ## Scheduled Events IAM Role
 
-By default, the plugin will create a new IAM role that allows AWS Events to start your state machine. Note that this role is different then the role assumed by the state machine. You can specify your own role instead (it must allow `events.amazonaws.com` to assume it, and it must be able to run `states:StartExecution` on your state machine):
+By default, the plugin will create a new IAM role that allows AWS Events to start your state machine. Note that this role is different than the role assumed by the state machine. You can specify your own role instead (it must allow `events.amazonaws.com` to assume it, and it must be able to run `states:StartExecution` on your state machine):
 
 ```yaml
 events:
