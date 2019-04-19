@@ -444,7 +444,7 @@ stepFunctions:
 
 #### Customizing request body mapping templates
 
-The plugin generates default body mapping templates for `application/json` and `application/x-www-form-urlencoded` content types. If you'd like to add more content types or customize the default ones, you can do so by including them in `serverless.yml`:
+The plugin generates default body mapping templates for `application/json` and `application/x-www-form-urlencoded` content types. If you'd like to add more content types or customize the default ones, you can do so by including your custom [API Gateway request mapping template](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html) in `serverless.yml` like so:
 
 ```yml
 stepFunctions:
