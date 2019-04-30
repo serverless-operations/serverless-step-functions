@@ -444,7 +444,7 @@ stepFunctions:
 
 #### Customizing request body mapping templates
 
-The plugin generates default body mapping templates for `application/json` and `application/x-www-form-urlencoded` content types. If you'd like to add more content types or customize the default ones, you can do so by including them in `serverless.yml`:
+The plugin generates default body mapping templates for `application/json` and `application/x-www-form-urlencoded` content types. If you'd like to add more content types or customize the default ones, you can do so by including your custom [API Gateway request mapping template](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html) in `serverless.yml` like so:
 
 ```yml
 stepFunctions:
@@ -578,6 +578,17 @@ events:
       description: 'your scheduled rate event description'
       rate: rate(2 hours)
 ```
+
+## Scheduled Events IAM Role
+
+By default, the plugin will create a new IAM role that allows AWS Events to start your state machine. Note that this role is different than the role assumed by the state machine. You can specify your own role instead (it must allow `events.amazonaws.com` to assume it, and it must be able to run `states:StartExecution` on your state machine):
+
+```yaml
+events:
+  - schedule:
+      rate: rate(2 hours)
+      role: arn:aws:iam::xxxxxxxx:role/yourRole
+
 
 ### CloudWatch Event
 ## Simple event definition
