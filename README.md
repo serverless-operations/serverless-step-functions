@@ -15,12 +15,13 @@ plugins:
 ```
 
 ## Setup
-Specifies your statemachine definition using Amazon States Language in a `definition` statement in serverless.yml.
-We recommend to use [serverless-pseudo-parameters](https://www.npmjs.com/package/serverless-pseudo-parameters) plugin together so that it makes it easy to set up `Resource` section under `definition`.
+Specifies your statemachine definition using Amazon States Language in a `definition` statement in serverless.yml. You can use CloudFormation intrinsic functions such as `Ref` and `Fn::GetAtt` to reference Lambda functions, SNS topics, SQS queues and DynamoDB tables declared in the same `serverless.yml`.
+
+Alternatively, you can also provide the raw ARN, or SQS queue URL, or DynamoDB table name as a string. If you need to construct the ARN by hand, then we recommend to use the [serverless-pseudo-parameters](https://www.npmjs.com/package/serverless-pseudo-parameters) plugin together to make it easier.
 
 ```yml
 functions:
-  hellofunc:
+  hello:
     handler: handler.hello
 
 stepFunctions:
@@ -45,7 +46,8 @@ stepFunctions:
         States:
           HelloWorld1:
             Type: Task
-            Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-hello
+            Resource:
+              Ref: HelloLambdaFunction
             End: true
       dependsOn: CustomIamRole
       tags:
@@ -68,7 +70,8 @@ stepFunctions:
         States:
           HelloWorld2:
             Type: Task
-            Resource: arn:aws:states:#{AWS::Region}:#{AWS::AccountId}:activity:myTask
+            Resource:
+              Ref: HelloLambdaFunction
             End: true
       dependsOn:
         - DynamoDBTable
@@ -515,7 +518,8 @@ functions:
             States:
               HelloWorld1:
                 Type: Task
-                Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-hello
+                Resource:
+                  Ref: HelloLambdaFunction
                 End: true
 
 
@@ -824,7 +828,8 @@ stepFunctions:
         States:
           FirstState:
             Type: Task
-            Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-hello
+            Resource:
+              Ref: HelloLambdaFunction
             Next: wait_using_seconds
           wait_using_seconds:
             Type: Wait
@@ -844,7 +849,8 @@ stepFunctions:
             Next: FinalState
           FinalState:
             Type: Task
-            Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-hello
+            Resource:
+              Ref: HelloLambdaFunction
             End: true
 plugins:
   - serverless-step-functions
@@ -866,7 +872,8 @@ stepFunctions:
         States:
           HelloWorld:
             Type: Task
-            Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-hello
+            Resource:
+              Ref: HelloLambdaFunction
             Retry:
             - ErrorEquals:
               - HandledError
@@ -946,7 +953,8 @@ stepFunctions:
         States:
           HelloWorld:
             Type: Task
-            Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-hello
+            Resource:
+              Ref: HelloLambdaFunction
             Catch:
             - ErrorEquals: ["HandledError"]
               Next: CustomErrorFallback
@@ -994,7 +1002,8 @@ stepFunctions:
         States:
           FirstState:
             Type: Task
-            Resource: arn:aws:lambda:${opt:region}:${self:custom.accountId}:function:${self:service}-${opt:stage}-hello1
+            Resource:
+              Ref: Hello1LambdaFunction
             Next: ChoiceState
           ChoiceState:
             Type: Choice
@@ -1008,18 +1017,21 @@ stepFunctions:
             Default: DefaultState
           FirstMatchState:
             Type: Task
-            Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-hello2
+            Resource:
+              Ref: Hello2LambdaFunction
             Next: NextState
           SecondMatchState:
             Type: Task
-            Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-hello3
+            Resource:
+              Ref: Hello3LambdaFunction
             Next: NextState
           DefaultState:
             Type: Fail
             Cause: "No Matches!"
           NextState:
             Type: Task
-            Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-hello4
+            Resource:
+              Ref: Hello4LambdaFunction
             End: true
 plugins:
   - serverless-step-functions
