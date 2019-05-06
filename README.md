@@ -1,20 +1,24 @@
-[![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com) [![Build Status](https://travis-ci.org/horike37/serverless-step-functions.svg?branch=master)](https://travis-ci.org/horike37/serverless-step-functions) [![npm version](https://badge.fury.io/js/serverless-step-functions.svg)](https://badge.fury.io/js/serverless-step-functions) [![Coverage Status](https://coveralls.io/repos/github/horike37/serverless-step-functions/badge.svg?branch=master)](https://coveralls.io/github/horike37/serverless-step-functions?branch=master) [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE) [![serverless-step-functions Dev Token](https://badge.devtoken.rocks/serverless-step-functions)](https://devtoken.rocks/package/serverless-step-functions)
 # Serverless Step Functions
+
+[![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com) [![Build Status](https://travis-ci.org/horike37/serverless-step-functions.svg?branch=master)](https://travis-ci.org/horike37/serverless-step-functions) [![npm version](https://badge.fury.io/js/serverless-step-functions.svg)](https://badge.fury.io/js/serverless-step-functions) [![Coverage Status](https://coveralls.io/repos/github/horike37/serverless-step-functions/badge.svg?branch=master)](https://coveralls.io/github/horike37/serverless-step-functions?branch=master) [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE) [![serverless-step-functions Dev Token](https://badge.devtoken.rocks/serverless-step-functions)](https://devtoken.rocks/package/serverless-step-functions)
+
 This is the Serverless Framework plugin for AWS Step Functions.
 
 ## Install
+
 Run `npm install` in your Serverless project.
-```
-$ npm install --save-dev serverless-step-functions
-```
+
+`$ npm install --save-dev serverless-step-functions`
 
 Add the plugin to your serverless.yml file
+
 ```yml
 plugins:
   - serverless-step-functions
 ```
 
 ## Setup
+
 Specifies your statemachine definition using Amazon States Language in a `definition` statement in serverless.yml. You can use CloudFormation intrinsic functions such as `Ref` and `Fn::GetAtt` to reference Lambda functions, SNS topics, SQS queues and DynamoDB tables declared in the same `serverless.yml`.
 
 Alternatively, you can also provide the raw ARN, or SQS queue URL, or DynamoDB table name as a string. If you need to construct the ARN by hand, then we recommend to use the [serverless-pseudo-parameters](https://www.npmjs.com/package/serverless-pseudo-parameters) plugin together to make your life easier.
@@ -47,7 +51,7 @@ stepFunctions:
           HelloWorld1:
             Type: Task
             Resource:
-              Ref: HelloLambdaFunction
+              Fn::GetAtt: [HelloLambdaFunction, Arn]
             End: true
       dependsOn: CustomIamRole
       tags:
@@ -71,7 +75,7 @@ stepFunctions:
           HelloWorld2:
             Type: Task
             Resource:
-              Ref: HelloLambdaFunction
+              Fn::GetAtt: [HelloLambdaFunction, Arn]
             End: true
       dependsOn:
         - DynamoDBTable
@@ -89,6 +93,7 @@ plugins:
 ```
 
 ### Adding a custom name for a stateMachine
+
 In case you need to interpolate a specific stage or service layer variable as the
 stateMachines name you can add a `name` property to your yaml.
 
@@ -111,6 +116,7 @@ plugins:
 ```
 
 ### Adding a custom logical id for a stateMachine
+
 You can use a custom logical id that is only unique within the stack as opposed to the name that needs to be unique globally. This can make referencing the state machine easier/simpler because you don't have to duplicate the interpolation logic everywhere you reference the state machine.
 
 ```yml
@@ -135,6 +141,7 @@ plugins:
 You can then `Ref: SendMessageStateMachine` in various parts of CloudFormation or serverless.yml
 
 #### Depending on another logical id
+
 If your state machine depends on another resource defined in your `serverless.yml` then you can add a `dependsOn` field to the state machine `definition`. This would add the `DependsOn`clause to the generated CloudFormation template.
 
 This `dependsOn` field can be either a string, or an array of strings.
@@ -152,6 +159,7 @@ stepFunctions:
 ```
 
 #### CloudWatch Alarms
+
 It's common practice to want to monitor the health of your state machines and be alerted when something goes wrong. You can either:
 
 * do this using the [serverless-plugin-aws-alerts](https://github.com/ACloudGuru/serverless-plugin-aws-alerts), which lets you configure custom CloudWatch Alarms against the various metrics that Step Functions publishes.
@@ -186,6 +194,7 @@ You can configure how the CloudWatch Alarms should treat missing data:
 For more information, please refer to the [official documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-missing-data).
 
 The generated CloudWatch alarms would have the following configurations:
+
 ```yaml
 namespace: 'AWS/States'
 metric: <ExecutionsTimeOut | ExecutionsFailed | ExecutionsAborted | ExecutionThrottled>
@@ -218,11 +227,12 @@ alarms:
 ```
 
 #### Current Gotcha
+
 Please keep this gotcha in mind if you want to reference the `name` from the `resources` section. To generate Logical ID for CloudFormation, the plugin transforms the specified name in serverless.yml based on the following scheme.
 
-- Transform a leading character into uppercase
-- Transform `-` into Dash
-- Transform `_` into Underscore
+* Transform a leading character into uppercase
+* Transform `-` into Dash
+* Transform `_` into Underscore
 
 If you want to use variables system in name statement, you can't put the variables as a prefix like this:`${self:service}-${opt:stage}-myStateMachine` since the variables are transformed within Output section, as a result, the reference will be broken.
 
@@ -243,11 +253,14 @@ resources:
 ```
 
 ## Events
+
 ### API Gateway
+
 To create HTTP endpoints as Event sources for your StepFunctions statemachine
 
 #### Simple HTTP Endpoint
-This setup specifies that the hello statemachine should be run when someone accesses the API gateway at hello via a GET request.
+
+This setup specifies that the hello state machine should be run when someone accesses the API gateway at hello via a GET request.
 
 Here's an example:
 
@@ -261,6 +274,7 @@ stepFunctions:
             method: GET
       definition:
 ```
+
 #### HTTP Endpoint with Extended Options
 
 Here You can define an POST endpoint for the path posts/create.
@@ -293,6 +307,7 @@ provider:
 functions:
   ...
 ```
+
 If your application has many nested paths, you might also want to break them out into smaller services.
 
 However, Cloudformation will throw an error if we try to generate an existing path resource. To avoid that, we reference the resource ID:
@@ -444,10 +459,27 @@ stepFunctions:
                 Ref: ApiGatewayAuthorizer  # or hard-code Authorizer ID
 ```
 
+#### LAMBDA_PROXY request template
+
+The plugin generates default body mapping templates for `application/json` and `application/x-www-form-urlencoded` content types. The default template would pass the request body as input to the state machine. If you need access to other contextual information about the HTTP request such as headers, path parameters, etc. then you can also use the `lambda_proxy` request template like this:
+
+```yml
+stepFunctions:
+  stateMachines:
+    hello:
+      events:
+        - http:
+            path: posts/create
+            method: POST
+            request:
+              template: lambda_proxy
+```
+
+This would generate the normal LAMBDA_PROXY template used for API Gateway integration with Lambda functions.
 
 #### Customizing request body mapping templates
 
-The plugin generates default body mapping templates for `application/json` and `application/x-www-form-urlencoded` content types. If you'd like to add more content types or customize the default ones, you can do so by including your custom [API Gateway request mapping template](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html) in `serverless.yml` like so:
+If you'd like to add content types or customize the default templates, you can do so by including your custom [API Gateway request mapping template](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html) in `serverless.yml` like so:
 
 ```yml
 stepFunctions:
@@ -472,13 +504,13 @@ stepFunctions:
 ```
 
 #### Send request to an API
+
 You can input an value as json in request body, the value is passed as the input value of your statemachine
 
-```
-$ curl -XPOST https://xxxxxxxxx.execute-api.us-east-1.amazonaws.com/dev/posts/create -d '{"foo":"bar"}'
-```
+`$ curl -XPOST https://xxxxxxxxx.execute-api.us-east-1.amazonaws.com/dev/posts/create -d '{"foo":"bar"}'`
 
 #### Setting API keys for your Rest API
+
 You can specify a list of API keys to be used by your service Rest API by adding an apiKeys array property to the provider object in serverless.yml. You'll also need to explicitly specify which endpoints are private and require one of the api keys to be included in the request by adding a private boolean property to the http event object you want to set as private. API Keys are created globally, so if you want to deploy your service to different stages make sure your API key contains a stage variable as defined below. When using API keys, you can optionally define usage plan quota and throttle, using usagePlan object.
 
 Here's an example configuration for setting API keys for your service Rest API:
@@ -519,7 +551,7 @@ functions:
               HelloWorld1:
                 Type: Task
                 Resource:
-                  Ref: HelloLambdaFunction
+                  Fn::GetAtt: [HelloLambdaFunction, Arn]
                 End: true
 
 
@@ -533,6 +565,7 @@ Please note that those are the API keys names, not the actual values. Once you d
 Clients connecting to this Rest API will then need to set any of these API keys values in the x-api-key header of their request. This is only necessary for functions where the private property is set to true.
 
 ### Schedule
+
 The following config will attach a schedule event and causes the stateMachine `crawl` to be called every 2 hours. The configuration allows you to attach multiple schedules to the same stateMachine. You can either use the `rate` or `cron` syntax. Take a look at the [AWS schedule syntax documentation](http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html) for more details.
 
 ```yaml
@@ -592,9 +625,10 @@ events:
   - schedule:
       rate: rate(2 hours)
       role: arn:aws:iam::xxxxxxxx:role/yourRole
-
+```
 
 ### CloudWatch Event
+
 ## Simple event definition
 
 This will enable your Statemachine to be called by an EC2 event rule.
@@ -733,20 +767,20 @@ You can specify tags on each state machine. Additionally any global tags (specif
 ## Command
 
 ### deploy
+
 Run `sls deploy`, the defined Stepfunctions are deployed.
 
 ### invoke
-```
-$ sls invoke stepf --name <stepfunctionname> --data '{"foo":"bar"}'
-```
+
+`$ sls invoke stepf --name <stepfunctionname> --data '{"foo":"bar"}'`
 
 #### options
 
-- --name or -n The name of the step function in your service that you want to invoke. Required.
-- --stage or -s The stage in your service you want to invoke your step function.
-- --region or -r The region in your stage that you want to invoke your step function.
-- --data or -d String data to be passed as an event to your step function.
-- --path or -p The path to a json file with input data to be passed to the invoked step function.
+* --name or -n The name of the step function in your service that you want to invoke. Required.
+* --stage or -s The stage in your service you want to invoke your step function.
+* --region or -r The region in your stage that you want to invoke your step function.
+* --data or -d String data to be passed as an event to your step function.
+* --path or -p The path to a json file with input data to be passed to the invoked step function.
 
 ## IAM Role
 
@@ -784,7 +818,9 @@ resources:
 The short form of the intrinsic functions (i.e. `!Sub`, `!Ref`) is not supported at the moment.
 
 ## Tips
+
 ### How to specify the stateMachine ARN to environment variables
+
 Here is serverless.yml sample to specify the stateMachine ARN to environment variables.
 This makes it possible to trigger your statemachine through Lambda events
 
@@ -812,8 +848,11 @@ resources:
 plugins:
   - serverless-step-functions
 ```
+
 ## Sample statemachines setting in serverless.yml
+
 ### Wait State
+
 ``` yaml
 functions:
   hello:
@@ -829,7 +868,7 @@ stepFunctions:
           FirstState:
             Type: Task
             Resource:
-              Ref: HelloLambdaFunction
+              Fn::GetAtt: [HelloLambdaFunction, Arn]
             Next: wait_using_seconds
           wait_using_seconds:
             Type: Wait
@@ -850,7 +889,7 @@ stepFunctions:
           FinalState:
             Type: Task
             Resource:
-              Ref: HelloLambdaFunction
+              Fn::GetAtt: [HelloLambdaFunction, Arn]
             End: true
 plugins:
   - serverless-step-functions
@@ -858,6 +897,7 @@ plugins:
 ```
 
 ### Retry Failture
+
 ``` yaml
 functions:
   hello:
@@ -873,7 +913,7 @@ stepFunctions:
           HelloWorld:
             Type: Task
             Resource:
-              Ref: HelloLambdaFunction
+              Fn::GetAtt: [HelloLambdaFunction, Arn]
             Retry:
             - ErrorEquals:
               - HandledError
@@ -954,7 +994,7 @@ stepFunctions:
           HelloWorld:
             Type: Task
             Resource:
-              Ref: HelloLambdaFunction
+              Fn::GetAtt: [HelloLambdaFunction, Arn]
             Catch:
             - ErrorEquals: ["HandledError"]
               Next: CustomErrorFallback
@@ -1003,7 +1043,7 @@ stepFunctions:
           FirstState:
             Type: Task
             Resource:
-              Ref: Hello1LambdaFunction
+              Fn::GetAtt: [Hello1LambdaFunction, Arn]
             Next: ChoiceState
           ChoiceState:
             Type: Choice
@@ -1018,12 +1058,12 @@ stepFunctions:
           FirstMatchState:
             Type: Task
             Resource:
-              Ref: Hello2LambdaFunction
+              Fn::GetAtt: [Hello2LambdaFunction, Arn]
             Next: NextState
           SecondMatchState:
             Type: Task
             Resource:
-              Ref: Hello3LambdaFunction
+              Fn::GetAtt: [Hello3LambdaFunction, Arn]
             Next: NextState
           DefaultState:
             Type: Fail
@@ -1031,7 +1071,7 @@ stepFunctions:
           NextState:
             Type: Task
             Resource:
-              Ref: Hello4LambdaFunction
+              Fn::GetAtt: [Hello4LambdaFunction, Arn]
             End: true
 plugins:
   - serverless-step-functions
