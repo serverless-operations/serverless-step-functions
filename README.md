@@ -226,6 +226,46 @@ alarms:
   treatMissingData: ignore # default
 ```
 
+#### CloudWatch Notifications
+
+You can monitor the execution state of your state machines [via CloudWatch Events](https://aws.amazon.com/about-aws/whats-new/2019/05/aws-step-functions-adds-support-for-workflow-execution-events/). It allows you to be alerted when the status of your state machine changes to `ABORTED`, `FAILED`, `RUNNING`, `SUCCEEDED` or `TIMED_OUT`.
+
+You can configure CloudWatch Events to send notification to a number of targets. Currently this plugin supports `sns`, `sqs`, `kinesis`, `firehose`, `lambda` and `stepFunctions`.
+
+To configure status change notifications to your state machine, you can add a `notifications` like below:
+
+```yml
+stepFunctions:
+  stateMachines:
+    hellostepfunc1:
+      name: test
+      definition:
+        ...
+      notifications:
+        ABORTED:
+          - sns: SNS_TOPIC_ARN
+          - sqs: SQS_TOPIC_ARN
+          - sqs: # for FIFO queues, which requires you to configure the message group ID
+              arn: SQS_TOPIC_ARN
+              messageGroupId: 12345
+          - lambda: LAMBDA_FUNCTION_ARN
+          - kinesis: KINESIS_STREAM_ARN
+          - kinesis:
+               arn: KINESIS_STREAM_ARN
+               partitionKeyPath: $.id # used to choose the parition key from payload
+          - firehose: FIREHOSE_STREAM_ARN
+          - stepFunctions: STATE_MACHINE_ARN
+        FAILED:
+          ... # same as above
+        ... # other status
+```
+
+As you can see from the above example, you can configure different notification targets for each type of status change. If you want to configure the same targets for multiple status changes, then consider using [YML anchors](https://blog.daemonl.com/2016/02/yaml.html) to keep your YML succinct.
+
+CloudFormation intrinsic functions such as `Ref` and `Fn::GetAtt` are supported.
+
+When setting up a notification target against a FIFO SQS queue, the queue must enable the content-based deduplication option and you must configure the `messageGroupId`.
+
 #### Current Gotcha
 
 Please keep this gotcha in mind if you want to reference the `name` from the `resources` section. To generate Logical ID for CloudFormation, the plugin transforms the specified name in serverless.yml based on the following scheme.

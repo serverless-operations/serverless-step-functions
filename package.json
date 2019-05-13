@@ -41,11 +41,13 @@
     "semantic-release": "^15.13.3"
   },
   "dependencies": {
-    "serverless": "^1.29.2",
+    "@hapi/joi": "^15.0.2",
     "aws-sdk": "^2.282.1",
     "bluebird": "^3.4.0",
     "chalk": "^1.1.1",
-    "lodash": "^4.17.10"
+    "chance": "^1.0.18",
+    "lodash": "^4.17.10",
+    "serverless": "^1.29.2"
   },
   "husky": {
     "hooks": {
