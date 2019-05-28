@@ -543,6 +543,27 @@ stepFunctions:
       definition:
 ```
 
+#### Customizing response body mapping templates
+
+If you'd like to add content types or customize the default templates, you can do so by including your custom [API Gateway response mapping template](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html) in `serverless.yml` like so:
+
+```yml
+stepFunctions:
+  stateMachines:
+    hello:
+      events:
+        - http:
+            path: posts/create
+            method: POST
+            response:
+              statusCodes:
+                200:
+                  pattern: ''
+                  template: ''
+                  headers:
+                    Content-Type: "'application/json'"
+```
+
 #### Send request to an API
 
 You can input an value as json in request body, the value is passed as the input value of your statemachine
