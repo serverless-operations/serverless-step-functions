@@ -315,8 +315,6 @@ stepFunctions:
       definition:
 ```
 
-#### HTTP Endpoint with Extended Options
-
 Here You can define an POST endpoint for the path posts/create.
 
 ```yml
@@ -327,6 +325,22 @@ stepFunctions:
         - http:
             path: posts/create
             method: POST
+      definition:
+```
+
+#### HTTP Endpoint with custom IAM Role
+
+The plugin would generate an IAM Role for you by default. However, if you wish to use an IAM role that you have provisioned separately, then you can override the IAM Role like this:
+
+```yml
+stepFunctions:
+  stateMachines:
+    hello:
+      events:
+        - http:
+            path: posts/create
+            method: POST
+            iamRole: arn:aws:iam::<accountId>:role/<roleName>
       definition:
 ```
 
