@@ -497,6 +497,10 @@ stepFunctions:
               type: COGNITO_USER_POOLS # TOKEN, CUSTOM or COGNITO_USER_POOLS, same as AWS Cloudformation documentation
               authorizerId:
                 Ref: ApiGatewayAuthorizer  # or hard-code Authorizer ID
+              # [Optional] you can also specify the OAuth scopes for Cognito
+              scopes:
+                - scope1
+                ...
 ```
 
 #### LAMBDA_PROXY request template
