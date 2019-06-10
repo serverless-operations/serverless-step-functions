@@ -4,6 +4,32 @@
 
 This is the Serverless Framework plugin for AWS Step Functions.
 
+## TOC
+
+ - [Install](#install)
+ - [Setup](#Setup)
+     - [Adding a custom name for a state machine](#adding-a-custom-name-for-a-statemachine)
+     - [Adding a custom logical id for a stateMachine](#adding-a-custom-logical-id-for-a-statemachine)
+     - [Depending on another logical id](#depending-on-another-logical-id)
+     - [CloudWatch Alarms](#cloudwatch-alarms)
+     - [CloudWatch Notifications](#cloudwatch-notifications)
+ - [Current Gotcha](#current-gotcha)
+ - [Events](#events)
+     - [API Gateway](#api-gateway)
+         - [Simple HTTP endpoint](#simple-http-endpoint)
+         - [HTTP Endpoint with custom IAM Role](#http-endpoint-with-custom-iam-role)
+         - [Share API Gateway and API Resources](#share-api-gateway-and-api-resources)
+         - [Enabling CORS](#enabling-cors)
+         - [HTTP Endpoints with AWS_IAM Authorizers](#http-endpoints-with-aws_iam-authorizers)
+         - [HTTP Endpoints with Custom Authorizers](#http-endpoints-with-custom-authorizers)
+         - [Shared Authorizer](#shared-authorizer)
+         - [LAMBDA_PROXY request template](#lambda_proxy-request-template)
+         - [Customizing request body mapping templates](#customizing-request-body-mapping-templates)
+         - [Send request to an API](#send-request-to-an-api)
+         - [Setting API keys for your Rest API](#setting-api-keys-for-your-rest-api)
+     - [Schedule](#schedule)
+         - [Enabling / Disabling](#enabling--disabling)
+
 ## Install
 
 Run `npm install` in your Serverless project.
@@ -140,7 +166,7 @@ plugins:
 
 You can then `Ref: SendMessageStateMachine` in various parts of CloudFormation or serverless.yml
 
-#### Depending on another logical id
+### Depending on another logical id
 
 If your state machine depends on another resource defined in your `serverless.yml` then you can add a `dependsOn` field to the state machine `definition`. This would add the `DependsOn`clause to the generated CloudFormation template.
 
@@ -158,7 +184,7 @@ stepFunctions:
         - myStream
 ```
 
-#### CloudWatch Alarms
+### CloudWatch Alarms
 
 It's common practice to want to monitor the health of your state machines and be alerted when something goes wrong. You can either:
 
@@ -226,7 +252,7 @@ alarms:
   treatMissingData: ignore # default
 ```
 
-#### CloudWatch Notifications
+### CloudWatch Notifications
 
 You can monitor the execution state of your state machines [via CloudWatch Events](https://aws.amazon.com/about-aws/whats-new/2019/05/aws-step-functions-adds-support-for-workflow-execution-events/). It allows you to be alerted when the status of your state machine changes to `ABORTED`, `FAILED`, `RUNNING`, `SUCCEEDED` or `TIMED_OUT`.
 
@@ -266,7 +292,7 @@ CloudFormation intrinsic functions such as `Ref` and `Fn::GetAtt` are supported.
 
 When setting up a notification target against a FIFO SQS queue, the queue must enable the content-based deduplication option and you must configure the `messageGroupId`.
 
-#### Current Gotcha
+## Current Gotcha
 
 Please keep this gotcha in mind if you want to reference the `name` from the `resources` section. To generate Logical ID for CloudFormation, the plugin transforms the specified name in serverless.yml based on the following scheme.
 
@@ -493,7 +519,7 @@ stepFunctions:
       definition:
 ```
 
-### Share Authorizer
+#### Shared Authorizer
 
 Auto-created Authorizer is convenient for conventional setup. However, when you need to define your custom Authorizer, or use COGNITO_USER_POOLS authorizer with shared API Gateway, it is painful because of AWS limitation. Sharing Authorizer is a better way to do.
 
@@ -636,7 +662,7 @@ stepFunctions:
       definition:
 ```
 
-## Enabling / Disabling
+#### Enabling / Disabling
 
 **Note:** `schedule` events are enabled by default.
 
@@ -662,7 +688,7 @@ stepFunctions:
             inputPath: '$.stageVariables'
 ```
 
-## Specify Name and Description
+#### Specify Name and Description
 
 Name and Description can be specified for a schedule event. These are not required properties.
 
@@ -674,7 +700,7 @@ events:
       rate: rate(2 hours)
 ```
 
-## Scheduled Events IAM Role
+#### Scheduled Events IAM Role
 
 By default, the plugin will create a new IAM role that allows AWS Events to start your state machine. Note that this role is different than the role assumed by the state machine. You can specify your own role instead (it must allow `events.amazonaws.com` to assume it, and it must be able to run `states:StartExecution` on your state machine):
 
@@ -687,7 +713,7 @@ events:
 
 ### CloudWatch Event
 
-## Simple event definition
+#### Simple event definition
 
 This will enable your Statemachine to be called by an EC2 event rule.
 Please check the page of [Event Types for CloudWatch Events](http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/EventTypes.html).
@@ -710,7 +736,7 @@ stepFunctions:
         ...
 ```
 
-## Enabling / Disabling
+#### Enabling / Disabling
 
 **Note:** `cloudwatchEvent` events are enabled by default.
 
@@ -735,7 +761,7 @@ stepFunctions:
         ...
 ```
 
-## Specify Input or Inputpath
+#### Specify Input or Inputpath
 
 You can specify input values ​​to the Lambda function.
 
@@ -772,7 +798,7 @@ stepFunctions:
         ...
 ```
 
-## Specifying a Description
+#### Specifying a Description
 
 You can also specify a CloudWatch Event description.
 
@@ -795,7 +821,7 @@ stepFunctions:
         ...
 ```
 
-## Specifying a Name
+#### Specifying a Name
 
 You can also specify a CloudWatch Event name. Keep in mind that the name must begin with a letter; contain only ASCII letters, digits, and hyphens; and not end with a hyphen or contain two consecutive hyphens. More infomation [here](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-name.html).
 
@@ -818,7 +844,7 @@ stepFunctions:
         ...
 ```
 
-## Tags
+### Tags
 
 You can specify tags on each state machine. Additionally any global tags (specified under `provider` section in your `serverless.yml`) would be merged in as well.
 
