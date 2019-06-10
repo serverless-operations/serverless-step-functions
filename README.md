@@ -29,6 +29,27 @@ This is the Serverless Framework plugin for AWS Step Functions.
          - [Setting API keys for your Rest API](#setting-api-keys-for-your-rest-api)
      - [Schedule](#schedule)
          - [Enabling / Disabling](#enabling--disabling)
+         - [Specify Name and Description](#specify-name-and-description)
+         - [Scheduled Events IAM Role](#scheduled-events-iam-role)
+     - [CloudWatch Event](#cloudwatch-event)
+         - [Simple event definition](#simple-event-definition)
+         - [Enabling / Disabling](#enabling--disabling-1)
+         - [Specify Input or Inputpath](#specify-input-or-inputpath)
+         - [Specifying a Description](#specifying-a-description)
+         - [Specifying a Name](#specifying-a-name)
+ - [Tags](#tags)
+ - [Commands](#commands)
+     - [deploy](#deploy)
+     - [invoke](#invoke)
+ - [IAM Role](#iam-role)
+ - [Tips](#tips)
+     - [How to specify the stateMachine ARN to environment variables](#how-to-specify-the-statemachine-arn-to-environment-variables)
+ - [Sample statemachines setting in serverless.yml](#sample-statemachines-setting-in-serverlessyml)
+     - [Wait State](#wait-state)
+     - [Retry Failure](#retry-failure)
+     - [Parallel](#parallel)
+     - [Catch Failure](#catch-failure)
+     - [Choice](#choice)
 
 ## Install
 
@@ -844,11 +865,11 @@ stepFunctions:
         ...
 ```
 
-### Tags
+## Tags
 
 You can specify tags on each state machine. Additionally any global tags (specified under `provider` section in your `serverless.yml`) would be merged in as well.
 
-## Command
+## Commands
 
 ### deploy
 
@@ -980,7 +1001,7 @@ plugins:
   - serverless-pseudo-parameters
 ```
 
-### Retry Failture
+### Retry Failure
 
 ``` yaml
 functions:
