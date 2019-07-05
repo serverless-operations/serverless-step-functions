@@ -17,6 +17,7 @@ This is the Serverless Framework plugin for AWS Step Functions.
  - [Events](#events)
      - [API Gateway](#api-gateway)
          - [Simple HTTP endpoint](#simple-http-endpoint)
+         - [Custom Step Functions Action](#custom-step-functions-action)
          - [HTTP Endpoint with custom IAM Role](#http-endpoint-with-custom-iam-role)
          - [Share API Gateway and API Resources](#share-api-gateway-and-api-resources)
          - [Enabling CORS](#enabling-cors)
@@ -374,6 +375,40 @@ stepFunctions:
             method: POST
       definition:
 ```
+
+#### Custom Step Functions Action
+
+Step Functions have custom actions like DescribeExecution or StopExecution to fetch and control them. You can use custom actions like this:
+
+```yml
+stepFunctions:
+  stateMachines:
+    start:
+      events:
+        - http:
+            path: action/start
+            method: POST
+      definition:
+        ...
+    status:
+      events:
+        - http:
+            path: action/status
+            method: POST
+            action: DescribeExecution
+      definition:
+        ...
+    stop:
+      events:
+        - http:
+            path: action/stop
+            method: POST
+            action: StopExecution
+      definition:
+        ...
+```
+
+Request template is not used when action is set because there're a bunch of actions. However if you want to use request template you can use [Customizing request body mapping templates](#customizing-request-body-mapping-templates).
 
 #### HTTP Endpoint with custom IAM Role
 
