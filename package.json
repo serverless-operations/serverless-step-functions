@@ -22,9 +22,9 @@
   },
   "homepage": "https://github.com/horike37/serverless-step-functions#readme",
   "devDependencies": {
-    "chai": "^3.5.0",
     "@commitlint/cli": "^7.5.2",
     "@commitlint/config-conventional": "^7.5.0",
+    "chai": "^3.5.0",
     "coveralls": "^3.0.2",
     "eslint": "^3.3.1",
     "eslint-config-airbnb": "^10.0.1",
@@ -37,8 +37,8 @@
     "lint-staged": "^8.1.4",
     "mocha": "^5.2.0",
     "mocha-lcov-reporter": "^1.2.0",
-    "sinon": "^1.17.5",
-    "semantic-release": "^15.13.3"
+    "semantic-release": "^15.13.19",
+    "sinon": "^1.17.5"
   },
   "dependencies": {
     "@hapi/joi": "^15.0.2",
@@ -46,8 +46,8 @@
     "bluebird": "^3.4.0",
     "chalk": "^1.1.1",
     "chance": "^1.0.18",
-    "lodash": "^4.17.10",
-    "serverless": "^1.29.2"
+    "lodash": "^4.17.11",
+    "serverless": "^1.46.1"
   },
   "husky": {
     "hooks": {
