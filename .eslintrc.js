@@ -3,8 +3,10 @@ module.exports = {
   "plugins": [],
   "rules": {
     "func-names": "off",
-
-    // doesn't work in node v4 :(
+    "prefer-destructuring": "off",
+    "no-plusplus": "off",
+    "no-template-curly-in-string": "off",
+    "no-restricted-syntax": "off",
     "strict": "off",
     "prefer-rest-params": "off",
     "react/require-extension" : "off",
