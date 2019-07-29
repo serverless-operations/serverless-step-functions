@@ -67,7 +67,7 @@ plugins:
 
 ## Setup
 
-Specifies your statemachine definition using Amazon States Language in a `definition` statement in serverless.yml. You can use CloudFormation intrinsic functions such as `Ref` and `Fn::GetAtt` to reference Lambda functions, SNS topics, SQS queues and DynamoDB tables declared in the same `serverless.yml`.
+Specifies your statemachine definition using Amazon States Language in a `definition` statement in serverless.yml. You can use CloudFormation intrinsic functions such as `Ref` and `Fn::GetAtt` to reference Lambda functions, SNS topics, SQS queues and DynamoDB tables declared in the same `serverless.yml`. Since `Ref` returns different things (ARN, ID, resource name, etc.) depending on the type of CloudFormation resource, please refer to [this page](https://theburningmonk.com/cloudformation-ref-and-getatt-cheatsheet/) to see whether you need to use `Ref` or `Fn::GetAtt`.
 
 Alternatively, you can also provide the raw ARN, or SQS queue URL, or DynamoDB table name as a string. If you need to construct the ARN by hand, then we recommend to use the [serverless-pseudo-parameters](https://www.npmjs.com/package/serverless-pseudo-parameters) plugin together to make your life easier.
 
@@ -139,6 +139,8 @@ plugins:
   - serverless-step-functions
   - serverless-pseudo-parameters
 ```
+
+In the above example, notice that we used `Fn::GetAtt: [HelloLambdaFunction, Arn]` to get the ARN for the `hello` function defined earlier. The `Serverless` framework generates the logical resource name `HelloLambdaFunction` from the name used in the `functions` section of the `serverless.yml`. If you're unfamiliar with the convention the `Serverless` framework uses, then the easiest thing to do is to first run `sls package` then look in the `.serverless` folder for the generated CloudFormation template. Here you can find the logical resource names for the functions you want to reference.
 
 ### Adding a custom name for a stateMachine
 
