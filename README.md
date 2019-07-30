@@ -67,7 +67,7 @@ plugins:
 
 ## Setup
 
-Specifies your statemachine definition using Amazon States Language in a `definition` statement in serverless.yml. You can use CloudFormation intrinsic functions such as `Ref` and `Fn::GetAtt` to reference Lambda functions, SNS topics, SQS queues and DynamoDB tables declared in the same `serverless.yml`.
+Specifies your statemachine definition using Amazon States Language in a `definition` statement in serverless.yml. You can use CloudFormation intrinsic functions such as `Ref` and `Fn::GetAtt` to reference Lambda functions, SNS topics, SQS queues and DynamoDB tables declared in the same `serverless.yml`. Since `Ref` returns different things (ARN, ID, resource name, etc.) depending on the type of CloudFormation resource, please refer to [this page](https://theburningmonk.com/cloudformation-ref-and-getatt-cheatsheet/) to see whether you need to use `Ref` or `Fn::GetAtt`.
 
 Alternatively, you can also provide the raw ARN, or SQS queue URL, or DynamoDB table name as a string. If you need to construct the ARN by hand, then we recommend to use the [serverless-pseudo-parameters](https://www.npmjs.com/package/serverless-pseudo-parameters) plugin together to make your life easier.
 
@@ -99,7 +99,7 @@ stepFunctions:
           HelloWorld1:
             Type: Task
             Resource:
-              Fn::GetAtt: [HelloLambdaFunction, Arn]
+              Fn::GetAtt: [hello, Arn]
             End: true
       dependsOn: CustomIamRole
       tags:
@@ -123,7 +123,7 @@ stepFunctions:
           HelloWorld2:
             Type: Task
             Resource:
-              Fn::GetAtt: [HelloLambdaFunction, Arn]
+              Fn::GetAtt: [hello, Arn]
             End: true
       dependsOn:
         - DynamoDBTable
@@ -139,6 +139,10 @@ plugins:
   - serverless-step-functions
   - serverless-pseudo-parameters
 ```
+
+In the example above, notice that we used `Fn::GetAtt: [hello, Arn]` to get the ARN for the `hello` function defined earlier. This means you don't have to know how the `Serverless` framework converts these local names to CloudFormation logical IDs (e.g. `hello-world` becomes `HelloDashworldLambdaFunction`).
+
+However, if you prefer to work with logical IDs, you can. You can also express the above `Fn::GetAtt` function as `Fn::GetAtt: [HelloLambdaFunction, Arn]`. If you're unfamiliar with the convention the `Serverless` framework uses, then the easiest thing to do is to first run `sls package` then look in the `.serverless` folder for the generated CloudFormation template. Here you can find the logical resource names for the functions you want to reference.
 
 ### Adding a custom name for a stateMachine
 
@@ -691,7 +695,7 @@ functions:
               HelloWorld1:
                 Type: Task
                 Resource:
-                  Fn::GetAtt: [HelloLambdaFunction, Arn]
+                  Fn::GetAtt: [hello, Arn]
                 End: true
 
 
@@ -1008,7 +1012,7 @@ stepFunctions:
           FirstState:
             Type: Task
             Resource:
-              Fn::GetAtt: [HelloLambdaFunction, Arn]
+              Fn::GetAtt: [hello, Arn]
             Next: wait_using_seconds
           wait_using_seconds:
             Type: Wait
@@ -1029,7 +1033,7 @@ stepFunctions:
           FinalState:
             Type: Task
             Resource:
-              Fn::GetAtt: [HelloLambdaFunction, Arn]
+              Fn::GetAtt: [hello, Arn]
             End: true
 plugins:
   - serverless-step-functions
@@ -1053,7 +1057,7 @@ stepFunctions:
           HelloWorld:
             Type: Task
             Resource:
-              Fn::GetAtt: [HelloLambdaFunction, Arn]
+              Fn::GetAtt: [hello, Arn]
             Retry:
             - ErrorEquals:
               - HandledError
@@ -1134,7 +1138,7 @@ stepFunctions:
           HelloWorld:
             Type: Task
             Resource:
-              Fn::GetAtt: [HelloLambdaFunction, Arn]
+              Fn::GetAtt: [hello, Arn]
             Catch:
             - ErrorEquals: ["HandledError"]
               Next: CustomErrorFallback
@@ -1183,7 +1187,7 @@ stepFunctions:
           FirstState:
             Type: Task
             Resource:
-              Fn::GetAtt: [Hello1LambdaFunction, Arn]
+              Fn::GetAtt: [hello, Arn]
             Next: ChoiceState
           ChoiceState:
             Type: Choice
@@ -1198,12 +1202,12 @@ stepFunctions:
           FirstMatchState:
             Type: Task
             Resource:
-              Fn::GetAtt: [Hello2LambdaFunction, Arn]
+              Fn::GetAtt: [hello2, Arn]
             Next: NextState
           SecondMatchState:
             Type: Task
             Resource:
-              Fn::GetAtt: [Hello3LambdaFunction, Arn]
+              Fn::GetAtt: [hello3, Arn]
             Next: NextState
           DefaultState:
             Type: Fail
@@ -1211,7 +1215,7 @@ stepFunctions:
           NextState:
             Type: Task
             Resource:
-              Fn::GetAtt: [Hello4LambdaFunction, Arn]
+              Fn::GetAtt: [hello4, Arn]
             End: true
 plugins:
   - serverless-step-functions
