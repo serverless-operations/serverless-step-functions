@@ -14,6 +14,7 @@ This is the Serverless Framework plugin for AWS Step Functions.
      - [CloudWatch Alarms](#cloudwatch-alarms)
      - [CloudWatch Notifications](#cloudwatch-notifications)
      - [Blue-Green deployments](#blue-green-deployment)
+     - [Pre-deployment validation](#pre-deployment-validation)
  - [Current Gotcha](#current-gotcha)
  - [Events](#events)
      - [API Gateway](#api-gateway)
@@ -135,6 +136,7 @@ stepFunctions:
   activities:
     - myTask
     - yourTask
+  validate: true # enable pre-deployment definition validation (disabled by default)
 
 plugins:
   - serverless-step-functions
@@ -332,6 +334,15 @@ stepFunctions:
       useExactVersion: true
       definition:
         ...
+```
+
+### Pre-deployment validation
+
+By default, your state machine definition will be validated during deployment by StepFunctions. This can be cumbersome when developing because you have to upload your service for every typo in your definition. In order to go faster, you can enable pre-deployment validation using [asl-validator](https://www.npmjs.com/package/asl-validator) which should detect most of the issues (like a missing state property).
+
+```yaml
+stepFunctions:
+  validate: true
 ```
 
 ## Current Gotcha
