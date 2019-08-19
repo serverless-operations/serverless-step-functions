@@ -13,6 +13,7 @@ This is the Serverless Framework plugin for AWS Step Functions.
      - [Depending on another logical id](#depending-on-another-logical-id)
      - [CloudWatch Alarms](#cloudwatch-alarms)
      - [CloudWatch Notifications](#cloudwatch-notifications)
+     - [Blue-Green deployments](#blue-green-deployment)
  - [Current Gotcha](#current-gotcha)
  - [Events](#events)
      - [API Gateway](#api-gateway)
@@ -317,6 +318,21 @@ As you can see from the above example, you can configure different notification 
 CloudFormation intrinsic functions such as `Ref` and `Fn::GetAtt` are supported.
 
 When setting up a notification target against a FIFO SQS queue, the queue must enable the content-based deduplication option and you must configure the `messageGroupId`.
+
+### Blue green deployment
+
+To implement a [blue-green deployment with Step Functions](https://theburningmonk.com/2019/08/how-to-do-blue-green-deployment-for-step-functions/) you need to reference the exact versions of the functions.
+
+To do this, you can specify `useExactVersion: true` in the state machine.
+
+```yml
+stepFunctions:
+  stateMachines:
+    hellostepfunc1:
+      useExactVersion: true
+      definition:
+        ...
+```
 
 ## Current Gotcha
 
