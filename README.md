@@ -1020,6 +1020,78 @@ plugins:
   - serverless-step-functions
 ```
 
+### How to split up state machines into files
+
+When you have a large serverless project with lots of state machines
+your serverless.yml file can grow to a point where it is unmaintainable.
+
+You can split step functions into external files and import them
+into your serverless.yml file.
+
+There are two ways you can do this:
+
+#### Single external file
+
+You can define the entire `stateMachines` block in a separate file
+and import it in its entirety.
+
+includes/state-machines.yml:
+
+```yml
+stateMachines:
+  hellostepfunc1:
+    name: myStateMachine1
+    definition:
+      <your definition>
+  hellostepfunc2:
+    name: myStateMachine2
+    definition:
+      <your definition>
+```
+
+serverless.yml:
+
+```yml
+stepFunctions:
+  ${file(includes/state-machines.yml)}
+
+plugins:
+  - serverless-step-functions
+```
+
+#### Separate Files
+
+You can split up the `stateMachines` block into separate files.
+
+includes/state-machine-1.yml:
+
+```yml
+name: myStateMachine1
+definition:
+  <your definition>
+```
+
+includes/state-machine-2.yml:
+
+```yml
+name: myStateMachine2
+definition:
+  <your definition>
+```
+
+serverless.yml:
+
+```yml
+stepFunctions:
+  hellostepfunc1:
+    ${file(includes/state-machine-1.yml)}
+  hellostepfunc2:
+    ${file(includes/state-machine-2.yml)}
+
+plugins:
+  - serverless-step-functions
+```
+
 ## Sample statemachines setting in serverless.yml
 
 ### Wait State
