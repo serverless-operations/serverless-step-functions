@@ -47,6 +47,7 @@ This is the Serverless Framework plugin for AWS Step Functions.
  - [IAM Role](#iam-role)
  - [Tips](#tips)
      - [How to specify the stateMachine ARN to environment variables](#how-to-specify-the-statemachine-arn-to-environment-variables)
+     - [How to split up state machines into files](#how-to-split-up-state-machines-into-files)
  - [Sample statemachines setting in serverless.yml](#sample-statemachines-setting-in-serverlessyml)
      - [Wait State](#wait-state)
      - [Retry Failure](#retry-failure)
