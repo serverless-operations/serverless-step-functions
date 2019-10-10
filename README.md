@@ -54,6 +54,7 @@ This is the Serverless Framework plugin for AWS Step Functions.
      - [Parallel](#parallel)
      - [Catch Failure](#catch-failure)
      - [Choice](#choice)
+     - [Map](#map)
 
 ## Install
 
@@ -1320,4 +1321,42 @@ stepFunctions:
 plugins:
   - serverless-step-functions
   - serverless-pseudo-parameters
+```
+
+### Map
+
+```yaml
+
+functions:
+  entry:
+    handler: handler.entry
+  mapTask:
+    handler: handler.mapTask
+
+stepFunctions:
+  stateMachines:
+    yourMapMachine:
+      definition:
+        Comment: "A Map example of the Amazon States Language using an AWS Lambda Function"
+        StartAt: FirstState
+        States:
+          FirstState:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [entry, Arn]
+            Next: mapped_task
+          mapped_task:
+            Type: Map
+            Iterator:
+              StartAt: FirstMapTask
+              States:
+                FirstMapTask:
+                  Type: Task
+                  Resource:
+                    Fn::GetAtt: [mapTask, Arn]
+                  End: true
+            End: true
+
+plugins:
+  - serverless-step-functions
 ```
