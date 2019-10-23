@@ -40,6 +40,7 @@ This is the Serverless Framework plugin for AWS Step Functions.
          - [Specify Input or Inputpath](#specify-input-or-inputpath)
          - [Specifying a Description](#specifying-a-description)
          - [Specifying a Name](#specifying-a-name)
+         - [Specifying a custom CloudWatch EventBus](#specifying-a-custom-cloudwatch-eventbus)
  - [Tags](#tags)
  - [Commands](#commands)
      - [deploy](#deploy)
@@ -926,6 +927,29 @@ stepFunctions:
                 - "aws.ec2"
               detail-type:
                 - "EC2 Instance State-change Notification"
+              detail:
+                state:
+                  - pending
+      definition:
+        ...
+```
+
+#### Specifying a custom CloudWatch EventBus
+
+You can choose which CloudWatch Event bus to listen to:
+
+```yml
+stepFunctions:
+  stateMachines:
+    cloudwatchEvent:
+      events:
+        - cloudwatchEvent:
+            eventBusName: 'my-custom-event-bus'
+            event:
+              source:
+                - "my.custom.source"
+              detail-type:
+                - "My Event Type"
               detail:
                 state:
                   - pending
