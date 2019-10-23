@@ -40,6 +40,7 @@ This is the Serverless Framework plugin for AWS Step Functions.
          - [Specify Input or Inputpath](#specify-input-or-inputpath)
          - [Specifying a Description](#specifying-a-description)
          - [Specifying a Name](#specifying-a-name)
+         - [Specifying a custom CloudWatch EventBus](#specifying-a-custom-cloudwatch-eventbus)
  - [Tags](#tags)
  - [Commands](#commands)
      - [deploy](#deploy)
