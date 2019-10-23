@@ -933,6 +933,29 @@ stepFunctions:
         ...
 ```
 
+#### Specifying a custom CloudWatch EventBus
+
+You can choose which CloudWatch Event bus to listen to:
+
+```yml
+stepFunctions:
+  stateMachines:
+    cloudwatchEvent:
+      events:
+        - cloudwatchEvent:
+            eventBusName: 'my-custom-event-bus'
+            event:
+              source:
+                - "my.custom.source"
+              detail-type:
+                - "My Event Type"
+              detail:
+                state:
+                  - pending
+      definition:
+        ...
+```
+
 ## Tags
 
 You can specify tags on each state machine. Additionally any global tags (specified under `provider` section in your `serverless.yml`) would be merged in as well.
