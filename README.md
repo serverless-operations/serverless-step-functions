@@ -15,6 +15,7 @@ This is the Serverless Framework plugin for AWS Step Functions.
      - [CloudWatch Notifications](#cloudwatch-notifications)
      - [Blue-Green deployments](#blue-green-deployment)
      - [Pre-deployment validation](#pre-deployment-validation)
+     - [Express Workflow](#express-workflow)
  - [Current Gotcha](#current-gotcha)
  - [Events](#events)
      - [API Gateway](#api-gateway)
@@ -346,6 +347,24 @@ By default, your state machine definition will be validated during deployment by
 ```yaml
 stepFunctions:
   validate: true
+```
+
+### Express Workflow
+
+At re:invent 2019, AWS [introduced Express Workflows](https://aws.amazon.com/about-aws/whats-new/2019/12/introducing-aws-step-functions-express-workflows/) as a cheaper, more scalable alternative (but with a cut-down set of features). See [this page](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-standard-vs-express.html) for differences between standard and express workflows.
+
+To declare an express workflow, specify `type` as `EXPRESS` and you can specify the logging configuration (only applicable for express workflows).
+
+```yaml
+stepFunctions:
+  stateMachines:
+    hellostepfunc1:
+      type: EXPRESS
+      loggingConfig:
+        level: ERROR
+        includeExecutionData: true
+        destinations:
+          - Fn::GetAtt: [MyLogGroup, Arn]
 ```
 
 ## Current Gotcha
