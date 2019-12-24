@@ -980,6 +980,25 @@ stepFunctions:
 
 You can specify tags on each state machine. Additionally any global tags (specified under `provider` section in your `serverless.yml`) would be merged in as well.
 
+If you _don't_ want for global tags to be merged into your state machine, you can include the `inheritGlobalTags` property for your state machine.
+
+```yaml
+provider:
+  tags:
+    app: myApp
+    department: engineering
+stepFunctions:
+  stateMachines:
+    hellostepfunc1:
+      name: myStateMachine
+      inheritGlobalTags: false
+      tags:
+        score: 42
+      definition: something
+```
+
+As a result, `hellostepfunc1` will only have the tag of `score: 42`, and _not_ the tags at the provider level
+
 ## Commands
 
 ### deploy
