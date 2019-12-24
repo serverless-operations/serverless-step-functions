@@ -820,7 +820,7 @@ events:
       role: arn:aws:iam::xxxxxxxx:role/yourRole
 ```
 
-### CloudWatch Event
+### CloudWatch Event / EventBridge
 
 #### Simple event definition
 
@@ -845,9 +845,31 @@ stepFunctions:
         ...
 ```
 
+You can alternatively use EventBridge:
+
+```yml
+stepFunctions:
+  stateMachines:
+    first:
+      events:
+        - eventBridge:
+            event:
+              source:
+                - "aws.ec2"
+              detail-type:
+                - "EC2 Instance State-change Notification"
+              detail:
+                state:
+                  - pending
+      definition:
+        ...
+```
+
+All the configurations in this section applies to both `cloudwatchEvent` and `eventBridge`.
+
 #### Enabling / Disabling
 
-**Note:** `cloudwatchEvent` events are enabled by default.
+**Note:** `cloudwatchEvent` and `eventBridge` events are enabled by default.
 
 This will create and attach a disabled `cloudwatchEvent` event for the `myCloudWatch` statemachine.
 
