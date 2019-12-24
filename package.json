@@ -37,6 +37,7 @@
     "lint-staged": "^8.1.4",
     "mocha": "^5.2.0",
     "mocha-lcov-reporter": "^1.2.0",
+    "mocha-param": "^2.0.0",
     "semantic-release": "^15.13.19",
     "sinon": "^1.17.5"
   },
