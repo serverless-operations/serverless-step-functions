@@ -29,6 +29,7 @@ This is the Serverless Framework plugin for AWS Step Functions.
          - [Shared Authorizer](#shared-authorizer)
          - [LAMBDA_PROXY request template](#lambda_proxy-request-template)
          - [Customizing request body mapping templates](#customizing-request-body-mapping-templates)
+         - [Customizing response headers and templates](#customizing-response-headers-and-templates)
          - [Send request to an API](#send-request-to-an-api)
          - [Setting API keys for your Rest API](#setting-api-keys-for-your-rest-api)
      - [Schedule](#schedule)
@@ -693,6 +694,31 @@ stepFunctions:
                     "stateMachineArn":"arn:aws:states:#{AWS::Region}:#{AWS::AccountId}:stateMachine:processOrderFlow-${opt:stage}"
                   }
       name: processOrderFlow-${opt:stage}
+      definition:
+```
+
+#### Customizing response headers and templates
+
+If you'd like to add custom headers in the HTTP response, or customize the default response template (which just returns the response from Step Function's StartExecution API), then you can do so by including your custom headers and [API Gateway response mapping template](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html) in `serverless.yml` like so:
+
+```yml
+stepFunctions:
+  stateMachines:
+    hello:
+      events:
+        - http:
+            path: posts/create
+            method: POST
+            response:
+              headers:
+                Content-Type: "'application/json'"
+                X-Application-Id: "'my-app'"
+              template:
+                application/json: |
+                  {
+                    "status": 200,
+                    "info": "OK"
+                  }
       definition:
 ```
 
