@@ -981,7 +981,7 @@ Run `sls deploy`, the defined Stepfunctions are deployed.
 
 ## IAM Role
 
-The IAM roles required to run Statemachine are automatically generated for the state machines lambda, with the policy name of `StatesExecutionPolicy-<environment>`. This is given the default permissions of allowing the lambda InvokeFunction. You can also specify a custom ARN directly to the step functions lambda.
+The IAM roles required to run Statemachine are automatically generated for each state machine in the `serverless.yml`, with the IAM role name of `StatesExecutionPolicy-<environment>`. These roles are tailored to the services that the state machine integrates with, for example with Lambda the `InvokeFunction` is applied. You can also specify a custom ARN directly to the step functions lambda.
 
 Here's an example:
 
@@ -993,9 +993,9 @@ stepFunctions:
       definition:
 ```
 
-It is also possible to use the [CloudFormation intrinsic functions](https://docs.aws.amazon.com/en_en/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html) to reference resources from elsewhere. This allows for an IAM Role to be created and applied to the step function all within the serverless file. 
+It is also possible to use the [CloudFormation intrinsic functions](https://docs.aws.amazon.com/en_en/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html) to reference resources from elsewhere. This allows for an IAM role to be created, and applied to the state machines all within the serverless file. 
 
-The below example shows the policy needed if your step function needs the ability to send a message to an sqs queue. To apply the role either the RoleName can be used as a reference in the state machine, or the role ARN can be used like in the example above. It is important to note that if lambda roles are stored in a folder, this must be specified on the `Path` property on the new role.
+The below example shows the policy needed if your step function needs the ability to send a message to an sqs queue. To apply the role either the RoleName can be used as a reference in the state machine, or the role ARN can be used like in the example above. It is important to note that if you want to store your state machine role at a certain path, this must be specified on the `Path` property on the new role.
 
 ```yml
 stepFunctions:
@@ -1012,7 +1012,7 @@ resources:
       Type: AWS::IAM::Role
       Properties:
         RoleName: RoleName
-        Path: /path_to_lambda_roles/
+        Path: /path_of_state_machine_roles/
         AssumeRolePolicyDocument:
           Statement:
           - Effect: Allow
@@ -1029,7 +1029,8 @@ resources:
                 - Effect: Allow
                   Action:
                     - lambda:InvokeFunction
-                  Resource: "*"
+                  Resource:
+                    - arn:aws:lambda:lambdaName
                 - Effect: Allow
                   Action:
                     - sqs:SendMessage
