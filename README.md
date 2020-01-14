@@ -981,9 +981,7 @@ Run `sls deploy`, the defined Stepfunctions are deployed.
 
 ## IAM Role
 
-The IAM roles required to run Statemachine are automatically generated for the state machines lambda, with the policy name of `StatesExecutionPolicy-<environment>`. This is given the default permissions of allowing lambda InvokeFunction.
-
-However, it is also possible to specify ARN directly.
+The IAM roles required to run Statemachine are automatically generated for the state machines lambda, with the policy name of `StatesExecutionPolicy-<environment>`. This is given the default permissions of allowing the lambda InvokeFunction. You can also specify a custom ARN directly to the step functions lambda.
 
 Here's an example:
 
@@ -995,10 +993,9 @@ stepFunctions:
       definition:
 ```
 
-It is also possible to use the [CloudFormation intrinsic functions](https://docs.aws.amazon.com/en_en/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html) to reference resources from elsewhere. This allows for another IAM Role to be created and 
+It is also possible to use the [CloudFormation intrinsic functions](https://docs.aws.amazon.com/en_en/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html) to reference resources from elsewhere. This allows for an IAM Role to be created and applied to the step function all within the serverless file. 
 
-
-Example:
+The below example shows the policy needed if your step function needs the ability to send a message to an sqs queue. To apply the role either the RoleName can be used as a reference in the state machine, or the role ARN can be used like in the example above. It is important to note that if lambda roles are stored in a folder, this must be specified on the `Path` property on the new role.
 
 ```yml
 stepFunctions:
@@ -1014,8 +1011,8 @@ resources:
     StateMachineRole:
       Type: AWS::IAM::Role
       Properties:
-        RoleName: role
-        Path: /lambda_roles/
+        RoleName: RoleName
+        Path: /path_to_lambda_roles/
         AssumeRolePolicyDocument:
           Statement:
           - Effect: Allow
