@@ -981,7 +981,9 @@ Run `sls deploy`, the defined Stepfunctions are deployed.
 
 ## IAM Role
 
-The IAM roles required to run Statemachine are automatically generated. It is also possible to specify ARN directly.
+The IAM roles required to run Statemachine are automatically generated for the state machines lambda, with the policy name of `StatesExecutionPolicy-<environment>`. This is given the default permissions of allowing lambda InvokeFunction.
+
+However, it is also possible to specify ARN directly.
 
 Here's an example:
 
@@ -993,7 +995,10 @@ stepFunctions:
       definition:
 ```
 
-It is also possible to use the [CloudFormation intrinsic functions](https://docs.aws.amazon.com/en_en/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html) to reference resources from elsewhere:
+It is also possible to use the [CloudFormation intrinsic functions](https://docs.aws.amazon.com/en_en/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html) to reference resources from elsewhere. This allows for another IAM Role to be created and 
+
+
+Example:
 
 ```yml
 stepFunctions:
@@ -1009,7 +1014,30 @@ resources:
     StateMachineRole:
       Type: AWS::IAM::Role
       Properties:
-        ...
+        RoleName: role
+        Path: /lambda_roles/
+        AssumeRolePolicyDocument:
+          Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - states.amazonaws.com
+            Action:
+              - sts:AssumeRole
+        Policies:
+          - PolicyName: statePolicy
+            PolicyDocument:
+              Version: version
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - lambda:InvokeFunction
+                  Resource: "*"
+                - Effect: Allow
+                  Action:
+                    - sqs:SendMessage
+                  Resource:
+                    - arn:aws:sqs::xxxxxxxx:queueName
 ```
 
 The short form of the intrinsic functions (i.e. `!Sub`, `!Ref`) is not supported at the moment.
