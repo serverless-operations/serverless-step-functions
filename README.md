@@ -1067,7 +1067,7 @@ Run `sls deploy`, the defined Stepfunctions are deployed.
 
 ## IAM Role
 
-The IAM roles required to run Statemachine are automatically generated. It is also possible to specify ARN directly.
+The IAM roles required to run Statemachine are automatically generated for each state machine in the `serverless.yml`, with the IAM role name of `StatesExecutionPolicy-<environment>`. These roles are tailored to the services that the state machine integrates with, for example with Lambda the `InvokeFunction` is applied. You can also specify a custom ARN directly to the step functions lambda.
 
 Here's an example:
 
@@ -1079,7 +1079,9 @@ stepFunctions:
       definition:
 ```
 
-It is also possible to use the [CloudFormation intrinsic functions](https://docs.aws.amazon.com/en_en/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html) to reference resources from elsewhere:
+It is also possible to use the [CloudFormation intrinsic functions](https://docs.aws.amazon.com/en_en/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html) to reference resources from elsewhere. This allows for an IAM role to be created, and applied to the state machines all within the serverless file. 
+
+The below example shows the policy needed if your step function needs the ability to send a message to an sqs queue. To apply the role either the RoleName can be used as a reference in the state machine, or the role ARN can be used like in the example above. It is important to note that if you want to store your state machine role at a certain path, this must be specified on the `Path` property on the new role.
 
 ```yml
 stepFunctions:
@@ -1095,7 +1097,31 @@ resources:
     StateMachineRole:
       Type: AWS::IAM::Role
       Properties:
-        ...
+        RoleName: RoleName
+        Path: /path_of_state_machine_roles/
+        AssumeRolePolicyDocument:
+          Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - states.amazonaws.com
+            Action:
+              - sts:AssumeRole
+        Policies:
+          - PolicyName: statePolicy
+            PolicyDocument:
+              Version: version
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - lambda:InvokeFunction
+                  Resource:
+                    - arn:aws:lambda:lambdaName
+                - Effect: Allow
+                  Action:
+                    - sqs:SendMessage
+                  Resource:
+                    - arn:aws:sqs::xxxxxxxx:queueName
 ```
 
 The short form of the intrinsic functions (i.e. `!Sub`, `!Ref`) is not supported at the moment.
