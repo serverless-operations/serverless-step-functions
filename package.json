@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/horike37/serverless-step-functions#readme",
   "devDependencies": {
-    "@commitlint/cli": "^7.5.2",
+    "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^7.5.0",
     "chai": "^3.5.0",
     "coveralls": "^3.0.2",
@@ -38,7 +38,7 @@
     "mocha": "^5.2.0",
     "mocha-lcov-reporter": "^1.2.0",
     "mocha-param": "^2.0.0",
-    "semantic-release": "^15.13.19",
+    "semantic-release": "^15.14.0",
     "sinon": "^1.17.5"
   },
   "dependencies": {
@@ -48,7 +48,7 @@
     "bluebird": "^3.4.0",
     "chalk": "^1.1.1",
     "lodash": "^4.17.11",
-    "serverless": "^1.46.1"
+    "serverless": "^1.64.1"
   },
   "husky": {
     "hooks": {
