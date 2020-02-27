@@ -117,7 +117,7 @@ stepFunctions:
           alarm: arn:aws:sns:us-east-1:1234567890:NotifyMe
           insufficientData: arn:aws:sns:us-east-1:1234567890:NotifyMe
         metrics:
-          - executionsTimeOut
+          - executionsTimedOut
           - executionsFailed
           - executionsAborted
           - metric: executionThrottled
@@ -235,7 +235,7 @@ stepFunctions:
           alarm: arn:aws:sns:us-east-1:1234567890:NotifyMe
           insufficientData: arn:aws:sns:us-east-1:1234567890:NotifyMe
         metrics:
-          - executionsTimeOut
+          - executionsTimedOut
           - executionsFailed
           - executionsAborted
           - executionThrottled
@@ -257,7 +257,7 @@ The generated CloudWatch alarms would have the following configurations:
 
 ```yaml
 namespace: 'AWS/States'
-metric: <ExecutionsTimeOut | ExecutionsFailed | ExecutionsAborted | ExecutionThrottled>
+metric: <ExecutionsTimedOut | ExecutionsFailed | ExecutionsAborted | ExecutionThrottled>
 threshold: 1
 period: 60
 evaluationPeriods: 1
@@ -278,7 +278,7 @@ alarms:
     alarm: arn:aws:sns:us-east-1:1234567890:NotifyMe
     insufficientData: arn:aws:sns:us-east-1:1234567890:NotifyMe
   metrics:
-    - executionsTimeOut
+    - executionsTimedOut
     - executionsFailed
     - executionsAborted
     - metric: executionThrottled
@@ -1079,7 +1079,7 @@ stepFunctions:
       definition:
 ```
 
-It is also possible to use the [CloudFormation intrinsic functions](https://docs.aws.amazon.com/en_en/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html) to reference resources from elsewhere. This allows for an IAM role to be created, and applied to the state machines all within the serverless file. 
+It is also possible to use the [CloudFormation intrinsic functions](https://docs.aws.amazon.com/en_en/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html) to reference resources from elsewhere. This allows for an IAM role to be created, and applied to the state machines all within the serverless file.
 
 The below example shows the policy needed if your step function needs the ability to send a message to an sqs queue. To apply the role either the RoleName can be used as a reference in the state machine, or the role ARN can be used like in the example above. It is important to note that if you want to store your state machine role at a certain path, this must be specified on the `Path` property on the new role.
 
