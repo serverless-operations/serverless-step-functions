@@ -14,10 +14,13 @@ sudo: false
 
 install:
   - travis_retry npm install
+  - npm install -g codecov
 
 script:
-  - if [[ -z "$DISABLE_TESTS" ]]; then npm run test; fi
+  - if [[ -z "$DISABLE_TESTS" ]]; then npm run coverage; fi
   - if [[ ! -z "$DISABLE_TESTS" && ! -z "$LINTING" ]]; then npm run lint; fi
 
 after_success:
-  - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
+  - codecov
+  - rm -rf ./.nyc_output
+  - rm -rf ./coverage
