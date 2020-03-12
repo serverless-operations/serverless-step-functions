@@ -42,6 +42,7 @@ This is the Serverless Framework plugin for AWS Step Functions.
          - [Specify Input or Inputpath](#specify-input-or-inputpath)
          - [Specifying a Description](#specifying-a-description)
          - [Specifying a Name](#specifying-a-name)
+         - [Specifying a RoleArn](#specifying-a-rolearn)
          - [Specifying a custom CloudWatch EventBus](#specifying-a-custom-cloudwatch-eventbus)
  - [Tags](#tags)
  - [Commands](#commands)
@@ -989,6 +990,33 @@ stepFunctions:
       events:
         - cloudwatchEvent:
             name: 'my-cloudwatch-event-name'
+            event:
+              source:
+                - "aws.ec2"
+              detail-type:
+                - "EC2 Instance State-change Notification"
+              detail:
+                state:
+                  - pending
+      definition:
+        ...
+```
+
+#### Specifying a RoleArn
+
+You can also specify a CloudWatch Event RoleArn.
+The Amazon Resource Name (ARN) of the role that is used for target invocation.
+
+Required: No
+
+```yml
+stepFunctions:
+  stateMachines:
+    cloudwatchEvent:
+      events:
+        - cloudwatchEvent:
+            name: 'my-cloudwatch-event-name'
+            iamRole: 'arn:aws:iam::012345678910:role/Events-InvokeStepFunctions-Role'
             event:
               source:
                 - "aws.ec2"
