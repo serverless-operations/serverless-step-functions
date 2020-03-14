@@ -1088,7 +1088,7 @@ stepFunctions:
   stateMachines:
     hello:
       role:
-        Ref: StateMachineRole
+        Fn::GetAtt: ["StateMachineRole", "Arn"]
       definition:
         ...
 
