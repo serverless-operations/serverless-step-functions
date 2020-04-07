@@ -351,6 +351,15 @@ stepFunctions:
   validate: true
 ```
 
+### Disable Output Cloudformation Outputs section
+
+Disables output in Outputs section.
+
+```yaml
+stepFUnctions:
+  noOutput: true
+```
+
 ### Express Workflow
 
 At re:invent 2019, AWS [introduced Express Workflows](https://aws.amazon.com/about-aws/whats-new/2019/12/introducing-aws-step-functions-express-workflows/) as a cheaper, more scalable alternative (but with a cut-down set of features). See [this page](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-standard-vs-express.html) for differences between standard and express workflows.
