@@ -1258,10 +1258,11 @@ serverless.yml:
 
 ```yml
 stepFunctions:
-  hellostepfunc1:
-    ${file(includes/state-machine-1.yml)}
-  hellostepfunc2:
-    ${file(includes/state-machine-2.yml)}
+  stateMachines:
+    hellostepfunc1:
+      ${file(includes/state-machine-1.yml)}
+    hellostepfunc2:
+      ${file(includes/state-machine-2.yml)}
 
 plugins:
   - serverless-step-functions
