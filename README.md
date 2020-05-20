@@ -16,6 +16,7 @@ This is the Serverless Framework plugin for AWS Step Functions.
      - [Blue-Green deployments](#blue-green-deployment)
      - [Pre-deployment validation](#pre-deployment-validation)
      - [Express Workflow](#express-workflow)
+     - [CloudWatch Logs](#cloudwatch-logs)
  - [Current Gotcha](#current-gotcha)
  - [Events](#events)
      - [API Gateway](#api-gateway)
