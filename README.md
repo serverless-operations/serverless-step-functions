@@ -364,13 +364,29 @@ stepFUnctions:
 
 At re:invent 2019, AWS [introduced Express Workflows](https://aws.amazon.com/about-aws/whats-new/2019/12/introducing-aws-step-functions-express-workflows/) as a cheaper, more scalable alternative (but with a cut-down set of features). See [this page](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-standard-vs-express.html) for differences between standard and express workflows.
 
-To declare an express workflow, specify `type` as `EXPRESS` and you can specify the logging configuration (only applicable for express workflows).
+To declare an express workflow, specify `type` as `EXPRESS` and you can specify the logging configuration:
 
 ```yaml
 stepFunctions:
   stateMachines:
     hellostepfunc1:
       type: EXPRESS
+      loggingConfig:
+        level: ERROR
+        includeExecutionData: true
+        destinations:
+          - Fn::GetAtt: [MyLogGroup, Arn]
+```
+
+### CloudWatch Logs
+
+You can enable CloudWatch Logs for standard Step Functions, the syntax is
+exactly like with Express Workflows.
+
+```yaml
+stepFunctions:
+  stateMachines:
+    hellostepfunc1:
       loggingConfig:
         level: ERROR
         includeExecutionData: true
