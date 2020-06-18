@@ -11,6 +11,7 @@ This is the Serverless Framework plugin for AWS Step Functions.
      - [Adding a custom name for a state machine](#adding-a-custom-name-for-a-statemachine)
      - [Adding a custom logical id for a stateMachine](#adding-a-custom-logical-id-for-a-statemachine)
      - [Depending on another logical id](#depending-on-another-logical-id)
+     - [Adding retain property for a state machine](#adding-retain-property-for-a-statemachine)
      - [CloudWatch Alarms](#cloudwatch-alarms)
      - [CloudWatch Notifications](#cloudwatch-notifications)
      - [Blue-Green deployments](#blue-green-deployment)
@@ -219,6 +220,17 @@ stepFunctions:
         - myOtherDB
         - myStream
 ```
+### Adding retain property for a stateMachine
+There are some practical cases when you would like to prevent state machine from deletion on stack delete or update. This can be achieved by adding `retain` property to the state machine section.
+
+```yaml
+stepFunctions:
+  stateMachines:
+    myStateMachine:
+      retain: true
+```
+
+Configuring in such way adds `"DeletionPolicy" : "Retain"` to the state machine within CloudFormation template.
 
 ### CloudWatch Alarms
 
