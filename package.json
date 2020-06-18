@@ -44,11 +44,11 @@
   },
   "dependencies": {
     "@hapi/joi": "^15.0.2",
-    "asl-validator": "^1.5.0",
+    "asl-validator": "^1.7.0",
     "bluebird": "^3.4.0",
     "chalk": "^1.1.1",
     "lodash": "^4.17.11",
-    "serverless": "^1.64.1"
+    "serverless": "^1.72.0"
   },
   "husky": {
     "hooks": {
