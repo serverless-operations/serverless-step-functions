@@ -77,7 +77,7 @@ plugins:
 
 ## Setup
 
-Specifies your statemachine definition using Amazon States Language in a `definition` statement in serverless.yml. You can use CloudFormation intrinsic functions such as `Ref` and `Fn::GetAtt` to reference Lambda functions, SNS topics, SQS queues and DynamoDB tables declared in the same `serverless.yml`. Since `Ref` returns different things (ARN, ID, resource name, etc.) depending on the type of CloudFormation resource, please refer to [this page](https://theburningmonk.com/cloudformation-ref-and-getatt-cheatsheet/) to see whether you need to use `Ref` or `Fn::GetAtt`.
+Specify your state machine definition using Amazon States Language in a `definition` statement in serverless.yml. You can use CloudFormation intrinsic functions such as `Ref` and `Fn::GetAtt` to reference Lambda functions, SNS topics, SQS queues and DynamoDB tables declared in the same `serverless.yml`. Since `Ref` returns different things (ARN, ID, resource name, etc.) depending on the type of CloudFormation resource, please refer to [this page](https://theburningmonk.com/cloudformation-ref-and-getatt-cheatsheet/) to see whether you need to use `Ref` or `Fn::GetAtt`.
 
 Alternatively, you can also provide the raw ARN, or SQS queue URL, or DynamoDB table name as a string. If you need to construct the ARN by hand, then we recommend to use the [serverless-pseudo-parameters](https://www.npmjs.com/package/serverless-pseudo-parameters) plugin together to make your life easier.
 
