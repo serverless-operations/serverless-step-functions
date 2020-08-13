@@ -366,10 +366,10 @@ stepFunctions:
 
 ### Disable Output Cloudformation Outputs section
 
-Disables output in the CloudFormation Outputs section.  if you define many state-machines in serverless.yml, there is a possibility of reaching out a CloudFormation limits in which the maximum number of outputs is 60. If you define `noOutput: true`, you can prevent automatically output by this plugin.
+Disables the generation of outputs in the CloudFormation Outputs section. If you define many state machines in serverless.yml you may reach the CloudFormation limit of 60 outputs. If you define `noOutput: true` then this plugin will not generate outputs automatically.
 
 ```yaml
-stepFUnctions:
+stepFunctions:
   noOutput: true
 ```
 
