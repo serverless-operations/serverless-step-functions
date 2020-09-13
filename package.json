@@ -40,15 +40,15 @@
     "mocha-param": "^2.0.0",
     "nyc": "^15.0.0",
     "semantic-release": "^15.14.0",
-    "sinon": "^1.17.5"
+    "sinon": "^1.17.5",
+    "serverless": "^1.72.0"
   },
   "dependencies": {
     "@hapi/joi": "^15.0.2",
     "asl-validator": "^1.7.0",
     "bluebird": "^3.4.0",
     "chalk": "^1.1.1",
-    "lodash": "^4.17.11",
-    "serverless": "^1.72.0"
+    "lodash": "^4.17.11"
   },
   "husky": {
     "hooks": {
