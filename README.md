@@ -18,6 +18,7 @@ This is the Serverless Framework plugin for AWS Step Functions.
      - [Pre-deployment validation](#pre-deployment-validation)
      - [Express Workflow](#express-workflow)
      - [CloudWatch Logs](#cloudwatch-logs)
+     - [X-Ray](#x-ray)
  - [Current Gotcha](#current-gotcha)
  - [Events](#events)
      - [API Gateway](#api-gateway)
@@ -405,6 +406,18 @@ stepFunctions:
         includeExecutionData: true
         destinations:
           - Fn::GetAtt: [MyLogGroup, Arn]
+```
+
+### X-Ray
+
+You can enable X-Ray for your state machine, specify `tracingConfig` as shown below.
+
+```yaml
+stepFunctions:
+  stateMachines:
+    hellostepfunc1:
+      tracingConfig:
+        enabled: true
 ```
 
 ## Current Gotcha
