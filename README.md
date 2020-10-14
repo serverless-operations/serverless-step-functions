@@ -255,7 +255,7 @@ stepFunctions:
           - executionsFailed
           - executionsAborted
           - executionThrottled
-          - executionSucceeded
+          - executionsSucceeded
         treatMissingData: missing
 ```
 
