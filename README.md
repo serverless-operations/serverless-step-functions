@@ -126,6 +126,7 @@ stepFunctions:
           - executionsAborted
           - metric: executionThrottled
             treatMissingData: breaching # overrides below default
+          - executionsSucceeded
         treatMissingData: ignore # optional
     hellostepfunc2:
       definition:
@@ -254,6 +255,7 @@ stepFunctions:
           - executionsFailed
           - executionsAborted
           - executionThrottled
+          - executionSucceeded
         treatMissingData: missing
 ```
 
@@ -298,6 +300,7 @@ alarms:
     - executionsAborted
     - metric: executionThrottled
       treatMissingData: breaching # override
+    - executionsSucceeded
   treatMissingData: ignore # default
 ```
 
