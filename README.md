@@ -47,6 +47,7 @@ This is the Serverless Framework plugin for AWS Step Functions.
          - [Specifying a Name](#specifying-a-name)
          - [Specifying a RoleArn](#specifying-a-rolearn)
          - [Specifying a custom CloudWatch EventBus](#specifying-a-custom-cloudwatch-eventbus)
+         - [Specifying a custom EventBridge EventBus](#specifying-a-custom-eventbridge-eventbus)
  - [Tags](#tags)
  - [Commands](#commands)
      - [deploy](#deploy)
@@ -1085,14 +1086,37 @@ stepFunctions:
 
 #### Specifying a custom CloudWatch EventBus
 
-You can choose which CloudWatch Event bus to listen to:
+You can choose which CloudWatch Event bus:
 
 ```yml
 stepFunctions:
   stateMachines:
-    cloudwatchEvent:
+    exampleCloudwatchEventStartsMachine:
       events:
         - cloudwatchEvent:
+            eventBusName: 'my-custom-event-bus'
+            event:
+              source:
+                - "my.custom.source"
+              detail-type:
+                - "My Event Type"
+              detail:
+                state:
+                  - pending
+      definition:
+        ...
+```
+
+#### Specifying a custom EventBridge EventBus
+
+You can choose which EventBridge Event bus:
+
+```yml
+stepFunctions:
+  stateMachines:
+    exampleEventBridgeEventStartsMachine:
+      events:
+        - eventBridge:
             eventBusName: 'my-custom-event-bus'
             event:
               source:
