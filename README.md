@@ -83,6 +83,8 @@ Specify your state machine definition using Amazon States Language in a `definit
 
 Alternatively, you can also provide the raw ARN, or SQS queue URL, or DynamoDB table name as a string. If you need to construct the ARN by hand, then we recommend to use the [serverless-pseudo-parameters](https://www.npmjs.com/package/serverless-pseudo-parameters) plugin together to make your life easier.
 
+In addition, if you want to reference a DynamoDB table managed by an external CloudFormation Stack, as long as that table name is exported as an output from that stack, it can be referenced by importing it using `Fn::ImportValue`. See the `ddbtablestepfunc` Step Function definition below for an example.
+
 ```yml
 functions:
   hello:
@@ -137,6 +139,27 @@ stepFunctions:
             Type: Task
             Resource:
               Fn::GetAtt: [hello, Arn]
+            End: true
+    ddbtablestepfunc:
+      definition:
+        Comment: Demonstrates how to reference a DynamoDB Table Name exported from an external CloudFormation Stack
+        StartAt: ImportDDBTableName
+        States:
+          ImportDDBTableName:
+            Type: Task
+            Resource: "arn:aws:states:::dynamodb:updateItem"
+            Parameters:
+              TableName:
+                Fn::ImportValue: MyExternalStack:ToDoTable:Name # imports a table name from an external stack
+              Key:
+                id:
+                  S.$: "$.todoId"
+              UpdateExpression: "SET #status = :updatedStatus"
+              ExpressionAttributeNames:
+                "#status": status
+              ExpressionAttributeValues:
+                ":updatedStatus":
+                  S: DONE
             End: true
       dependsOn:
         - DynamoDBTable
