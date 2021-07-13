@@ -997,7 +997,7 @@ stepFunctions:
         ...
 ```
 
-#### Specify Input or Inputpath
+#### Specify Input or Inputpath or InputTransformer
 
 You can specify input values ​​to the Lambda function.
 
@@ -1030,6 +1030,19 @@ stepFunctions:
                 state:
                   - pending
             inputPath: '$.stageVariables'
+        - cloudwatchEvent:
+            event:
+              source:
+                - "aws.ec2"
+              detail-type:
+                - "EC2 Instance State-change Notification"
+              detail:
+                state:
+                  - pending
+            inputTransformer:
+              inputPathsMap:
+                stage: '$.stageVariables'
+              inputTemplate: '{ "stage": <stage> }'
       definition:
         ...
 ```
