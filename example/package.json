@@ -1,0 +1,16 @@
+{
+  "name": "sls-stepf-inputtransformer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless": "^2.51.2",
+    "serverless-step-functions": "^2.32.0"
+  }
+}
