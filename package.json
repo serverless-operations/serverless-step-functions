@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha \"!(node_modules)/**/*.test.js\"",
+    "test:events": "mocha \"!(node_modules)/**/compileCloudWatchEventEvents.test.js\"",
     "coverage": "nyc npm test",
     "lint": "eslint .",
     "semantic-release": "semantic-release"
