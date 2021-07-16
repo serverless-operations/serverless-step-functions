@@ -40,7 +40,7 @@
     "mocha-param": "^2.0.0",
     "nyc": "^15.0.0",
     "semantic-release": "^17.2.3",
-    "serverless": "^1.72.0",
+    "serverless": "^2.52.0",
     "sinon": "^1.17.5"
   },
   "dependencies": {
