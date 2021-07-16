@@ -50,6 +50,9 @@
     "chalk": "^1.1.1",
     "lodash": "^4.17.11"
   },
+  "peerDependencies": {
+    "serverless": "^2.32.0"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
