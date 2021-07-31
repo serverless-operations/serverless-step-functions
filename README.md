@@ -4,6 +4,9 @@
 
 This is the Serverless Framework plugin for AWS Step Functions.
 
+## Requirement
+Serverless Framework v2.32.0 or later is required.
+
 ## TOC
 
  - [Install](#install)
