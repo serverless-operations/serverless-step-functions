@@ -51,6 +51,7 @@ Serverless Framework v2.32.0 or later is required.
          - [Specifying a RoleArn](#specifying-a-rolearn)
          - [Specifying a custom CloudWatch EventBus](#specifying-a-custom-cloudwatch-eventbus)
          - [Specifying a custom EventBridge EventBus](#specifying-a-custom-eventbridge-eventbus)
+         - [Specifying a DeadLetterQueue](#specifying-a-deadletterqueue)
  - [Tags](#tags)
  - [Commands](#commands)
      - [deploy](#deploy)
@@ -1154,6 +1155,73 @@ stepFunctions:
                   - pending
       definition:
         ...
+```
+
+#### Specifying a DeadLetterQueue
+
+You can configure a target queue to send dead-letter queue events to:
+
+```yml
+stepFunctions:
+  stateMachines:
+    exampleEventBridgeEventStartsMachine:
+      events:
+        - eventBridge:
+            eventBusName: 'my-custom-event-bus'
+            event:
+              source:
+                - "my.custom.source"
+              detail-type:
+                - "My Event Type"
+              detail:
+                state:
+                  - pending
+            deadLetterConfig: 'arn:aws:sqs:us-east-1:012345678910:my-dlq' # SQS Arn
+      definition:
+        ...
+```
+##### Important point
+Don't forget to [Grant permissions to the dead-letter queue](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-rule-dlq.html#eb-dlq-perms), to do that you may need to have the `ARN` of the generated `EventBridge Rule`.
+
+In order to get the `ARN` you can use [intrinsic functions](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html) against the `logicalId`, this plugin generates `logicalIds` following this format:
+```ts
+`${StateMachineName}EventsRuleCloudWatchEvent${index}`
+```
+Given this example 👇
+```yml
+stepFunctions:
+  stateMachines:
+    hellostepfunc1: # <---- StateMachineName
+      events:
+        - eventBridge:
+            eventBusName: 'my-custom-event-bus'
+            event:
+              source:
+                - "my.custom.source"
+        - eventBridge:
+            eventBusName: 'my-custom-event-bus'
+            event:
+              source:
+                - "my.custom.source"
+            deadLetterConfig: 'arn:aws:sqs:us-east-1:012345678910:my-dlq'
+      name: myStateMachine
+      definition:
+        Comment: "A Hello World example of the Amazon States Language using an AWS Lambda Function"
+        StartAt: HelloWorld1
+        States:
+          HelloWorld1:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [hello, Arn]
+            End: true
+```
+Then
+```yaml
+# to get the Arn of the 1st EventBridge rule
+!GetAtt Hellostepfunc1EventsRuleCloudWatchEvent1.Arn
+
+# to get the Arn of the 2nd EventBridge rule
+!GetAtt Hellostepfunc1EventsRuleCloudWatchEvent2.Arn
 ```
 
 ## Tags
