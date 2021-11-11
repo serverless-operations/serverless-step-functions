@@ -168,7 +168,7 @@ stepFunctions:
       dependsOn:
         - DynamoDBTable
         - KinesisStream
-        - CUstomIamRole
+        - CustomIamRole
       tags:
         Team: Atlantis
   activities:
