@@ -51,7 +51,7 @@
     "lodash": "^4.17.11"
   },
   "peerDependencies": {
-    "serverless": "^2.32.0"
+    "serverless": "^2.32.0 || 3"
   },
   "husky": {
     "hooks": {
