@@ -45,7 +45,7 @@ Serverless Framework v2.32.0 or later is required.
      - [CloudWatch Event](#cloudwatch-event)
          - [Simple event definition](#simple-event-definition)
          - [Enabling / Disabling](#enabling--disabling-1)
-         - [Specify Input or Inputpath](#specify-input-or-inputpath)
+         - [Specify Input or Inputpath or InputTransformer](#specify-input-or-inputpath-or-inputtransformer)
          - [Specifying a Description](#specifying-a-description)
          - [Specifying a Name](#specifying-a-name)
          - [Specifying a RoleArn](#specifying-a-rolearn)
