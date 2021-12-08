@@ -48,7 +48,7 @@
     "@serverless/utils": "^5.20.1",
     "asl-validator": "^1.9.8",
     "bluebird": "^3.4.0",
-    "chalk": "^1.1.1",
+    "chalk": "^4.1.2",
     "lodash": "^4.17.11"
   },
   "peerDependencies": {
