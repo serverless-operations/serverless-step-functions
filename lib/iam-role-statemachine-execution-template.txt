@@ -7,7 +7,9 @@
         {
           "Effect": "Allow",
           "Principal": {
-            "Service": "states.[region].amazonaws.com"
+            "Service": {
+              "Fn::Sub": "states.${AWS::Region}.amazonaws.com"
+            }
           },
           "Action": "sts:AssumeRole"
         }
