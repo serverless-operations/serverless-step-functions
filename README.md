@@ -42,6 +42,7 @@ Serverless Framework v2.32.0 or later is required.
          - [Enabling / Disabling](#enabling--disabling)
          - [Specify Name and Description](#specify-name-and-description)
          - [Scheduled Events IAM Role](#scheduled-events-iam-role)
+         - [Specify InputTransformer](#specify-inputtransformer)
      - [CloudWatch Event](#cloudwatch-event)
          - [Simple event definition](#simple-event-definition)
          - [Enabling / Disabling](#enabling--disabling-1)
@@ -927,6 +928,26 @@ events:
   - schedule:
       rate: rate(2 hours)
       role: arn:aws:iam::xxxxxxxx:role/yourRole
+```
+
+#### Specify InputTransformer
+
+You can specify input values ​​to the Lambda function.
+
+```yml
+stepFunctions:
+  stateMachines:
+    stateMachineScheduled:
+      events:
+        - schedule: 
+            rate: cron(30 12 ? * 1-5 *)
+            inputTransformer:
+              inputPathsMap: 
+                time: '$.time'
+                stage: '$.stageVariables'
+              inputTemplate: '{"time": <time>, "stage" : <stage> }'
+      definition:
+        ...
 ```
 
 ### CloudWatch Event / EventBridge
