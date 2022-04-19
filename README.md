@@ -333,6 +333,71 @@ alarms:
   treatMissingData: ignore # default
 ```
 
+#### Custom CloudWatch Alarm names
+
+By default, the CloudFormation assigns names to the alarms based on the CloudFormation stack and the resource logical Id, and in some cases and these names could be confusing.
+
+To use custom names to the alarms add `nameTemplate` property in the `alarms` object.
+
+example:
+
+```yaml
+service: myservice
+
+plugins:
+  - serverless-step-functions
+
+stepFunctions:
+  stateMachines:
+    main-workflow:
+      name: main
+      alarms:
+        nameTemplate: $[stateMachineName]-$[cloudWatchMetricName]-alarm
+        topics:
+          alarm: !Ref AwsAlertsGenericAlarmTopicAlarm
+        metrics:
+          - executionsFailed
+          - executionsAborted
+          - executionsTimedOut
+          - executionThrottled
+        treatMissingData: ignore
+      definition: ${file(./step-functions/main.asl.yaml)}
+```
+
+Supported variables to the `nameTemplate` property:
+
+- `stateMachineName`
+- `metricName`
+- `cloudWatchMetricName`
+
+##### Per-Metric Alarm Name
+
+To overwrite the alarm name for a specific metric, add the `alarmName` property in the metric object.
+
+```yaml
+service: myservice
+
+plugins:
+  - serverless-step-functions
+
+stepFunctions:
+  stateMachines:
+    main-workflow:
+      name: main
+      alarms:
+        nameTemplate: $[stateMachineName]-$[cloudWatchMetricName]-alarm
+        topics:
+          alarm: !Ref AwsAlertsGenericAlarmTopicAlarm
+        metrics:
+          - metric: executionsFailed
+            alarmName: mycustom-name-${self:stage.region}-Failed-alarm
+          - executionsAborted
+          - executionsTimedOut
+          - executionThrottled
+        treatMissingData: ignore
+      definition: ${file(./step-functions/main.asl.yaml)}
+```
+
 ### CloudWatch Notifications
 
 You can monitor the execution state of your state machines [via CloudWatch Events](https://aws.amazon.com/about-aws/whats-new/2019/05/aws-step-functions-adds-support-for-workflow-execution-events/). It allows you to be alerted when the status of your state machine changes to `ABORTED`, `FAILED`, `RUNNING`, `SUCCEEDED` or `TIMED_OUT`.
