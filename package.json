@@ -39,7 +39,7 @@
     "mocha-lcov-reporter": "^1.2.0",
     "mocha-param": "^2.0.0",
     "nyc": "^15.0.0",
-    "semantic-release": "^18.0.1",
+    "semantic-release": "^19.0.3",
     "serverless": "^2.69.1",
     "sinon": "^12.0.1"
   },
