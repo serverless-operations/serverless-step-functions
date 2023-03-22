@@ -1,0 +1,279 @@
+service: dummy-service
+
+provider:
+  name: aws
+  region: 'ap-south-1'
+  runtime: nodejs14.x
+  stage: 'test'
+
+plugins:
+  localPath: "../lib/index.js"
+  modules:
+    - ""
+functions:
+  dummy:
+    handler: handler.handler
+    description: function description
+    memorySize: 128
+    timeout: 3
+  jap:
+    handler: handler.handler
+    description: function description
+    memorySize: 128
+    timeout: 3
+  Jap1:
+    handler: handler.Jap
+    description: function description
+    memorySize: 128
+    timeout: 3
+  rangeJobState:
+    handler: handler.Jap
+    memorySize: 512
+    timeout: 900
+    maximumRetryAttempts: 0
+  rangeLastRun:
+    handler: handler.Jap
+    memorySize: 512
+    timeout: 900
+    maximumRetryAttempts: 0
+  getRangeDataFiles:
+    handler: handler.Jap
+    memorySize: 2048
+    timeout: 900
+    maximumRetryAttempts: 0
+  catchExcepRange:
+    handler: handler.Jap
+    memorySize: 512
+    timeout: 900
+    maximumRetryAttempts: 0
+  insertTrunRangeData:
+    handler: handler.Jap
+    memorySize: 2048
+    timeout: 900
+    maximumRetryAttempts: 0
+
+stepFunctions:
+  stateMachines:
+    StepMachineOne:
+      name: StepMachineOne
+      id: StepMachineOne
+      definition:
+        StartAt: Function1
+        States:
+          Function1:
+            Type: Task
+            Parameters:
+              AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_NAME.$: $$.Execution.Name
+            Resource:
+              Fn::GetAtt: [dummy, Arn]
+            Retry:
+              - ErrorEquals:
+                  - States.ALL
+                IntervalSeconds: 5
+                MaxAttempts: 5
+                BackoffRate: 2
+            Catch:
+              - ErrorEquals:
+                  - States.ALL
+                Next: CatchException
+            End: true
+          CatchException:
+            Type: Fail
+    RangeStagingDataLoadStepFunction:
+      name: RangeStaginDataLoadStepFunction
+      id: RangeStagingDataLoadStepFunction
+      definition:
+        StartAt: Start Range Processing for Staging DB
+        States:
+          Start Range Processing for Staging DB:
+            Type: Parallel
+            Next: Success
+            Branches:
+              - StartAt: 'Set Job Running Delta'
+                States:
+                  'Set Job Running Delta':
+                    Comment: 'Set Job Running for Range Staging Data Load Delta'
+                    Type: Task
+                    Parameters:
+                      action: 'Run'
+                      processType: 'RANGE_DELTA'
+                    Resource:
+                      Fn::GetAtt: [rangeJobState, Arn]
+                    ResultPath: $.jobStateRunning
+                    Next: 'Get Last Successful Run for Delta'
+                    Catch:
+                      - ErrorEquals:
+                          - States.ALL
+                        Next: 'Catch Exception Delta'
+                        ResultPath: '$.error'
+                  'Get Last Successful Run for Delta':
+                    Comment: 'Get Last Successful Run for Range Staging Data Load Delta'
+                    Type: Task
+                    InputPath: '$'
+                    Parameters:
+                      processType: 'RANGE_DELTA'
+                    Resource:
+                      Fn::GetAtt: [rangeLastRun, Arn]
+                    ResultPath: $.lastRun
+                    Next: 'Get delta data files from S3'
+                    Catch:
+                      - ErrorEquals:
+                          - States.ALL
+                        Next: 'Catch Exception Delta'
+                        ResultPath: '$.error'
+                  'Get delta data files from S3':
+                    Type: Task
+                    Resource:
+                      Fn::GetAtt: [getRangeDataFiles, Arn]
+                    Parameters:
+                      lastRun.$: $.lastRun
+                      processType: 'RANGE_DELTA'
+                      AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_NAME.$: $$.Execution.Name
+                    Next: 'Truncate and Insert Delta Data'
+                    ResultPath: '$'
+                    Catch:
+                      - ErrorEquals:
+                          - States.ALL
+                        Next: 'Catch Exception Delta'
+                        ResultPath: '$.error'
+                  'Truncate and Insert Delta Data':
+                    Type: Task
+                    Resource:
+                      Fn::GetAtt: [insertTrunRangeData, Arn]
+                    Parameters:
+                      lastRun.$: $.lastRun
+                      processType: 'RANGE_DELTA'
+                      files.$: $.files
+                      AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_NAME.$: $$.Execution.Name
+                    Next: 'Set Job Success Delta'
+                    ResultPath: '$'
+                    Catch:
+                      - ErrorEquals:
+                          - States.ALL
+                        Next: 'Catch Exception Delta'
+                        ResultPath: '$.error'
+                  'Set Job Success Delta':
+                    Comment: 'Set Job Success for S51 Delta Range to RMS Mapping'
+                    Type: Task
+                    Parameters:
+                      action: 'Success'
+                      processType: 'RANGE_DELTA'
+                    Resource:
+                      Fn::GetAtt: [rangeJobState, Arn]
+                    ResultPath: $
+                    End: true
+                    Catch:
+                      - ErrorEquals:
+                          - States.ALL
+                        Next: 'Catch Exception Delta'
+                        ResultPath: '$.error'
+                  'Catch Exception Delta':
+                    Comment: 'Catch exception occured at any step in workflow'
+                    Type: Task
+                    InputPath: '$'
+                    Resource:
+                      Fn::GetAtt: [catchExcepRange, Arn]
+                    Parameters:
+                      error.$: $.error
+                      processType: 'RANGE_DELTA'
+                    ResultPath: '$'
+                    Next: 'Fail Delta'
+                  'Fail Delta':
+                    Type: Pass
+                    End: true
+              - StartAt: 'Set Job Running Full'
+                States:
+                  'Set Job Running Full':
+                    Comment: 'Set Job Running for Range Staging Data Load Full'
+                    Type: Task
+                    Parameters:
+                      action: 'Run'
+                      processType: 'RANGE_FULL'
+                    Resource:
+                      Fn::GetAtt: [rangeJobState, Arn]
+                    ResultPath: $.jobStateRunning
+                    Next: 'Get Last Successful Run for Full'
+                    Catch:
+                      - ErrorEquals:
+                          - States.ALL
+                        Next: 'Catch Exception Full'
+                        ResultPath: '$.error'
+                  'Get Last Successful Run for Full':
+                    Comment: 'Get Last Successful Run for Range Staging Data Load Full'
+                    Type: Task
+                    InputPath: '$'
+                    Parameters:
+                      processType: 'RANGE_FULL'
+                    Resource:
+                      Fn::GetAtt: [rangeLastRun, Arn]
+                    ResultPath: $.lastRun
+                    Next: 'Get full data files from S3'
+                    Catch:
+                      - ErrorEquals:
+                          - States.ALL
+                        Next: 'Catch Exception Full'
+                        ResultPath: '$.error'
+                  'Get full data files from S3':
+                    Type: Task
+                    Resource:
+                      Fn::GetAtt: [getRangeDataFiles, Arn]
+                    Parameters:
+                      lastRun.$: $.lastRun
+                      processType: 'RANGE_FULL'
+                      AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_NAME.$: $$.Execution.Name
+                    Next: 'Truncate and Insert Full Data'
+                    ResultPath: '$'
+                    Catch:
+                      - ErrorEquals:
+                          - States.ALL
+                        Next: 'Catch Exception Full'
+                        ResultPath: '$.error'
+                  'Truncate and Insert Full Data':
+                    Type: Task
+                    Resource:
+                      Fn::GetAtt: [insertTrunRangeData, Arn]
+                    Parameters:
+                      lastRun.$: $.lastRun
+                      processType: 'RANGE_FULL'
+                      files.$: $.files
+                      AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_NAME.$: $$.Execution.Name
+                    Next: 'Set Job Success Full'
+                    ResultPath: '$'
+                    Catch:
+                      - ErrorEquals:
+                          - States.ALL
+                        Next: 'Catch Exception Full'
+                        ResultPath: '$.error'
+                  'Set Job Success Full':
+                    Comment: 'Set Job Success for S51 Full Range to RMS Mapping'
+                    Type: Task
+                    Parameters:
+                      action: 'Success'
+                      processType: 'RANGE_FULL'
+                    Resource:
+                      Fn::GetAtt: [rangeJobState, Arn]
+                    ResultPath: $
+                    End: true
+                    Catch:
+                      - ErrorEquals:
+                          - States.ALL
+                        Next: 'Catch Exception Full'
+                        ResultPath: '$.error'
+                  'Catch Exception Full':
+                    Comment: 'Catch exception occured at any step in workflow'
+                    Type: Task
+                    InputPath: '$'
+                    Parameters:
+                      error.$: $.error
+                      processType: 'RANGE_FULL'
+                    Resource:
+                      Fn::GetAtt: [catchExcepRange, Arn]
+                    ResultPath: '$'
+                    Next: 'Fail Full'
+                  'Fail Full':
+                    Type: Pass
+                    End: true
+          Success:
+            Type: Pass
+            End: true
+
