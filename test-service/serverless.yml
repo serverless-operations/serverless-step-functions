@@ -59,6 +59,7 @@ stepFunctions:
       id: StepMachineOne
       definition:
         StartAt: Function1
+        Comment: 'Yo Jap'
         States:
           Function1:
             Type: Task
@@ -76,9 +77,11 @@ stepFunctions:
               - ErrorEquals:
                   - States.ALL
                 Next: CatchException
-            End: true
+            Next: Success
           CatchException:
             Type: Fail
+          Success:
+            Type: Succeed
     RangeStagingDataLoadStepFunction:
       name: RangeStaginDataLoadStepFunction
       id: RangeStagingDataLoadStepFunction
