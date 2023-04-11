@@ -59,12 +59,13 @@ stepFunctions:
       id: StepMachineOne
       definition:
         StartAt: Function1
-        Comment: 'Yo Jap'
+        Comment: 'Yo DDev Rocks'
         States:
           Function1:
             Type: Task
             Parameters:
               AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_NAME.$: $$.Execution.Name
+              AWS_STEP_FUNCTIONS_STARTED.$: $$.Execution.Name
             Resource:
               Fn::GetAtt: [dummy, Arn]
             Retry:
