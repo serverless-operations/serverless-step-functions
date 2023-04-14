@@ -56,6 +56,7 @@ Serverless Framework v2.32.0 or later is required.
  - [Tags](#tags)
  - [Commands](#commands)
      - [deploy](#deploy)
+     - [deploy individual step function](#deploy_individual_step_function)
      - [invoke](#invoke)
  - [IAM Role](#iam-role)
  - [Tips](#tips)
@@ -1004,10 +1005,10 @@ stepFunctions:
   stateMachines:
     stateMachineScheduled:
       events:
-        - schedule: 
+        - schedule:
             rate: cron(30 12 ? * 1-5 *)
             inputTransformer:
-              inputPathsMap: 
+              inputPathsMap:
                 time: '$.time'
                 stage: '$.stageVariables'
               inputTemplate: '{"time": <time>, "stage" : <stage> }'
@@ -1351,7 +1352,17 @@ As a result, `hellostepfunc1` will only have the tag of `score: 42`, and _not_ t
 ### deploy
 
 Run `sls deploy`, the defined Stepfunctions are deployed.
+### deploy_individual_step_function
 
+Run `sls deploy stepf --name <stepfunctionname>`
+
+#### options:
+
+- –name or -n The name of the step function in your service that you want to invoke. Required.
+- –stage or -s The stage in your service you want to invoke your step function.
+- –region or -r The region in your stage that you want to invoke your step function.
+
+It will update the definition of the state machine. It will ********************************************************************not deploy the logic of lambda.******************************************************************** It will only update the lambda ARN.
 ### invoke
 
 `$ sls invoke stepf --name <stepfunctionname> --data '{"foo":"bar"}'`
