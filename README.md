@@ -879,7 +879,7 @@ You can input an value as json in request body, the value is passed as the input
 
 #### Setting API keys for your Rest API
 
-You can specify a list of API keys to be used by your service Rest API by adding an apiKeys array property to the provider object in serverless.yml. You'll also need to explicitly specify which endpoints are private and require one of the api keys to be included in the request by adding a private boolean property to the http event object you want to set as private. API Keys are created globally, so if you want to deploy your service to different stages make sure your API key contains a stage variable as defined below. When using API keys, you can optionally define usage plan quota and throttle, using usagePlan object.
+You can specify a list of API keys to be used by your service Rest API by adding an apiKeys array property to the apiGateway subsection of the provider object in serverless.yml. You'll also need to explicitly specify which endpoints are private and require one of the api keys to be included in the request by adding a private boolean property to the http event object you want to set as private. API Keys are created globally, so if you want to deploy your service to different stages make sure your API key contains a stage variable as defined below. When using API keys, you can optionally define usage plan quota and throttle, using usagePlan object.
 
 Here's an example configuration for setting API keys for your service Rest API:
 
