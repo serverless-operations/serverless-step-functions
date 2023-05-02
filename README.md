@@ -887,10 +887,11 @@ Here's an example configuration for setting API keys for your service Rest API:
 service: my-service
 provider:
   name: aws
-  apiKeys:
-    - myFirstKey
-    - ${opt:stage}-myFirstKey
-    - ${env:MY_API_KEY} # you can hide it in a serverless variable
+  apiGateway:
+    apiKeys:
+        - myFirstKey
+        - ${opt:stage}-myFirstKey
+        - ${env:MY_API_KEY} # you can hide it in a serverless variable
   usagePlan:
     quota:
       limit: 5000
