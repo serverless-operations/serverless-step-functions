@@ -3,6 +3,7 @@
   "version": "3.11.1",
   "description": "The module is AWS Step Functions plugin for Serverless Framework",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "test": "mocha \"!(node_modules)/**/*.test.js\"",
     "coverage": "nyc npm test",
@@ -25,6 +26,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.6.1",
     "@commitlint/config-conventional": "^15.0.0",
+    "@serverless/typescript": "^3.30.1",
     "chai": "^3.5.0",
     "coveralls": "^3.0.2",
     "eslint": "^8.5.0",
@@ -44,11 +46,11 @@
     "sinon": "^12.0.1"
   },
   "dependencies": {
-    "joi": "^17.7.0",
     "@serverless/utils": "^6.7.0",
     "asl-validator": "^3.8.0",
     "bluebird": "^3.4.0",
     "chalk": "^4.1.2",
+    "joi": "^17.7.0",
     "lodash": "^4.17.11"
   },
   "peerDependencies": {
