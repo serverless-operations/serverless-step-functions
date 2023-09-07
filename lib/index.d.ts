@@ -11,6 +11,7 @@ declare module '@serverless/typescript' {
 
 type StateMachines = {
   [stateMachine: string]: {
+    type?: 'STANDARD' | 'EXPRESS'; 
     id?: string;
     name?: string;
     definition: Definition;
