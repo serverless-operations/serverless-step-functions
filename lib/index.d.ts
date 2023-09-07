@@ -43,6 +43,9 @@ type Definition = {
   Comment?: string;
   StartAt: string;
   States: States;
+  ProcessorConfig?: {
+    Mode: "INLINE" | "DISTRIBUTED";
+  };
 };
 
 type States = {
