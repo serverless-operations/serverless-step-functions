@@ -12,7 +12,7 @@ declare module '@serverless/typescript' {
 type StateMachines = {
   [stateMachine: string]: {
     id?: string;
-    name: string;
+    name?: string;
     definition: Definition;
     tracingConfig?: TracingConfig;
   };
