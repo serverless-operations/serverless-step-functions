@@ -10,13 +10,15 @@ declare module '@serverless/typescript' {
 }
 
 type StateMachines = {
-  [stateMachine: string]: {
-    type?: 'STANDARD' | 'EXPRESS'; 
-    id?: string;
-    name?: string;
-    definition: Definition;
-    tracingConfig?: TracingConfig;
-  };
+  [stateMachine: string]: StateMachine
+};
+
+export type StateMachine = {
+  type?: 'STANDARD' | 'EXPRESS';
+  id?: string;
+  name?: string;
+  definition: Definition;
+  tracingConfig?: TracingConfig;
 };
 
 type Selector = string | Record<string, unknown>;
