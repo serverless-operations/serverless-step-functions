@@ -19,6 +19,15 @@ export type StateMachine = {
   name?: string;
   definition: Definition;
   tracingConfig?: TracingConfig;
+  loggingConfig?: LoggingConfig;
+  events?: any[];
+  dependsOn?: string | string[];
+};
+
+type LoggingConfig = {
+  level: "ERROR" | "ALL" | "FATAL" | "OFF";
+  includeExecutionData: boolean;
+  destinations: Resource | Resource[]
 };
 
 type Selector = string | Record<string, unknown>;
