@@ -158,7 +158,7 @@ interface Map extends StateBase {
   Type: 'Map';
   ItemsPath: string;
   Iterator: Definition;
-  ItemSelector: {
+  ItemSelector?: {
     [key: string]: string;
   }
   MaxConcurrency?: number;
