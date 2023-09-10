@@ -5,6 +5,7 @@ declare module '@serverless/typescript' {
     stepFunctions?: {
       stateMachines: StateMachines;
       validate?: boolean;
+      noOutput?: boolean;
     };
   }
 }
