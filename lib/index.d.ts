@@ -156,7 +156,7 @@ interface Fail extends StateBase {
 
 interface Map extends StateBase {
   Type: 'Map';
-  ItemsPath: string;
+  ItemsPath?: string;
   Iterator: Definition;
   ItemSelector?: {
     [key: string]: string;
