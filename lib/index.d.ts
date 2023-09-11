@@ -124,6 +124,7 @@ type ChoiceRuleComparison = {
 type ChoiceRuleNot = {
   Not: ChoiceRuleComparison;
   Next: string;
+  Comment?: string;
 };
 
 type ChoiceRuleAnd = {
