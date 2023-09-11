@@ -141,6 +141,7 @@ type ChoiceRuleOr = {
 
 type ChoiceRuleSimple = ChoiceRuleComparison & {
   Next: string;
+  Comment?: string:
 };
 
 type ChoiceRule = ChoiceRuleSimple | ChoiceRuleNot | ChoiceRuleAnd | ChoiceRuleOr;
