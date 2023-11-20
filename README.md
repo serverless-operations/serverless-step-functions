@@ -44,6 +44,7 @@ Serverless Framework v2.32.0 or later is required.
          - [Specify Name and Description](#specify-name-and-description)
          - [Scheduled Events IAM Role](#scheduled-events-iam-role)
          - [Specify InputTransformer](#specify-inputtransformer)
+         - [Use EventBridge Scheduler instead of EventBridge rules](#use-eventbridge-scheduler-instead-of-eventbridge-rules)
      - [CloudWatch Event](#cloudwatch-event)
          - [Simple event definition](#simple-event-definition)
          - [Enabling / Disabling](#enabling--disabling-1)
@@ -1095,6 +1096,26 @@ stepFunctions:
                 time: '$.time'
                 stage: '$.stageVariables'
               inputTemplate: '{"time": <time>, "stage" : <stage> }'
+      definition:
+        ...
+```
+
+#### Use EventBridge Scheduler instead of EventBridge rules
+
+AWS has account-wide limits on the number of `AWS::Event::Rule` triggers per bus (300 events), and all Lambda schedules go into a single bus with no way to override it. This can lead to a situation where large projects hit the limit with no ability to schedule more events.
+
+However, `AWS::Scheduler::Schedule` has much higher limits (1,000,000 events), and is configured identically. `method` can be set in order to migrate to this trigger type seamlessly. It also allows you to specify a timezone to run your event based on local time.
+
+```yml
+stepFunctions:
+  stateMachines:
+    stateMachineScheduled:
+      events:
+        - schedule:
+            method: scheduler
+            rate: cron(30 12 ? * 1-5 *)
+            enabled: true
+            timezone: America/New_York
       definition:
         ...
 ```
