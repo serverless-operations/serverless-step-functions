@@ -52,7 +52,7 @@
     "lodash": "^4.17.11"
   },
   "peerDependencies": {
-    "serverless": "^2.32.0 || 3"
+    "serverless": ">=2.32.0"
   },
   "overrides": {
     "file-type": "17.1.3",
