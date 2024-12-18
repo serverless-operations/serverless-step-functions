@@ -9,67 +9,67 @@ Serverless Framework v2.32.0 or later is required.
 
 ## TOC
 
- - [Install](#install)
- - [Setup](#Setup)
-     - [Adding a custom name for a state machine](#adding-a-custom-name-for-a-statemachine)
-     - [Adding a custom logical id for a stateMachine](#adding-a-custom-logical-id-for-a-statemachine)
-     - [Depending on another logical id](#depending-on-another-logical-id)
-     - [Adding retain property for a state machine](#adding-retain-property-for-a-statemachine)
-     - [CloudWatch Alarms](#cloudwatch-alarms)
-     - [CloudWatch Notifications](#cloudwatch-notifications)
-     - [Blue-Green deployments](#blue-green-deployment)
-     - [Pre-deployment validation](#pre-deployment-validation)
-     - [Express Workflow](#express-workflow)
-     - [CloudWatch Logs](#cloudwatch-logs)
-     - [X-Ray](#x-ray)
- - [Current Gotcha](#current-gotcha)
- - [Events](#events)
-     - [API Gateway](#api-gateway)
-         - [Simple HTTP endpoint](#simple-http-endpoint)
-         - [Custom Step Functions Action](#custom-step-functions-action)
-         - [HTTP Endpoint with custom IAM Role](#http-endpoint-with-custom-iam-role)
-         - [Share API Gateway and API Resources](#share-api-gateway-and-api-resources)
-         - [Enabling CORS](#enabling-cors)
-         - [HTTP Endpoints with AWS_IAM Authorizers](#http-endpoints-with-aws_iam-authorizers)
-         - [HTTP Endpoints with Custom Authorizers](#http-endpoints-with-custom-authorizers)
-         - [Shared Authorizer](#shared-authorizer)
-         - [LAMBDA_PROXY request template](#lambda_proxy-request-template)
-         - [Customizing request body mapping templates](#customizing-request-body-mapping-templates)
-         - [Customizing response headers and templates](#customizing-response-headers-and-templates)
-         - [Send request to an API](#send-request-to-an-api)
-         - [Setting API keys for your Rest API](#setting-api-keys-for-your-rest-api)
-         - [Request Schema Validators](#request-schema-validators)
-     - [Schedule](#schedule)
-         - [Enabling / Disabling](#enabling--disabling)
-         - [Specify Name and Description](#specify-name-and-description)
-         - [Scheduled Events IAM Role](#scheduled-events-iam-role)
-         - [Specify InputTransformer](#specify-inputtransformer)
-         - [Use EventBridge Scheduler instead of EventBridge rules](#use-eventbridge-scheduler-instead-of-eventbridge-rules)
-     - [CloudWatch Event](#cloudwatch-event)
-         - [Simple event definition](#simple-event-definition)
-         - [Enabling / Disabling](#enabling--disabling-1)
-         - [Specify Input or Inputpath or InputTransformer](#specify-input-or-inputpath-or-inputtransformer)
-         - [Specifying a Description](#specifying-a-description)
-         - [Specifying a Name](#specifying-a-name)
-         - [Specifying a RoleArn](#specifying-a-rolearn)
-         - [Specifying a custom CloudWatch EventBus](#specifying-a-custom-cloudwatch-eventbus)
-         - [Specifying a custom EventBridge EventBus](#specifying-a-custom-eventbridge-eventbus)
-         - [Specifying a DeadLetterQueue](#specifying-a-deadletterqueue)
- - [Tags](#tags)
- - [Commands](#commands)
-     - [deploy](#deploy)
-     - [invoke](#invoke)
- - [IAM Role](#iam-role)
- - [Tips](#tips)
-     - [How to specify the stateMachine ARN to environment variables](#how-to-specify-the-statemachine-arn-to-environment-variables)
-     - [How to split up state machines into files](#how-to-split-up-state-machines-into-files)
- - [Sample statemachines setting in serverless.yml](#sample-statemachines-setting-in-serverlessyml)
-     - [Wait State](#wait-state)
-     - [Retry Failure](#retry-failure)
-     - [Parallel](#parallel)
-     - [Catch Failure](#catch-failure)
-     - [Choice](#choice)
-     - [Map](#map)
+- [Install](#install)
+- [Setup](#Setup)
+  - [Adding a custom name for a state machine](#adding-a-custom-name-for-a-statemachine)
+  - [Adding a custom logical id for a stateMachine](#adding-a-custom-logical-id-for-a-statemachine)
+  - [Depending on another logical id](#depending-on-another-logical-id)
+  - [Adding retain property for a state machine](#adding-retain-property-for-a-statemachine)
+  - [CloudWatch Alarms](#cloudwatch-alarms)
+  - [CloudWatch Notifications](#cloudwatch-notifications)
+  - [Blue-Green deployments](#blue-green-deployment)
+  - [Pre-deployment validation](#pre-deployment-validation)
+  - [Express Workflow](#express-workflow)
+  - [CloudWatch Logs](#cloudwatch-logs)
+  - [X-Ray](#x-ray)
+- [Current Gotcha](#current-gotcha)
+- [Events](#events)
+  - [API Gateway](#api-gateway)
+    - [Simple HTTP endpoint](#simple-http-endpoint)
+    - [Custom Step Functions Action](#custom-step-functions-action)
+    - [HTTP Endpoint with custom IAM Role](#http-endpoint-with-custom-iam-role)
+    - [Share API Gateway and API Resources](#share-api-gateway-and-api-resources)
+    - [Enabling CORS](#enabling-cors)
+    - [HTTP Endpoints with AWS_IAM Authorizers](#http-endpoints-with-aws_iam-authorizers)
+    - [HTTP Endpoints with Custom Authorizers](#http-endpoints-with-custom-authorizers)
+    - [Shared Authorizer](#shared-authorizer)
+    - [LAMBDA_PROXY request template](#lambda_proxy-request-template)
+    - [Customizing request body mapping templates](#customizing-request-body-mapping-templates)
+    - [Customizing response headers and templates](#customizing-response-headers-and-templates)
+    - [Send request to an API](#send-request-to-an-api)
+    - [Setting API keys for your Rest API](#setting-api-keys-for-your-rest-api)
+    - [Request Schema Validators](#request-schema-validators)
+  - [Schedule](#schedule)
+    - [Enabling / Disabling](#enabling--disabling)
+    - [Specify Name and Description](#specify-name-and-description)
+    - [Scheduled Events IAM Role](#scheduled-events-iam-role)
+    - [Specify InputTransformer](#specify-inputtransformer)
+    - [Use EventBridge Scheduler instead of EventBridge rules](#use-eventbridge-scheduler-instead-of-eventbridge-rules)
+  - [CloudWatch Event](#cloudwatch-event)
+    - [Simple event definition](#simple-event-definition)
+    - [Enabling / Disabling](#enabling--disabling-1)
+    - [Specify Input or Inputpath or InputTransformer](#specify-input-or-inputpath-or-inputtransformer)
+    - [Specifying a Description](#specifying-a-description)
+    - [Specifying a Name](#specifying-a-name)
+    - [Specifying a RoleArn](#specifying-a-rolearn)
+    - [Specifying a custom CloudWatch EventBus](#specifying-a-custom-cloudwatch-eventbus)
+    - [Specifying a custom EventBridge EventBus](#specifying-a-custom-eventbridge-eventbus)
+    - [Specifying a DeadLetterQueue](#specifying-a-deadletterqueue)
+- [Tags](#tags)
+- [Commands](#commands)
+  - [deploy](#deploy)
+  - [invoke](#invoke)
+- [IAM Role](#iam-role)
+- [Tips](#tips)
+  - [How to specify the stateMachine ARN to environment variables](#how-to-specify-the-statemachine-arn-to-environment-variables)
+  - [How to split up state machines into files](#how-to-split-up-state-machines-into-files)
+- [Sample statemachines setting in serverless.yml](#sample-statemachines-setting-in-serverlessyml)
+  - [Wait State](#wait-state)
+  - [Retry Failure](#retry-failure)
+  - [Parallel](#parallel)
+  - [Catch Failure](#catch-failure)
+  - [Choice](#choice)
+  - [Map](#map)
 
 ## Install
 
@@ -425,8 +425,8 @@ stepFunctions:
           - lambda: LAMBDA_FUNCTION_ARN
           - kinesis: KINESIS_STREAM_ARN
           - kinesis:
-               arn: KINESIS_STREAM_ARN
-               partitionKeyPath: $.id # used to choose the parition key from payload
+              arn: KINESIS_STREAM_ARN
+              partitionKeyPath: $.id # used to choose the parition key from payload
           - firehose: FIREHOSE_STREAM_ARN
           - stepFunctions: STATE_MACHINE_ARN
         FAILED:
@@ -790,7 +790,7 @@ stepFunctions:
     createUser:
       ...
       events:
-        - http:
+          - http:
             path: /users
             ...
             authorizer:
@@ -870,6 +870,43 @@ stepFunctions:
                     "status": 200,
                     "info": "OK"
                   }
+      definition:
+```
+
+If you want to add multiple custom templates for different status codes, headers and content types, you can do so by including them in the `responses` object like so:
+
+```yml
+
+stepFunctions:
+  stateMachines:
+    hello:
+      events:
+        - http:
+            path: posts/create
+            method: POST
+            responses:
+              200:
+                statusCode: 200
+                responseParameters:
+                  method.response.header.Content-Type: "'application/json'"
+                  method.response.header.X-Application-Id: "'my-app'"
+                responseTemplates:
+                  application/json: |
+                    {
+                      "status": 200,
+                      "info": "OK"
+                    }
+              400:
+                statusCode: 400
+                responseParameters:
+                  method.response.header.Content-Type: "'application/json'"
+                  method.response.header.X-Application-Id: "'my-app'"
+                responseTemplates:
+                  application/json: |
+                    {
+                      "status": 400,
+                      "info": "Bad Request"
+                    }
       definition:
 ```
 
@@ -982,7 +1019,7 @@ provider:
             name: PostCreateModel
             schema: ${file(api_schema/post_add_schema.json)}
             description: "A Model validation for adding posts"
- 
+
 stepFunctions:
   stateMachines:
     create:
@@ -1089,10 +1126,10 @@ stepFunctions:
   stateMachines:
     stateMachineScheduled:
       events:
-        - schedule: 
+        - schedule:
             rate: cron(30 12 ? * 1-5 *)
             inputTransformer:
-              inputPathsMap: 
+              inputPathsMap:
                 time: '$.time'
                 stage: '$.stageVariables'
               inputTemplate: '{"time": <time>, "stage" : <stage> }'
@@ -1424,8 +1461,8 @@ Then
 # to get the Arn of the 1st EventBridge rule
 !GetAtt Hellostepfunc1EventsRuleCloudWatchEvent1.Arn
 
-# to get the Arn of the 2nd EventBridge rule
-!GetAtt Hellostepfunc1EventsRuleCloudWatchEvent2.Arn
+  # to get the Arn of the 2nd EventBridge rule
+  !GetAtt Hellostepfunc1EventsRuleCloudWatchEvent2.Arn
 ```
 
 ## Tags
@@ -1505,12 +1542,12 @@ resources:
         Path: /path_of_state_machine_roles/
         AssumeRolePolicyDocument:
           Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - states.amazonaws.com
-            Action:
-              - sts:AssumeRole
+            - Effect: Allow
+              Principal:
+                Service:
+                  - states.amazonaws.com
+              Action:
+                - sts:AssumeRole
         Policies:
           - PolicyName: statePolicy
             PolicyDocument:
@@ -1740,21 +1777,21 @@ stepFunctions:
             Type: Parallel
             Next: Final State
             Branches:
-            - StartAt: Wait 20s
-              States:
-                Wait 20s:
-                  Type: Wait
-                  Seconds: 20
-                  End: true
-            - StartAt: Pass
-              States:
-                Pass:
-                  Type: Pass
-                  Next: Wait 10s
-                Wait 10s:
-                  Type: Wait
-                  Seconds: 10
-                  End: true
+              - StartAt: Wait 20s
+                States:
+                  Wait 20s:
+                    Type: Wait
+                    Seconds: 20
+                    End: true
+              - StartAt: Pass
+                States:
+                  Pass:
+                    Type: Pass
+                    Next: Wait 10s
+                  Wait 10s:
+                    Type: Wait
+                    Seconds: 10
+                    End: true
           Final State:
             Type: Pass
             End: true
@@ -1782,12 +1819,12 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [hello, Arn]
             Catch:
-            - ErrorEquals: ["HandledError"]
-              Next: CustomErrorFallback
-            - ErrorEquals: ["States.TaskFailed"]
-              Next: ReservedTypeFallback
-            - ErrorEquals: ["States.ALL"]
-              Next: CatchAllFallback
+              - ErrorEquals: ["HandledError"]
+                Next: CustomErrorFallback
+              - ErrorEquals: ["States.TaskFailed"]
+                Next: ReservedTypeFallback
+              - ErrorEquals: ["States.ALL"]
+                Next: CatchAllFallback
             End: true
           CustomErrorFallback:
             Type: Pass
@@ -1834,12 +1871,12 @@ stepFunctions:
           ChoiceState:
             Type: Choice
             Choices:
-            - Variable: "$.foo"
-              NumericEquals: 1
-              Next: FirstMatchState
-            - Variable: "$.foo"
-              NumericEquals: 2
-              Next: SecondMatchState
+              - Variable: "$.foo"
+                NumericEquals: 1
+                Next: FirstMatchState
+              - Variable: "$.foo"
+                NumericEquals: 2
+                Next: SecondMatchState
             Default: DefaultState
           FirstMatchState:
             Type: Task
