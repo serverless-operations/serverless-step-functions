@@ -1,0 +1,28 @@
+name: Preview
+
+on:
+  pull_request:
+
+permissions:
+  checks: write
+  id-token: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  preview:
+    name: Preview
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v2.1.4
+        with:
+          node-version: 14
+
+      - run: corepack enable
+
+      - run: npm install
+
+      - name: Publish Preview
+        run: npx pkg-pr-new publish
