@@ -46,7 +46,7 @@
   "dependencies": {
     "joi": "^17.7.0",
     "@serverless/utils": "^6.7.0",
-    "asl-validator": "^3.8.0",
+    "asl-validator": "^3.14.0",
     "bluebird": "^3.4.0",
     "chalk": "^4.1.2",
     "lodash": "^4.17.11"
