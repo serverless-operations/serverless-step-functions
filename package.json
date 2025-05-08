@@ -74,5 +74,8 @@
     "*.js": [
       "eslint"
     ]
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
