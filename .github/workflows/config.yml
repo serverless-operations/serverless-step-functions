@@ -20,3 +20,5 @@ jobs:
         with:
           name: code-coverage-report
           path: reports
+      - run: |
+          npx pkg-pr-new publish
