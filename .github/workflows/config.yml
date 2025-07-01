@@ -1,6 +1,15 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches: ["master"]
+
+permissions:
+  checks: write
+  id-token: write
+  contents: write
+  pull-requests: write
 
 jobs:
   test:
@@ -20,3 +29,5 @@ jobs:
         with:
           name: code-coverage-report
           path: reports
+      - run: |
+          npx pkg-pr-new publish
