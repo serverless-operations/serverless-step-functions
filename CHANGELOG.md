@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.24.3](https://github.com/serverless-operations/serverless-step-functions/compare/v3.24.2...v3.24.3) (2026-03-18)
+
+
+### Bug Fixes
+
+* pkg json ([cfb37e4](https://github.com/serverless-operations/serverless-step-functions/commit/cfb37e48d4671cc24161932d58bc4947e4a41432))
+
 ## [3.24.2](https://github.com/serverless-operations/serverless-step-functions/compare/v3.24.1...v3.24.2) (2026-03-18)
 
 
