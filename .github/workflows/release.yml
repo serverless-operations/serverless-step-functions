@@ -1,0 +1,31 @@
+# IMPORTANT: DO NOT RENAME THIS FILE
+# It uses Trusted Publisher to deploy without token
+# https://www.npmjs.com/package/serverless-step-functions/access
+
+name: Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  id-token: write # needed for npm publish with provenance
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: |
+          npm install --legacy-peer-deps
+      - run: |
+          npm run lint
+      - run: |
+          npm run test
+      - run: |
+          npm publish --provenance
