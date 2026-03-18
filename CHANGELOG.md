@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.25.0](https://github.com/serverless-operations/serverless-step-functions/compare/v3.24.4...v3.25.0) (2026-03-18)
+
+
+### Features
+
+* **api-gateway:** support timeoutInMillis for http events ([#673](https://github.com/serverless-operations/serverless-step-functions/issues/673)) ([e0057e3](https://github.com/serverless-operations/serverless-step-functions/commit/e0057e3798f7b708044e21b235e75842107ad43f)), closes [#651](https://github.com/serverless-operations/serverless-step-functions/issues/651)
+
+
+### Bug Fixes
+
+* **iam:** apply provider.iam.role.path to state machine execution roles ([#674](https://github.com/serverless-operations/serverless-step-functions/issues/674)) ([aa4755a](https://github.com/serverless-operations/serverless-step-functions/commit/aa4755a9e5067aa8288945df6595f7b862c524f9)), closes [#653](https://github.com/serverless-operations/serverless-step-functions/issues/653)
+
 ## [3.24.4](https://github.com/serverless-operations/serverless-step-functions/compare/v3.24.3...v3.24.4) (2026-03-18)
 
 
