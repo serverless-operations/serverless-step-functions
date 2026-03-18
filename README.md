@@ -335,6 +335,23 @@ alarms:
   treatMissingData: ignore # default
 ```
 
+You can also override the default `period` (in seconds) for all alarms or for a specific alarm:
+
+```yml
+alarms:
+  topics:
+    ok: arn:aws:sns:us-east-1:1234567890:NotifyMe
+    alarm: arn:aws:sns:us-east-1:1234567890:NotifyMe
+    insufficientData: arn:aws:sns:us-east-1:1234567890:NotifyMe
+  metrics:
+    - executionsTimedOut
+    - executionsFailed
+    - metric: executionThrottled
+      period: 300 # override for this alarm only
+    - executionsSucceeded
+  period: 120 # default for all alarms (defaults to 60 if omitted)
+```
+
 #### Custom CloudWatch Alarm names
 
 By default, the CloudFormation assigns names to the alarms based on the CloudFormation stack and the resource logical Id, and in some cases and these names could be confusing.
@@ -614,6 +631,27 @@ stepFunctions:
 ```
 
 Request template is not used when action is set because there're a bunch of actions. However if you want to use request template you can use [Customizing request body mapping templates](#customizing-request-body-mapping-templates).
+
+#### HTTP Endpoint with custom timeout
+
+You can configure the API Gateway integration timeout (in milliseconds) at the event level or as a default for all events via `provider.apiGateway.timeoutInMillis`:
+
+```yml
+provider:
+  name: aws
+  apiGateway:
+    timeoutInMillis: 15000 # default for all step function http events
+
+stepFunctions:
+  stateMachines:
+    hello:
+      events:
+        - http:
+            path: hello
+            method: GET
+            timeoutInMillis: 29000 # override per event
+      definition:
+```
 
 #### HTTP Endpoint with custom IAM Role
 
