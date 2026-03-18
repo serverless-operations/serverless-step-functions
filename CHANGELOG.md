@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.26.1](https://github.com/serverless-operations/serverless-step-functions/compare/v3.26.0...v3.26.1) (2026-03-18)
+
+
+### Bug Fixes
+
+* **alarms:** support custom period for CloudWatch alarms ([#686](https://github.com/serverless-operations/serverless-step-functions/issues/686)) ([72b3e5f](https://github.com/serverless-operations/serverless-step-functions/commit/72b3e5f80d388ba1d8f94c0ce9cd8d3e9c57576f)), closes [#612](https://github.com/serverless-operations/serverless-step-functions/issues/612)
+
 ## [3.26.0](https://github.com/serverless-operations/serverless-step-functions/compare/v3.25.0...v3.26.0) (2026-03-18)
 
 
