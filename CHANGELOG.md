@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.26.0](https://github.com/serverless-operations/serverless-step-functions/compare/v3.25.0...v3.26.0) (2026-03-18)
+
+
+### Features
+
+* **iam:** generate IAM policy for http:invoke (Call third-party API) states ([#688](https://github.com/serverless-operations/serverless-step-functions/issues/688)) ([11018ae](https://github.com/serverless-operations/serverless-step-functions/commit/11018ae50a9d31bc7f5a2ad67772af1d709ceec5)), closes [#599](https://github.com/serverless-operations/serverless-step-functions/issues/599)
+
+
+### Bug Fixes
+
+* **iam:** generate IAM policy for aws-sdk:dynamodb:scan resource ([#684](https://github.com/serverless-operations/serverless-step-functions/issues/684)) ([a47454a](https://github.com/serverless-operations/serverless-step-functions/commit/a47454a7b7125e11c3515aafe2df9b84e23dafaa)), closes [#584](https://github.com/serverless-operations/serverless-step-functions/issues/584)
+* **iam:** generate IAM policy for aws-sdk:sesv2:sendEmail resource ([#689](https://github.com/serverless-operations/serverless-step-functions/issues/689)) ([eeaa755](https://github.com/serverless-operations/serverless-step-functions/commit/eeaa755581eb198d423736ec34f080919eb4796e)), closes [#610](https://github.com/serverless-operations/serverless-step-functions/issues/610)
+* **notifications:** resolve local function names to CloudFormation logical IDs ([#690](https://github.com/serverless-operations/serverless-step-functions/issues/690)) ([ad5e98a](https://github.com/serverless-operations/serverless-step-functions/commit/ad5e98ab394517f16abd9672aa528cdb5e48f390)), closes [#582](https://github.com/serverless-operations/serverless-step-functions/issues/582)
+
 ## [3.25.0](https://github.com/serverless-operations/serverless-step-functions/compare/v3.24.4...v3.25.0) (2026-03-18)
 
 
