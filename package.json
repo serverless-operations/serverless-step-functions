@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/horike37/serverless-step-functions.git"
+    "url": "git+https://github.com/serverless-operations/serverless-step-functions.git"
   },
   "keywords": [
     "serverless"
@@ -19,9 +19,9 @@
   "author": "horike37",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/horike37/serverless-step-functions/issues"
+    "url": "https://github.com/serverless-operations/serverless-step-functions/issues"
   },
-  "homepage": "https://github.com/horike37/serverless-step-functions#readme",
+  "homepage": "https://github.com/serverless-operations/serverless-step-functions#readme",
   "devDependencies": {
     "@commitlint/cli": "^17.6.1",
     "@commitlint/config-conventional": "^15.0.0",
