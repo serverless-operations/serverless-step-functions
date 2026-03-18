@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.24.2](https://github.com/serverless-operations/serverless-step-functions/compare/v3.24.1...v3.24.2) (2026-03-18)
+
+
+### Bug Fixes
+
+* upgrade node v24 ([08b333c](https://github.com/serverless-operations/serverless-step-functions/commit/08b333cad69131936b7ec3af02ccb8e3dff45384))
+
 ## [3.24.1](https://github.com/serverless-operations/serverless-step-functions/compare/v3.24.0...v3.24.1) (2026-03-18)
 
 
