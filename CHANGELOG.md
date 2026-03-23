@@ -1,5 +1,24 @@
 # Changelog
 
+## [3.27.0](https://github.com/serverless-operations/serverless-step-functions/compare/v3.26.1...v3.27.0) (2026-03-23)
+
+
+### Features
+
+* **iam:** generate IAM policy for aws-sdk:scheduler:deleteSchedule ([#627](https://github.com/serverless-operations/serverless-step-functions/issues/627)) ([#692](https://github.com/serverless-operations/serverless-step-functions/issues/692)) ([d2837e3](https://github.com/serverless-operations/serverless-step-functions/commit/d2837e35efd9740ba00a995ff7550f0749503ae2))
+
+
+### Bug Fixes
+
+* **alarms:** allow Fn::Sub in alarm topic ARNs ([#702](https://github.com/serverless-operations/serverless-step-functions/issues/702)) ([2c136aa](https://github.com/serverless-operations/serverless-step-functions/commit/2c136aa2a8c5544535b81c914e37bc2f9e367159)), closes [#417](https://github.com/serverless-operations/serverless-step-functions/issues/417)
+* **apiGateway:** use string type for SelectionPattern in integration responses ([#593](https://github.com/serverless-operations/serverless-step-functions/issues/593)) ([#694](https://github.com/serverless-operations/serverless-step-functions/issues/694)) ([6a0a8cd](https://github.com/serverless-operations/serverless-step-functions/commit/6a0a8cdadbd22e2dea4415b4059ed6dd9a08f583))
+* handle CloudFormation intrinsic functions in Arguments.StateMachineArn ([#709](https://github.com/serverless-operations/serverless-step-functions/issues/709)) ([799c09b](https://github.com/serverless-operations/serverless-step-functions/commit/799c09b4fe5655757020ef72caacfbb42fb5d2c6))
+* **iam:** handle Fn::Sub string form in getExecutionArn ([9ba12af](https://github.com/serverless-operations/serverless-step-functions/commit/9ba12afc01e3ef625927aef41eed555dee2a95fd))
+* **iam:** restrict DescribeExecution and StopExecution to specific state machine executions ([#697](https://github.com/serverless-operations/serverless-step-functions/issues/697)) ([f833e9f](https://github.com/serverless-operations/serverless-step-functions/commit/f833e9f7f7acceccbd5800d06ef569e3a7aaef66))
+* **iam:** use ${AWS::Partition} in S3 resource ARNs ([#662](https://github.com/serverless-operations/serverless-step-functions/issues/662)) ([#693](https://github.com/serverless-operations/serverless-step-functions/issues/693)) ([4a88f75](https://github.com/serverless-operations/serverless-step-functions/commit/4a88f751d4108f8d5fbd9c2fee08ba5e8e5b49d7))
+* return promise from compileStateMachines to suppress Bluebird warning ([#574](https://github.com/serverless-operations/serverless-step-functions/issues/574)) ([#695](https://github.com/serverless-operations/serverless-step-functions/issues/695)) ([25823de](https://github.com/serverless-operations/serverless-step-functions/commit/25823deb20e8b73664e81bbab798c8ffa78b3b8a))
+* **stateMachines:** omit Destinations from LoggingConfiguration when not provided ([#701](https://github.com/serverless-operations/serverless-step-functions/issues/701)) ([2bdbb9c](https://github.com/serverless-operations/serverless-step-functions/commit/2bdbb9cb4c9db8567c45485ce05e94f3a1276e02)), closes [#458](https://github.com/serverless-operations/serverless-step-functions/issues/458)
+
 ## [3.26.1](https://github.com/serverless-operations/serverless-step-functions/compare/v3.26.0...v3.26.1) (2026-03-18)
 
 
