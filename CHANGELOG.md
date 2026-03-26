@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.28.0](https://github.com/serverless-operations/serverless-step-functions/compare/v3.27.0...v3.28.0) (2026-03-26)
+
+
+### Features
+
+* **events:** add RetryPolicy support for EventBridge rule targets ([#700](https://github.com/serverless-operations/serverless-step-functions/issues/700)) ([1191e1d](https://github.com/serverless-operations/serverless-step-functions/commit/1191e1d6efe098b5e65cb12bd9a992d85dc5c417)), closes [#575](https://github.com/serverless-operations/serverless-step-functions/issues/575)
+* **notifications:** support InputPath and InputTransformer on notification targets ([#698](https://github.com/serverless-operations/serverless-step-functions/issues/698)) ([1c0b9bc](https://github.com/serverless-operations/serverless-step-functions/commit/1c0b9bc8e78b4fd51a214eaa6d5f114c54a3009e)), closes [#609](https://github.com/serverless-operations/serverless-step-functions/issues/609)
+* support JSONata for EventBridge Scheduler IAM permissions ([#712](https://github.com/serverless-operations/serverless-step-functions/issues/712)) ([56a7d77](https://github.com/serverless-operations/serverless-step-functions/commit/56a7d77064b52466b407b04d37249ece3d41ad5f))
+
+
+### Bug Fixes
+
+* **apiGateway:** support object form for apiKeys entries ([#699](https://github.com/serverless-operations/serverless-step-functions/issues/699)) ([14d8eed](https://github.com/serverless-operations/serverless-step-functions/commit/14d8eedba44854f6635fdd97003043ccec3a8383))
+
 ## [3.27.0](https://github.com/serverless-operations/serverless-step-functions/compare/v3.26.1...v3.27.0) (2026-03-23)
 
 
