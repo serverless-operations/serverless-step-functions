@@ -55,6 +55,7 @@ Serverless Framework v2.32.0 or later is required.
     - [Specifying a custom CloudWatch EventBus](#specifying-a-custom-cloudwatch-eventbus)
     - [Specifying a custom EventBridge EventBus](#specifying-a-custom-eventbridge-eventbus)
     - [Specifying a DeadLetterQueue](#specifying-a-deadletterqueue)
+    - [Specifying a RetryPolicy](#specifying-a-retrypolicy)
 - [Tags](#tags)
 - [Commands](#commands)
   - [deploy](#deploy)
@@ -1527,6 +1528,33 @@ Then
   # to get the Arn of the 2nd EventBridge rule
   !GetAtt Hellostepfunc1EventsRuleCloudWatchEvent2.Arn
 ```
+
+#### Specifying a RetryPolicy
+
+You can configure a retry policy for `schedule` and `eventBridge`/`cloudwatchEvent` rule targets. This controls how EventBridge retries failed invocations before sending the event to a dead-letter queue (if configured).
+
+```yml
+stepFunctions:
+  stateMachines:
+    myMachine:
+      events:
+        - schedule:
+            rate: rate(10 minutes)
+            retryPolicy:
+              maximumEventAgeInSeconds: 3600
+              maximumRetryAttempts: 3
+        - eventBridge:
+            event:
+              source:
+                - aws.ec2
+            retryPolicy:
+              maximumEventAgeInSeconds: 7200
+              maximumRetryAttempts: 5
+      definition:
+        ...
+```
+
+Both `maximumEventAgeInSeconds` (60–86400) and `maximumRetryAttempts` (0–185) are optional. When omitted, AWS applies its default retry behaviour.
 
 ## Tags
 
