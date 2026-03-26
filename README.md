@@ -456,6 +456,29 @@ CloudFormation intrinsic functions such as `Ref` and `Fn::GetAtt` are supported.
 
 When setting up a notification target against a FIFO SQS queue, the queue must enable the content-based deduplication option and you must configure the `messageGroupId`.
 
+You can also control the event payload delivered to each notification target using `inputPath` or `inputTransformer`:
+
+```yml
+stepFunctions:
+  stateMachines:
+    hellostepfunc1:
+      name: test
+      definition:
+        ...
+      notifications:
+        FAILED:
+          - sns: SNS_TOPIC_ARN
+            inputTransformer:
+              inputPathsMap:
+                status: '$.detail.status'
+                name: '$.detail.name'
+              inputTemplate: '"State machine <name> finished with status <status>"'
+          - sqs: SQS_QUEUE_ARN
+            inputPath: '$.detail'
+```
+
+`inputPath` selects a sub-tree of the event to pass to the target. `inputTransformer` lets you map fields from the event and embed them in a custom template string.
+
 ### Blue green deployment
 
 To implement a [blue-green deployment with Step Functions](https://theburningmonk.com/2019/08/how-to-do-blue-green-deployment-for-step-functions/) you need to reference the exact versions of the functions.
