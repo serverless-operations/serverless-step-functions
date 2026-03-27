@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.28.1](https://github.com/serverless-operations/serverless-step-functions/compare/v3.28.0...v3.28.1) (2026-03-27)
+
+
+### Bug Fixes
+
+* **apiGateway:** support object form for apiKeys entries ([#716](https://github.com/serverless-operations/serverless-step-functions/issues/716)) ([3c7f8e4](https://github.com/serverless-operations/serverless-step-functions/commit/3c7f8e49f4b0dd46ae31e8e789e97d0045186461)), closes [#431](https://github.com/serverless-operations/serverless-step-functions/issues/431)
+
 ## [3.28.0](https://github.com/serverless-operations/serverless-step-functions/compare/v3.27.0...v3.28.0) (2026-03-26)
 
 
