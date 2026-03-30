@@ -25,11 +25,10 @@ jobs:
       - run: |
           npm run lint
       - run: |
-          npm run test
-      - uses: actions/upload-artifact@v4
+          npm run coverage
+      - uses: codecov/codecov-action@v5
         with:
-          name: code-coverage-report
-          path: reports
+          files: ./coverage/lcov.info
       - run: |
           npx pkg-pr-new publish
   release:

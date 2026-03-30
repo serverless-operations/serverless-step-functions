@@ -1,6 +1,6 @@
 # Serverless Step Functions
 
-![CI](https://github.com/serverless-operations/serverless-step-functions/actions/workflows/config.yml/badge.svg) [![npm version](https://badge.fury.io/js/serverless-step-functions.svg)](https://badge.fury.io/js/serverless-step-functions) [![Coverage Status](https://coveralls.io/repos/github/serverless-operations/serverless-step-functions/badge.svg?branch=master)](https://coveralls.io/github/serverless-operations/serverless-step-functions?branch=master) [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+![CI](https://github.com/serverless-operations/serverless-step-functions/actions/workflows/config.yml/badge.svg) [![npm version](https://badge.fury.io/js/serverless-step-functions.svg)](https://badge.fury.io/js/serverless-step-functions) [![codecov](https://codecov.io/gh/serverless-operations/serverless-step-functions/branch/master/graph/badge.svg)](https://codecov.io/gh/serverless-operations/serverless-step-functions) [![Coverage Status](https://coveralls.io/repos/github/serverless-operations/serverless-step-functions/badge.svg?branch=master)](https://coveralls.io/github/serverless-operations/serverless-step-functions?branch=master) [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
 This is the Serverless Framework plugin for AWS Step Functions.
 
