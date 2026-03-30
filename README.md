@@ -989,24 +989,24 @@ provider:
   name: aws
   apiGateway:
     apiKeys:
-        - myFirstKey
-        - ${opt:stage}-myFirstKey
-        - ${env:MY_API_KEY} # you can hide it in a serverless variable
-        - name: myKeyWithValue  # object form — lets you set a specific key value
-          value: myApiKeyValue
-  usagePlan:
-    quota:
-      limit: 5000
-      offset: 2
-      period: MONTH
-    throttle:
-      burstLimit: 200
-      rateLimit: 100
+      - myFirstKey
+      - ${opt:stage}-myFirstKey
+      - ${env:MY_API_KEY} # you can hide it in a serverless variable
+      - name: myKeyWithValue  # object form — lets you set a specific key value
+        value: myApiKeyValue
+    usagePlan:
+      quota:
+        limit: 5000
+        offset: 2
+        period: MONTH
+      throttle:
+        burstLimit: 200
+        rateLimit: 100
 functions:
   hello:
     handler: handler.hello
 
-    stepFunctions:
+stepFunctions:
       stateMachines:
         statemachine1:
           name: ${self:service}-${opt:stage}-statemachine1
