@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.28.2](https://github.com/serverless-operations/serverless-step-functions/compare/v3.28.1...v3.28.2) (2026-03-30)
+
+
+### Bug Fixes
+
+* **iam:** apply provider.rolePermissionsBoundary to ApigatewayToStepFunctionsRole ([cd3a82e](https://github.com/serverless-operations/serverless-step-functions/commit/cd3a82ec98cd7986f72bf44fb85616e6d730ca48)), closes [#395](https://github.com/serverless-operations/serverless-step-functions/issues/395)
+* **iam:** handle missing Parameters block when StateMachineArn is a top-level Ref ([#720](https://github.com/serverless-operations/serverless-step-functions/issues/720)) ([62878ab](https://github.com/serverless-operations/serverless-step-functions/commit/62878ab77111ad017a53a258ae4f74ca23fb580f)), closes [#468](https://github.com/serverless-operations/serverless-step-functions/issues/468)
+* **invoke:** write result as JSON to stdout, errors to stderr ([#724](https://github.com/serverless-operations/serverless-step-functions/issues/724)) ([9956927](https://github.com/serverless-operations/serverless-step-functions/commit/9956927e1670c06d231816e768ad733c2bfbf0a0)), closes [#436](https://github.com/serverless-operations/serverless-step-functions/issues/436) [#592](https://github.com/serverless-operations/serverless-step-functions/issues/592)
+* **stateMachine:** guard pseudo-parameter validation + fix apiKeys docs ([#725](https://github.com/serverless-operations/serverless-step-functions/issues/725)) ([28b4b73](https://github.com/serverless-operations/serverless-step-functions/commit/28b4b732a0f50c7c8a07d6735c0d7a56086d6a54))
+
 ## [3.28.1](https://github.com/serverless-operations/serverless-step-functions/compare/v3.28.0...v3.28.1) (2026-03-27)
 
 
