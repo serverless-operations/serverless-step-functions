@@ -36,7 +36,7 @@
     "mocha-param": "^2.0.0",
     "pkg-pr-new": "^0.0.54",
     "semantic-release": "^25.0.3",
-    "serverless": "^2.69.1",
+    "serverless": "^3.0.0",
     "sinon": "^12.0.1"
   },
   "dependencies": {
@@ -48,7 +48,7 @@
     "lodash": "^4.17.11"
   },
   "peerDependencies": {
-    "serverless": ">=2.32.0"
+    "serverless": ">=3.0.0"
   },
   "overrides": {
     "file-type": "17.1.3",
