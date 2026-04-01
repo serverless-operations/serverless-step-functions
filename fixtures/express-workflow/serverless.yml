@@ -1,0 +1,39 @@
+service: integration-express-workflow
+
+provider: ${file(../base.yml):provider}
+plugins: ${file(../base.yml):plugins}
+package: ${file(../base.yml):package}
+custom: ${file(../base.yml):custom}
+
+resources:
+  Resources:
+    LogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        LogGroupName: /aws/states/integration-express-workflow-${opt:stage, 'test'}
+        RetentionInDays: 1
+
+functions:
+  hello:
+    handler: handler.hello
+
+stepFunctions:
+  stateMachines:
+    expressMachine:
+      name: integration-express-workflow-${opt:stage, 'test'}
+      type: EXPRESS
+      loggingConfig:
+        level: ALL
+        includeExecutionData: true
+        destinations:
+          - Fn::GetAtt: [LogGroup, Arn]
+      tracingConfig:
+        enabled: true
+      definition:
+        StartAt: InvokeHello
+        States:
+          InvokeHello:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [HelloLambdaFunction, Arn]
+            End: true

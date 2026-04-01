@@ -1,0 +1,27 @@
+service: integration-cloudwatch-event
+
+provider: ${file(../base.yml):provider}
+plugins: ${file(../base.yml):plugins}
+package: ${file(../base.yml):package}
+custom: ${file(../base.yml):custom}
+
+stepFunctions:
+  stateMachines:
+    eventMachine:
+      name: integration-cloudwatch-event-${opt:stage, 'test'}
+      events:
+        - cloudwatchEvent:
+            event:
+              source:
+                - aws.ec2
+              detail-type:
+                - EC2 Instance State-change Notification
+              detail:
+                state:
+                  - running
+      definition:
+        StartAt: PassThrough
+        States:
+          PassThrough:
+            Type: Pass
+            End: true

@@ -1,0 +1,21 @@
+service: integration-activities
+
+provider: ${file(../base.yml):provider}
+plugins: ${file(../base.yml):plugins}
+package: ${file(../base.yml):package}
+custom: ${file(../base.yml):custom}
+
+stepFunctions:
+  stateMachines:
+    activityMachine:
+      name: integration-activities-${opt:stage, 'test'}
+      definition:
+        StartAt: WaitForActivity
+        States:
+          WaitForActivity:
+            Type: Task
+            Resource:
+              Ref: MyActivityTaskStepFunctionsActivity
+            End: true
+  activities:
+    - MyActivityTask

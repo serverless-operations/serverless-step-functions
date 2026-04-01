@@ -4,9 +4,10 @@
   "description": "The module is AWS Step Functions plugin for Serverless Framework",
   "main": "lib/index.js",
   "scripts": {
-    "test": "mocha \"!(node_modules)/**/*.test.js\"",
+    "test": "mocha \"lib/**/*.test.js\"",
     "coverage": "c8 --reporter=text --reporter=lcov npm test",
     "lint": "eslint .",
+    "test:integration": "osls deploy --stage test",
     "semantic-release": "semantic-release"
   },
   "repository": {
@@ -25,8 +26,8 @@
   "devDependencies": {
     "@commitlint/cli": "^17.6.1",
     "@commitlint/config-conventional": "^15.0.0",
-    "chai": "^3.5.0",
     "c8": "^11.0.0",
+    "chai": "^3.5.0",
     "eslint": "^10.0.0",
     "eslint-config-airbnb-extended": "^3.0.1",
     "globals": "^17.0.0",
@@ -36,10 +37,11 @@
     "mocha-param": "^2.0.0",
     "pkg-pr-new": "^0.0.54",
     "semantic-release": "^25.0.3",
-    "serverless": "^3.0.0",
+    "osls": "^3.0.0",
     "sinon": "^12.0.1"
   },
   "dependencies": {
+    "@osls/compose": "^1.4.0",
     "@serverless/utils": "^6.7.0",
     "asl-validator": "^3.11.0",
     "bluebird": "^3.4.0",
@@ -55,10 +57,7 @@
     "ansi-regex": "5.0.1",
     "simple-git": "3.5.0",
     "ramda": "0.27.2",
-    "got": "11.8.5",
-    "serverless": {
-      "@serverless/utils": "$@serverless/utils"
-    }
+    "got": "11.8.5"
   },
   "husky": {
     "hooks": {

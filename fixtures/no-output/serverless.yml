@@ -1,0 +1,20 @@
+service: integration-no-output
+
+provider: ${file(../base.yml):provider}
+plugins: ${file(../base.yml):plugins}
+package: ${file(../base.yml):package}
+custom: ${file(../base.yml):custom}
+
+stepFunctions:
+  # noOutput suppresses all CloudFormation Outputs for state machine ARNs.
+  # This fixture intentionally produces no Stack Outputs.
+  noOutput: true
+  stateMachines:
+    noOutputMachine:
+      name: integration-no-output-${opt:stage, 'test'}
+      definition:
+        StartAt: PassThrough
+        States:
+          PassThrough:
+            Type: Pass
+            End: true

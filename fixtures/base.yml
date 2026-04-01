@@ -1,0 +1,23 @@
+provider:
+  name: aws
+  runtime: nodejs22.x
+  region: us-east-1
+  stage: test
+
+plugins:
+  - serverless-localstack
+  - serverless-step-functions
+
+# excludeDevDependencies must be false to prevent Serverless Framework v3 from
+# scanning node_modules (~25k files) to identify production dependencies before
+# packaging — that analysis exhausts the JS heap. The !node_modules/** pattern
+# then excludes node_modules from the deployment package.
+package:
+  excludeDevDependencies: false
+  patterns:
+    - '!node_modules/**'
+
+custom:
+  localstack:
+    stages:
+      - test
