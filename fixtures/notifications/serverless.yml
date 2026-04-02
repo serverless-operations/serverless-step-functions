@@ -29,3 +29,22 @@ stepFunctions:
         SUCCEEDED:
           - sqs:
               Fn::GetAtt: [NotificationQueue, Arn]
+
+    # Second state machine sharing the same SNS topic and SQS queue (fan-in).
+    # Reproduces issue #275: without the fix, this machine's TopicPolicy and
+    # QueuePolicy overwrite the first machine's, leaving it unable to publish.
+    notificationMachine2:
+      name: integration-notifications-2-${opt:stage, 'test'}
+      definition:
+        StartAt: PassThrough
+        States:
+          PassThrough:
+            Type: Pass
+            End: true
+      notifications:
+        FAILED:
+          - sns:
+              Ref: NotificationTopic
+        SUCCEEDED:
+          - sqs:
+              Fn::GetAtt: [NotificationQueue, Arn]
