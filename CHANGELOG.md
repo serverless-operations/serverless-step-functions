@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.29.0](https://github.com/serverless-operations/serverless-step-functions/compare/v3.28.2...v3.29.0) (2026-04-02)
+
+
+### Features
+
+* **iam:** generate correct permissions for EMR service integration ([#743](https://github.com/serverless-operations/serverless-step-functions/issues/743)) ([72860ca](https://github.com/serverless-operations/serverless-step-functions/commit/72860ca1b40399e9352214e09e43d6dfd3008b14)), closes [#423](https://github.com/serverless-operations/serverless-step-functions/issues/423)
+* **iam:** generate events:PutTargets policy for aws-sdk:eventbridge:putTargets ([#739](https://github.com/serverless-operations/serverless-step-functions/issues/739)) ([dfbf54b](https://github.com/serverless-operations/serverless-step-functions/commit/dfbf54b10aa15428a54c8c73b965a7c66b437dac)), closes [#506](https://github.com/serverless-operations/serverless-step-functions/issues/506)
+* **test:** add integration test suite with LocalStack ([#745](https://github.com/serverless-operations/serverless-step-functions/issues/745)) ([2c4117c](https://github.com/serverless-operations/serverless-step-functions/commit/2c4117cf8b398d27fddb1ad2ada6f0bc841eabe0))
+
+
+### Bug Fixes
+
+* **stateMachine:** handle plain string Fn::Sub when useExactVersion is true ([#744](https://github.com/serverless-operations/serverless-step-functions/issues/744)) ([60e195c](https://github.com/serverless-operations/serverless-step-functions/commit/60e195c756171c5be3dfbc71932d8e80f9efa75e)), closes [#488](https://github.com/serverless-operations/serverless-step-functions/issues/488)
+
 ## [3.28.2](https://github.com/serverless-operations/serverless-step-functions/compare/v3.28.1...v3.28.2) (2026-03-30)
 
 
