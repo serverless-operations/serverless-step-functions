@@ -1,0 +1,43 @@
+service: integration-cloudwatch-alarms
+
+provider: ${file(../base.yml):provider}
+plugins: ${file(../base.yml):plugins}
+package: ${file(../base.yml):package}
+custom: ${file(../base.yml):custom}
+
+resources:
+  Resources:
+    AlarmTopic:
+      Type: AWS::SNS::Topic
+
+functions:
+  hello:
+    handler: handler.hello
+
+stepFunctions:
+  stateMachines:
+    alarmMachine:
+      name: integration-cloudwatch-alarms-${opt:stage, 'test'}
+      definition:
+        StartAt: InvokeHello
+        States:
+          InvokeHello:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [HelloLambdaFunction, Arn]
+            End: true
+      alarms:
+        topics:
+          ok:
+            Ref: AlarmTopic
+          alarm:
+            Ref: AlarmTopic
+          insufficientData:
+            Ref: AlarmTopic
+        metrics:
+          - executionsTimedOut
+          - executionsFailed
+          - executionsAborted
+          - executionThrottled
+          - executionsSucceeded
+        treatMissingData: ignore

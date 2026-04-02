@@ -1,0 +1,26 @@
+service: integration-basic-state-machine
+
+provider: ${file(../base.yml):provider}
+plugins: ${file(../base.yml):plugins}
+package: ${file(../base.yml):package}
+custom: ${file(../base.yml):custom}
+
+functions:
+  hello:
+    handler: handler.hello
+
+stepFunctions:
+  stateMachines:
+    basicMachine:
+      name: integration-basic-${opt:stage, 'test'}
+      tags:
+        integration: 'true'
+        fixture: basic-state-machine
+      definition:
+        StartAt: InvokeHello
+        States:
+          InvokeHello:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [HelloLambdaFunction, Arn]
+            End: true

@@ -1,0 +1,8 @@
+services:
+  localstack:
+    image: localstack/localstack:4
+    network_mode: host
+    environment:
+      SERVICES: cloudformation,stepfunctions,iam,lambda,s3,logs,sns,cloudwatch,sqs,events,scheduler,apigateway
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

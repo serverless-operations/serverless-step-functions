@@ -1,0 +1,21 @@
+service: integration-api-gateway
+
+provider: ${file(../base.yml):provider}
+plugins: ${file(../base.yml):plugins}
+package: ${file(../base.yml):package}
+custom: ${file(../base.yml):custom}
+
+stepFunctions:
+  stateMachines:
+    apiMachine:
+      name: integration-api-gateway-${opt:stage, 'test'}
+      events:
+        - http:
+            path: execute
+            method: POST
+      definition:
+        StartAt: PassThrough
+        States:
+          PassThrough:
+            Type: Pass
+            End: true

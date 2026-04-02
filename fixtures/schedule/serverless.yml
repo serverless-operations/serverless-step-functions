@@ -1,0 +1,34 @@
+service: integration-schedule
+
+provider: ${file(../base.yml):provider}
+plugins: ${file(../base.yml):plugins}
+package: ${file(../base.yml):package}
+custom: ${file(../base.yml):custom}
+
+stepFunctions:
+  stateMachines:
+    rateMachine:
+      name: integration-schedule-rate-${opt:stage, 'test'}
+      events:
+        - schedule:
+            rate: rate(1 day)
+            enabled: true
+      definition:
+        StartAt: PassThrough
+        States:
+          PassThrough:
+            Type: Pass
+            End: true
+    schedulerMachine:
+      name: integration-schedule-scheduler-${opt:stage, 'test'}
+      events:
+        - schedule:
+            method: scheduler
+            rate: rate(1 day)
+            enabled: true
+      definition:
+        StartAt: PassThrough
+        States:
+          PassThrough:
+            Type: Pass
+            End: true

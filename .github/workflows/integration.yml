@@ -1,0 +1,40 @@
+name: Integration Tests
+
+on:
+  pull_request:
+    paths-ignore:
+      - "**/*.md"
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Start LocalStack
+        run: docker compose up -d
+      - name: Install dependencies
+        run: |
+          npm install --legacy-peer-deps
+          npm install --legacy-peer-deps --prefix fixtures/
+      - name: Wait for LocalStack
+        run: |
+          echo "Waiting for LocalStack to be ready..."
+          for i in $(seq 1 30); do
+            HEALTH=$(curl -s http://localhost:4566/_localstack/health)
+            if echo "$HEALTH" | grep -q '"cloudformation": "available"' && \
+               echo "$HEALTH" | grep -q '"s3": "available"' && \
+               echo "$HEALTH" | grep -q '"stepfunctions": "available"'; then
+              echo "LocalStack is ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "LocalStack did not become ready in time"
+          exit 1
+      - name: Deploy fixtures
+        run: npm run test:integration

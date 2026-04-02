@@ -1579,6 +1579,56 @@ stepFunctions:
 
 As a result, `hellostepfunc1` will only have the tag of `score: 42`, and _not_ the tags at the provider level
 
+## Integration Tests
+
+Integration tests deploy real CloudFormation stacks to [LocalStack](https://localstack.cloud) to catch issues that unit tests cannot (e.g. circular resource dependencies, invalid ARN references).
+
+### Prerequisites
+
+- Docker
+
+### Running all fixtures
+
+Install dependencies, start LocalStack, then run the integration test script:
+
+```bash
+npm install --legacy-peer-deps
+npm install --legacy-peer-deps --prefix fixtures/
+docker compose up -d
+npm run test:integration
+```
+
+### Running a single fixture
+
+Use the `fixture:command` syntax directly with `osls`:
+
+```bash
+osls basic-state-machine:deploy --stage test
+```
+
+### Adding a fixture
+
+Create a new directory under `fixtures/` containing a `serverless.yml`. It will be picked up automatically by `fixtures/serverless-compose.js`. No `package.json` is needed — all fixtures share `fixtures/package.json`.
+
+Use `fixtures/base.yml` for all shared configuration (`provider`, `plugins`, `package`, `custom`):
+
+```yaml
+service: integration-my-fixture
+
+provider: ${file(../base.yml):provider}
+plugins: ${file(../base.yml):plugins}
+package: ${file(../base.yml):package}
+custom: ${file(../base.yml):custom}
+
+stepFunctions:
+  stateMachines:
+    ...
+```
+
+The `package` section in `base.yml` sets `excludeDevDependencies: false`, which is required to prevent OOM during deployment. Serverless Framework v3 defaults this to `true`, causing it to scan all files in `node_modules` (~25k files per fixture) to identify production dependencies before packaging — that analysis exhausts the JS heap.
+
+> **Note:** `serverless-compose.js` at the repo root is intentionally a one-line re-export of `fixtures/serverless-compose.js`. It must exist at the root because `@osls/compose` resolves the config via `lstat`, which does not follow symlinks. Do not delete it.
+
 ## Commands
 
 ### deploy

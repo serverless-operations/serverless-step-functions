@@ -1,0 +1,9 @@
+{
+  "name": "integration-fixtures",
+  "private": true,
+  "devDependencies": {
+    "osls": "^3.0.0",
+    "serverless-localstack": "^1.3.0",
+    "serverless-step-functions": "file:../"
+  }
+}
