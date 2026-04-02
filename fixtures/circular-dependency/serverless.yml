@@ -1,0 +1,23 @@
+service: integration-circular-dependency
+
+provider: ${file(../base.yml):provider}
+plugins: ${file(../base.yml):plugins}
+package: ${file(../base.yml):package}
+custom: ${file(../base.yml):custom}
+
+functions:
+  parseCSV:
+    handler: handler.parseCSV
+
+stepFunctions:
+  stateMachines:
+    circularMachine:
+      id: CircularMachine
+      name: integration-circular-${opt:stage, 'test'}
+      definition:
+        StartAt: Parse
+        States:
+          Parse:
+            Type: Task
+            Resource: !Ref ParseCSVLambdaFunction
+            End: true
