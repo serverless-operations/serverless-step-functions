@@ -24,3 +24,13 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [HelloLambdaFunction, Arn]
             End: true
+    fnSubMachine:
+      name: integration-basic-fn-sub-${opt:stage, 'test'}
+      definition:
+        StartAt: InvokeLambda
+        States:
+          InvokeLambda:
+            Type: Task
+            Resource:
+              Fn::Sub: "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:my-fn"
+            End: true
