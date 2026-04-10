@@ -1,0 +1,32 @@
+service: integration-use-exact-version
+
+provider: ${file(../base.yml):provider}
+plugins: ${file(../base.yml):plugins}
+package: ${file(../base.yml):package}
+custom: ${file(../base.yml):custom}
+
+layers:
+  utils:
+    path: layers/utils
+    compatibleRuntimes:
+      - nodejs22.x
+
+functions:
+  hello:
+    handler: handler.hello
+    layers:
+      - Ref: UtilsLambdaLayer
+
+stepFunctions:
+  stateMachines:
+    exactVersionMachine:
+      name: integration-exact-version-${opt:stage, 'test'}
+      useExactVersion: true
+      definition:
+        StartAt: InvokeHello
+        States:
+          InvokeHello:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [HelloLambdaFunction, Arn]
+            End: true
