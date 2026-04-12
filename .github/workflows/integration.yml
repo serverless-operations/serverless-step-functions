@@ -38,3 +38,5 @@ jobs:
           exit 1
       - name: Deploy fixtures
         run: npm run test:integration
+      - name: Verify compiled templates
+        run: npx mocha "fixtures/**/verify.test.js"
