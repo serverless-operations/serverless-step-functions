@@ -1,5 +1,25 @@
 # Changelog
 
+## [3.29.2](https://github.com/serverless-operations/serverless-step-functions/compare/v3.29.1...v3.29.2) (2026-05-04)
+
+
+### Code Refactoring
+
+* **apiGateway:** replace .then() chain with CompilationPipeline ([#765](https://github.com/serverless-operations/serverless-step-functions/issues/765)) ([24758e3](https://github.com/serverless-operations/serverless-step-functions/commit/24758e3f2dc86170e9e5b2adced2c1dd228c186e))
+* **events:** extract shared input validator and IAM role factory ([#764](https://github.com/serverless-operations/serverless-step-functions/issues/764)) ([fbd6cc0](https://github.com/serverless-operations/serverless-step-functions/commit/fbd6cc09e11a8f777a2b213ca3984166ffadbaa2))
+* **naming:** introduce generateLogicalId factory method ([#762](https://github.com/serverless-operations/serverless-step-functions/issues/762)) ([ff6de3a](https://github.com/serverless-operations/serverless-step-functions/commit/ff6de3abd537bb33b20d0f4738e01d7158ce7f90))
+* **notifications:** split compileNotifications into Strategy pattern ([#763](https://github.com/serverless-operations/serverless-step-functions/issues/763)) ([d241e59](https://github.com/serverless-operations/serverless-step-functions/commit/d241e597cc577747776411c0d9530802b48128a1))
+
+
+### Continuous Integration
+
+* configure release-please with manifest and changelog sections ([79b935f](https://github.com/serverless-operations/serverless-step-functions/commit/79b935f4700f0b1e59374d5f61027c84ec1a5aa9))
+
+
+### Miscellaneous Chores
+
+* **deps:** bump fast-xml-parser and @aws-sdk/xml-builder ([#766](https://github.com/serverless-operations/serverless-step-functions/issues/766)) ([1be96b1](https://github.com/serverless-operations/serverless-step-functions/commit/1be96b17e4b9673548b8b05d8ad34b47bd027b6a))
+
 ## [3.29.1](https://github.com/serverless-operations/serverless-step-functions/compare/v3.29.0...v3.29.1) (2026-04-12)
 
 

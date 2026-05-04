@@ -1,6 +1,6 @@
 {
   "name": "serverless-step-functions",
-  "version": "3.29.1",
+  "version": "3.29.2",
   "description": "The module is AWS Step Functions plugin for Serverless Framework",
   "main": "lib/index.js",
   "scripts": {
