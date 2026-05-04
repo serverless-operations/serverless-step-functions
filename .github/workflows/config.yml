@@ -43,4 +43,5 @@ jobs:
         with:
           # https://github.com/googleapis/release-please-action?tab=readme-ov-file#github-credentials
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
-          release-type: node
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
