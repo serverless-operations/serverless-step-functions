@@ -1,0 +1,65 @@
+service: integration-configure-task-timeouts
+
+provider: ${file(../base.yml):provider}
+plugins: ${file(../base.yml):plugins}
+package: ${file(../base.yml):package}
+custom: ${file(../base.yml):custom}
+
+functions:
+  short:
+    handler: handler.fn
+    timeout: 12
+  long:
+    handler: handler.fn
+    timeout: 90
+  defaulted:
+    handler: handler.fn
+
+stepFunctions:
+  stateMachines:
+    autoTimeoutsMachine:
+      name: integration-configure-task-timeouts-${opt:stage, 'test'}
+      configureTaskTimeouts: true
+      definition:
+        StartAt: DirectInvoke
+        States:
+          DirectInvoke:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [ShortLambdaFunction, Arn]
+            Next: ServiceIntegration
+          ServiceIntegration:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke
+            Parameters:
+              FunctionName:
+                Fn::GetAtt: [LongLambdaFunction, Arn]
+              Payload.$: $
+            Next: UserSetTimeout
+          UserSetTimeout:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [ShortLambdaFunction, Arn]
+            TimeoutSeconds: 5
+            Next: ParallelStep
+          ParallelStep:
+            Type: Parallel
+            End: true
+            Branches:
+              - StartAt: NestedTask
+                States:
+                  NestedTask:
+                    Type: Task
+                    Resource:
+                      Fn::GetAtt: [DefaultedLambdaFunction, Arn]
+                    End: true
+    backCompatMachine:
+      name: integration-back-compat-task-timeouts-${opt:stage, 'test'}
+      definition:
+        StartAt: NoInjection
+        States:
+          NoInjection:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [ShortLambdaFunction, Arn]
+            End: true

@@ -495,6 +495,23 @@ stepFunctions:
         ...
 ```
 
+### Auto-configure Task timeouts
+
+Lambda function timeouts are not surfaced as `States.Timeout` errors in Step Functions; they appear as `States.TaskFailed`. To bridge the gap you can set `TimeoutSeconds` on every Task state, but it's easy to forget and tedious to keep in sync with each function's `timeout`.
+
+Set `configureTaskTimeouts: true` on a state machine to automatically inject `TimeoutSeconds` into Task states that invoke a Lambda function defined in the same Serverless service. The injected value is the function's configured `timeout`, falling back to the service-wide `provider.timeout`, and finally to the Serverless Framework default of 6 seconds. This works for both the legacy direct-invoke form (`Resource: !GetAtt fn.Arn`) and the service-integration form (`Resource: arn:aws:states:::lambda:invoke`), and recurses into `Parallel` branches and `Map` iterators.
+
+```yaml
+stepFunctions:
+  stateMachines:
+    hellostepfunc1:
+      configureTaskTimeouts: true
+      definition:
+        ...
+```
+
+If a Task state already declares `TimeoutSeconds` or `TimeoutSecondsPath`, the existing value is preserved. If the user-set `TimeoutSeconds` is strictly greater than the Lambda's timeout, a warning is logged at deploy time — the Lambda will fail before the state-level timeout fires, so the longer value has no effect.
+
 ### Pre-deployment validation
 
 By default, your state machine definition will be validated during deployment by StepFunctions. This can be cumbersome when developing because you have to upload your service for every typo in your definition. In order to go faster, you can enable pre-deployment validation using [asl-validator](https://www.npmjs.com/package/asl-validator) which should detect most of the issues (like a missing state property).
