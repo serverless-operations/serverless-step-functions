@@ -1,0 +1,69 @@
+service: integration-athena
+
+provider: ${file(../base.yml):provider}
+plugins: ${file(../base.yml):plugins}
+package: ${file(../base.yml):package}
+custom: ${file(../base.yml):custom}
+
+stepFunctions:
+  stateMachines:
+    athenaMachine:
+      name: integration-athena-${opt:stage, 'test'}
+      definition:
+        StartAt: StartQuery
+        States:
+          StartQuery:
+            Type: Task
+            Resource: arn:aws:states:::athena:startQueryExecution.sync
+            Parameters:
+              QueryString: SELECT 1
+              WorkGroup: primary
+              ResultConfiguration:
+                OutputLocation: s3://example-results/
+            Next: GetQueryExecution
+          GetQueryExecution:
+            Type: Task
+            Resource: arn:aws:states:::athena:getQueryExecution
+            Parameters:
+              QueryExecutionId.$: $.QueryExecution.QueryExecutionId
+            Next: GetQueryResults
+          GetQueryResults:
+            Type: Task
+            Resource: arn:aws:states:::athena:getQueryResults
+            Parameters:
+              QueryExecutionId.$: $.QueryExecution.QueryExecutionId
+            Next: StopQuery
+          StopQuery:
+            Type: Task
+            Resource: arn:aws:states:::athena:stopQueryExecution
+            Parameters:
+              QueryExecutionId.$: $.QueryExecution.QueryExecutionId
+            End: true
+    athenaAsyncMachine:
+      name: integration-athena-async-${opt:stage, 'test'}
+      definition:
+        StartAt: StartQueryAsync
+        States:
+          StartQueryAsync:
+            Type: Task
+            Resource: arn:aws:states:::athena:startQueryExecution
+            Parameters:
+              QueryString: SELECT 1
+              WorkGroup: primary
+              ResultConfiguration:
+                OutputLocation: s3://example-results/
+            End: true
+    athenaRuntimeWorkgroupMachine:
+      name: integration-athena-runtime-wg-${opt:stage, 'test'}
+      definition:
+        StartAt: StartQueryRuntimeWg
+        States:
+          StartQueryRuntimeWg:
+            Type: Task
+            Resource: arn:aws:states:::athena:startQueryExecution
+            Parameters:
+              QueryString: SELECT 1
+              WorkGroup.$: $.workgroup
+              ResultConfiguration:
+                OutputLocation: s3://example-results/
+            End: true
