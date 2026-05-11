@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.30.0](https://github.com/serverless-operations/serverless-step-functions/compare/v3.29.2...v3.30.0) (2026-05-06)
+
+
+### Features
+
+* **iam:** add Athena service integration permissions ([#769](https://github.com/serverless-operations/serverless-step-functions/issues/769)) ([92073df](https://github.com/serverless-operations/serverless-step-functions/commit/92073dff8377140ea76de3cdc04b5ea7a491b9c8)), closes [#450](https://github.com/serverless-operations/serverless-step-functions/issues/450)
+* **stateMachines:** add configureTaskTimeouts to mirror Lambda timeouts ([#768](https://github.com/serverless-operations/serverless-step-functions/issues/768)) ([41d1cb5](https://github.com/serverless-operations/serverless-step-functions/commit/41d1cb556f8ed7bf5f94c523354839527f31babb)), closes [#239](https://github.com/serverless-operations/serverless-step-functions/issues/239)
+
 ## [3.29.2](https://github.com/serverless-operations/serverless-step-functions/compare/v3.29.1...v3.29.2) (2026-05-04)
 
 
