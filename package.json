@@ -41,6 +41,8 @@
     "sinon": "^12.0.1"
   },
   "dependencies": {
+    "@aws-sdk/client-cloudformation": "^3.700.0",
+    "@aws-sdk/client-sfn": "^3.700.0",
     "@osls/compose": "^1.4.0",
     "asl-validator": "^3.11.0",
     "bluebird": "^3.4.0",
@@ -49,7 +51,16 @@
     "lodash": "^4.17.11"
   },
   "peerDependencies": {
+    "osls": ">=4",
     "serverless": ">=3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "osls": {
+      "optional": true
+    },
+    "serverless": {
+      "optional": true
+    }
   },
   "overrides": {
     "file-type": "17.1.3",
