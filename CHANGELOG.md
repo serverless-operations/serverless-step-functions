@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.31.0](https://github.com/serverless-operations/serverless-step-functions/compare/v3.30.0...v3.31.0) (2026-07-13)
+
+
+### Features
+
+* support osls v4 by migrating provider.request to AWS SDK v3 ([#789](https://github.com/serverless-operations/serverless-step-functions/issues/789)) ([6085716](https://github.com/serverless-operations/serverless-step-functions/commit/6085716e93c3a2c913a0270b6cd3b712edc5bc2f))
+
 ## [3.30.0](https://github.com/serverless-operations/serverless-step-functions/compare/v3.29.2...v3.30.0) (2026-05-06)
 
 
