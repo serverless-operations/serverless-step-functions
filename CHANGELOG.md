@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.31.1](https://github.com/serverless-operations/serverless-step-functions/compare/v3.31.0...v3.31.1) (2026-07-21)
+
+
+### Bug Fixes
+
+* widen osls peer dependency range to &gt;=3 ([#791](https://github.com/serverless-operations/serverless-step-functions/issues/791)) ([520c418](https://github.com/serverless-operations/serverless-step-functions/commit/520c418b00bd2b808a80c85ddbedd51d26c3421f))
+
 ## [3.31.0](https://github.com/serverless-operations/serverless-step-functions/compare/v3.30.0...v3.31.0) (2026-07-13)
 
 
