@@ -51,7 +51,7 @@
     "lodash": "^4.17.11"
   },
   "peerDependencies": {
-    "osls": ">=4",
+    "osls": ">=3",
     "serverless": ">=3.0.0"
   },
   "peerDependenciesMeta": {
