@@ -44,30 +44,36 @@ describe('notifications fixture — CloudFormation template', () => {
     );
   });
 
-  it('should include statements from all state machines in the merged SNS topic policy', () => {
+  it('should not emit duplicate statement Sids in any merged SNS topic policy', () => {
+    // Regression guard for #801: the fan-in fixture has two state machines targeting the
+    // same topic on the same status, so their grants share a Sid. If they are concatenated
+    // without deduping, AWS rejects the deploy with "Every policy statement must have a
+    // unique ID". LocalStack accepts duplicate Sids, so only this template assertion catches it.
     const snsPolicies = Object.values(resources).filter(
       (r) => r.Type === 'AWS::SNS::TopicPolicy',
     );
 
     for (const policy of snsPolicies) {
-      const statements = [].concat(policy.Properties.PolicyDocument.Statement);
-      expect(statements.length).to.be.greaterThan(
-        1,
-        'SNS topic policy should have statements from both notificationMachine and notificationMachine2',
+      const sids = [].concat(policy.Properties.PolicyDocument.Statement).map((s) => s.Sid);
+      expect(new Set(sids).size).to.equal(
+        sids.length,
+        'Duplicate Sid in a merged SNS topic policy — AWS rejects this with '
+        + `"Every policy statement must have a unique ID": [${sids}]`,
       );
     }
   });
 
-  it('should include statements from all state machines in the merged SQS queue policy', () => {
+  it('should not emit duplicate statement Sids in any merged SQS queue policy', () => {
     const sqsPolicies = Object.values(resources).filter(
       (r) => r.Type === 'AWS::SQS::QueuePolicy',
     );
 
     for (const policy of sqsPolicies) {
-      const statements = [].concat(policy.Properties.PolicyDocument.Statement);
-      expect(statements.length).to.be.greaterThan(
-        1,
-        'SQS queue policy should have statements from both notificationMachine and notificationMachine2',
+      const sids = [].concat(policy.Properties.PolicyDocument.Statement).map((s) => s.Sid);
+      expect(new Set(sids).size).to.equal(
+        sids.length,
+        'Duplicate Sid in a merged SQS queue policy — AWS rejects this with '
+        + `"Every policy statement must have a unique ID": [${sids}]`,
       );
     }
   });
