@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.31.2](https://github.com/serverless-operations/serverless-step-functions/compare/v3.31.1...v3.31.2) (2026-08-03)
+
+
+### Bug Fixes
+
+* **notifications:** dedupe SNS/SQS policy statements by Sid ([#801](https://github.com/serverless-operations/serverless-step-functions/issues/801)) ([#802](https://github.com/serverless-operations/serverless-step-functions/issues/802)) ([f1a5f47](https://github.com/serverless-operations/serverless-step-functions/commit/f1a5f47bb9086573fcf43e26984e054995ac9e35))
+
 ## [3.31.1](https://github.com/serverless-operations/serverless-step-functions/compare/v3.31.0...v3.31.1) (2026-07-21)
 
 
